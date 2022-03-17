@@ -1,8 +1,11 @@
 package com.alkemy.ong.entities;
+
+import java.util.UUID;
+
 //Clase de prueba para probar la lógica del Mapper, reemplazar por la verdadera clase "Organization" cuando esté disponible.
 public class OrganizationMock {
 	
-	private Long id;
+	private UUID id;
 	private String name;
 	private String image;
 	private Integer phone;
@@ -14,11 +17,11 @@ public class OrganizationMock {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 	
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 

@@ -1,8 +1,10 @@
 package com.alkemy.ong.dto;
 
+import java.util.UUID;
+
 public class OrganizationDto {
 	
-	private Long id;
+	private UUID id;
 	private String name;
 	private String image; 
 	private Integer phone;
@@ -12,11 +14,11 @@ public class OrganizationDto {
 		// TODO Auto-generated constructor stub
 	}
 	
-	public Long getId() {
+	public UUID getId() {
 		return id;
 	}
 	
-	public void setId(Long id) {
+	public void setId(UUID id) {
 		this.id = id;
 	}
 
