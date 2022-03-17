@@ -4,6 +4,7 @@ import java.sql.Timestamp;
 import java.time.Instant;
 
 import javax.persistence.Entity;
+import javax.persistence.Lob;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.SQLDelete;
@@ -26,6 +27,7 @@ public class Activity {
 	@NonNull
 	private String name;
 	@NonNull
+	@Lob
 	private String content;
 	@NonNull
 	private String image;
