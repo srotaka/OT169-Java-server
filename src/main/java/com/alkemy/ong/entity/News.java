@@ -5,6 +5,7 @@ import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
+import javax.validation.constraints.NotNull;
 
 import org.hibernate.annotations.GenericGenerator;
 
@@ -22,6 +23,7 @@ public class News {
 	private String id;
 	
 	@Column(nullable = false, columnDefinition="VARCHAR")
+	@NotNull(message = "Name cannot be null")
 	private String name;
 	
 	@Column(nullable = false, columnDefinition="TEXT")
