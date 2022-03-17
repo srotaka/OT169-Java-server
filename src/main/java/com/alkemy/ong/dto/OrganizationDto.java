@@ -2,6 +2,7 @@ package com.alkemy.ong.dto;
 
 public class OrganizationDto {
 	
+	private Long id;
 	private String name;
 	private String image; 
 	private Integer phone;
@@ -9,6 +10,14 @@ public class OrganizationDto {
 	
 	public OrganizationDto() {
 		// TODO Auto-generated constructor stub
+	}
+	
+	public Long getId() {
+		return id;
+	}
+	
+	public void setId(Long id) {
+		this.id = id;
 	}
 
 	public String getName() {
