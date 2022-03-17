@@ -49,6 +49,10 @@ public class Activity {
 		this.content = content;
 	}
 	
+	public UUID getId() {
+		return id;
+	}
+	
 	public String getName() {
 		return name;
 	}
