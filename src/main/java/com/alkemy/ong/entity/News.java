@@ -30,9 +30,11 @@ public class News {
 	private String name;
 	
 	@Column(nullable = false, columnDefinition="TEXT")
+	@NotNull(message = "Content cannot be null")
 	private String content;
 	
 	@Column(nullable = false, columnDefinition="VARCHAR")
+	@NotNull(message = "Image cannot be null")
 	private String image;
 	
 	//private List<Category> categories; //The entity Category doesn't exists in this commit
