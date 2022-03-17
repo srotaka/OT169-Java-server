@@ -1,5 +1,8 @@
 package com.alkemy.ong.entity;
 
+import java.sql.Timestamp;
+import java.time.Instant;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -34,18 +37,21 @@ public class News {
 	
 	//private List<Category> categories; //The entity Category doesn't exists in this commit
 	
-	//private Timestamp timestamp // Problems setting Timestamp
+	private Timestamp timestamp = Timestamp.from(Instant.now());
+	
     private boolean softDelete = false;
 	
     public News() {    	
     }
 
-	public News(String id, String name, String content, String image, boolean softDelete) {
+	public News(String id, @NotNull(message = "Name cannot be null") String name, String content, String image,
+			Timestamp timestamp, boolean softDelete) {
 		super();
 		this.id = id;
 		this.name = name;
 		this.content = content;
 		this.image = image;
+		this.timestamp = timestamp;
 		this.softDelete = softDelete;
 	}
 
@@ -88,6 +94,13 @@ public class News {
 	public void setSoftDelete(boolean softDelete) {
 		this.softDelete = softDelete;
 	}
-    
+
+	public Timestamp getTimestamp() {
+		return timestamp;
+	}
+
+	public void setTimestamp(Timestamp timestamp) {
+		this.timestamp = timestamp;
+	}
     
 }
