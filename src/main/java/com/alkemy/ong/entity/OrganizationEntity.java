@@ -8,6 +8,7 @@ import org.hibernate.annotations.UpdateTimestamp;
 import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
 import java.time.LocalDateTime;
+import java.util.UUID;
 
 @Entity
 @Table(name="organizations")
@@ -19,9 +20,8 @@ import java.time.LocalDateTime;
 public class OrganizationEntity {
 
     @Id
-    @Column(updatable = false)
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private Long organizationId;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private UUID organizationId;
 
     @Column(nullable = false)
     private String name;
