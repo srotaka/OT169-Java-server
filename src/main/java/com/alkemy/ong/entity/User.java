@@ -20,13 +20,19 @@ import java.util.UUID;
 @SQLDelete(sql = "UPDATE users SET soft_delete = TRUE WHERE id=?")
 @Where(clause = "soft_delete = false")
 public class User {
-
+/*
     @Id
     @GeneratedValue(generator = "UUID")
     @GenericGenerator(name = "UUID", strategy = "org.hibernate.id.UUIDGenerator")
     @Column(name = "id",updatable = false,nullable = false)
     private UUID id;
-
+*/
+	
+	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	private String id;
+	
     @Column(nullable = false)
     private String firstName;
 
@@ -43,9 +49,11 @@ public class User {
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
+    
     @JoinColumn(name = "role_id",nullable = false,foreignKey=@ForeignKey(name = "Fk_role_id"))
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     private Role roleId;
+    
 
     @Column(name = "soft_delete")
     private boolean softDelete = Boolean.FALSE;

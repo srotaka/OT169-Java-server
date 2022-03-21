@@ -13,6 +13,8 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
+import org.hibernate.annotations.Cache;
+import org.hibernate.annotations.CacheConcurrencyStrategy;
 import org.hibernate.annotations.GenericGenerator;
 
 /**
@@ -21,6 +23,7 @@ import org.hibernate.annotations.GenericGenerator;
 
 @Entity
 @Table(name = "news")
+@Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
 public class News {
 
 	@Id
@@ -28,21 +31,21 @@ public class News {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 	private String id;
 	
-	@Column(nullable = false, columnDefinition="VARCHAR")
+	@Column(nullable = false)
 	@NotNull(message = "Name cannot be null")
 	private String name;
 	
-	@Column(nullable = false, columnDefinition="TEXT")
+	@Column(nullable = false, columnDefinition="TEXT", length = 65535)
 	@NotNull(message = "Content cannot be null")
 	private String content;
 	
-	@Column(nullable = false, columnDefinition="VARCHAR")
+	@Column(nullable = false)
 	@NotNull(message = "Image cannot be null")
 	private String image;
 	
 	@OneToMany
 	@JoinColumn(name="Category_ID")
-	private List<Category> categories; //The entity Category doesn't exists in this commit
+	private List<Category> categories;
 	
 	private Timestamp timestamp = Timestamp.from(Instant.now());
 	
