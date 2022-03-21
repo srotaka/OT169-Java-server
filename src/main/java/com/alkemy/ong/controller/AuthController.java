@@ -24,17 +24,12 @@ public class AuthController {
 	
 	
 	@Autowired 
-	private UserRepository userRepository; //This repository doesn't exists in this commit 
+	private UserRepository userRepository;
 	
 	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody User user){ //Not functional. User doesn't exists
-		User obj = new User(); 
-		obj.setFirstName(user.getFirstName());
-		obj.setLastName(user.getLastName());
-		obj.setEmail(user.getEmail());
-		obj.setPassword( passwordEncoder.encode(user.getPassword()) );
-		userRepository.save(obj);//This repository doesn't exists in this commit 
-		return new ResponseEntity<User>(obj, HttpStatus.OK);
+	public ResponseEntity<User> register(@RequestBody User user){		
+		userRepository.save(user); 
+		return new ResponseEntity<User>(user, HttpStatus.OK);
 	}
 	
 }
