@@ -1,14 +1,11 @@
 package com.alkemy.ong.repository;
 
+import com.alkemy.ong.entity.Category;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.stereotype.Repository;
 
-import com.alkemy.ong.entity.News;
+import java.util.UUID;
 
 @Repository
-/**
- * @author Franco Lamberti
- */
-public interface NewsRepository extends JpaRepository<News, String>{
-
+public interface CategoryRepository extends JpaRepository<Category, UUID> {
 }
