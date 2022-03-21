@@ -11,7 +11,7 @@ import java.sql.Date;
 @Setter
 @Entity
 @Table(name="role")
-@SQLDelete(sql = "UPDATE role SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE role SET softDeleted = true WHERE id=?")
 @Where(clause="deleted=false")
 public class Role {
 
@@ -27,7 +27,7 @@ public class Role {
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamps;
 
-    private boolean deleted = Boolean.FALSE;
+    private boolean softDeleted = Boolean.FALSE;
 
 
 }
