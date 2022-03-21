@@ -2,19 +2,17 @@ package com.alkemy.ong.entity;
 
 
 import lombok.*;
-import org.hibernate.annotations.CreationTimestamp;
 import org.hibernate.annotations.SQLDelete;
-import org.hibernate.annotations.UpdateTimestamp;
-import org.springframework.format.annotation.DateTimeFormat;
 import javax.persistence.*;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.UUID;
 
 @Entity
 @Table(name="organizations")
 @Setter
 @Getter
-@SQLDelete(sql = "UPDATE organizations SET is_deleted  = true WHERE id = ?")
+@SQLDelete(sql = "UPDATE organizations SET soft_delete  = true WHERE id = ?")
 @NoArgsConstructor
 @AllArgsConstructor
 public class OrganizationEntity {
@@ -44,18 +42,10 @@ public class OrganizationEntity {
     @Column(name = "about_us_text")
     private String aboutUsText;
 
-    @CreationTimestamp
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "creation_date", updatable = false)
-    private LocalDateTime creationDate;
+    private Timestamp timestamp = Timestamp.from(Instant.now());
 
-    @UpdateTimestamp
-    @DateTimeFormat(pattern = "yyyy-MM-dd HH:mm:ss")
-    @Column(name = "update_date")
-    private LocalDateTime updateDate;
-
-    @Column(name="is_deleted")
-    private Boolean isDeleted = Boolean.FALSE;
+    @Column(name="soft_delete")
+    private Boolean softDelete = Boolean.FALSE;
 
 
 }
