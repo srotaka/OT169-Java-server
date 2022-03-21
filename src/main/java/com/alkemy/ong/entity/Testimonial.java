@@ -18,7 +18,7 @@ import java.util.UUID;
 @Getter
 @Setter
 @SQLDelete(sql = "UPDATE testimonials SET deleted = true WHERE id=?")
-@Where(clause = "deleted = false")
+@Where(clause = "soft_delete = false")
 public class Testimonial {
 
     @Id
@@ -37,7 +37,8 @@ public class Testimonial {
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
-    private boolean deleted = Boolean.FALSE;
+    @Column(name = "soft_delete")
+    private boolean softDelete = Boolean.FALSE;
 
 
 
