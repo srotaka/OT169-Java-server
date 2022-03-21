@@ -2,11 +2,11 @@ package com.alkemy.ong.entity;
 
 
 import lombok.*;
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name="organizations")
@@ -18,8 +18,9 @@ import java.util.UUID;
 public class OrganizationEntity {
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
-    private UUID organizationId;
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
 
     @Column(nullable = false)
     private String name;
