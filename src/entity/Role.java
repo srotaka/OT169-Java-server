@@ -10,6 +10,9 @@ import java.sql.Date;
 @Getter
 @Setter
 @Entity
+@Table(name="role")
+@SQLDelete(sql = "UPDATE role SET deleted = true WHERE id=?")
+@Where(clause="deleted=false")
 public class Role {
 
     @Id
@@ -23,6 +26,8 @@ public class Role {
 
     @Temporal(TemporalType.TIMESTAMP)
     private Date timestamps;
+
+    private boolean deleted = Boolean.FALSE;
 
 
 }
