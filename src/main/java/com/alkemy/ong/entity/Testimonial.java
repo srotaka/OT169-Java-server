@@ -24,7 +24,7 @@ public class Testimonial {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private UUID id;
+    private String id;
 
     @NonNull
     private String name;
