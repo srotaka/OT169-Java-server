@@ -23,7 +23,7 @@ public class AuthController {
 	
 	
 	@Autowired 
-	private UserRepository userRepository; //This repository doesn't exists in this commit
+	private UserRepository userRepository;
 	@Autowired
 	private UserService userService;
 	
