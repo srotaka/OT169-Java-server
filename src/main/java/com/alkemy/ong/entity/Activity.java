@@ -26,7 +26,8 @@ import lombok.NonNull;
 public class Activity {
 	
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
+	//@GeneratedValue (strategy = GenerationType.IDENTITY)  ---> Tuve que cambiar a AUTO la estrategia para que me corra el proyecto
+	@GeneratedValue (strategy = GenerationType.AUTO)
 	private UUID id;
 	@NonNull
 	@Column(unique = true)
