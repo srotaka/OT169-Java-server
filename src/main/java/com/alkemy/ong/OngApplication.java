@@ -9,6 +9,6 @@ public class OngApplication {
 
 	public static void main(String[] args) throws IOException {
 		SpringApplication.run(OngApplication.class, args);
-		
+
 	}
 }
