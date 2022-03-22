@@ -34,6 +34,11 @@
 			<groupId>org.springframework.session</groupId>
 			<artifactId>spring-session-core</artifactId>
 		</dependency>
+		<dependency>
+			<groupId>com.sendgrid</groupId>
+			<artifactId>sendgrid-java</artifactId>
+			<version>4.0.1</version>
+		</dependency>
 
 		<dependency>
 			<groupId>mysql</groupId>
