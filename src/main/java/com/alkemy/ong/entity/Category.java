@@ -11,7 +11,6 @@ import org.springframework.lang.Nullable;
 import javax.persistence.*;
 import java.sql.Timestamp;
 import java.time.Instant;
-import java.util.UUID;
 
 @Entity
 @Table(name = "categories")
@@ -23,8 +22,8 @@ public class Category {
 
     @Id
     @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
     @NonNull
     private String name;
     @Nullable
