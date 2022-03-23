@@ -32,7 +32,7 @@ public class OrganizationEntity {
     private String address;
 
     @Column
-    private Long phone;
+    private String phone;
 
     @Column(nullable = false)
     private String email;
