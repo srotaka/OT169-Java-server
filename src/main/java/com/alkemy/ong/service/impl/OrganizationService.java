@@ -1,5 +1,7 @@
 package com.alkemy.ong.service.impl;
 
+import com.alkemy.ong.repository.OrganizationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.alkemy.ong.dto.OrganizationDto;
@@ -10,16 +12,12 @@ import com.alkemy.ong.utils.Mapper;
 @Service
 public class OrganizationService implements IOrganizationService {
 
+	@Autowired
+	private OrganizationRepository repository;
+
 	@Override
 	public OrganizationDto getPublicInfo() {
-		OrganizationMock organization = new OrganizationMock();
-		organization.setName("Organization Name");
-		organization.setImage("Organization.jpg");
-		organization.setPhone(Integer.valueOf(123456789));
-		organization.setAddress("Organization address");
-		organization.setSecretValue(1);
-		
-		return Mapper.mapToDto(organization);
+		return Mapper.mapToDto(repository.findAll().get(0));
 	}
 	
 }
