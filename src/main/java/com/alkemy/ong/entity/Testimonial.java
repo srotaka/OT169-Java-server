@@ -37,6 +37,7 @@ public class Testimonial {
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
+
     @Column(name = "soft_delete")
     private boolean softDelete = Boolean.FALSE;
 
