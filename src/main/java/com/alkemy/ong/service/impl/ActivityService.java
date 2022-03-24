@@ -16,8 +16,15 @@ public class ActivityService implements IActivityService {
 
     @Override
     public ActivityDto addActivity(ActivityDto activityDto) {
-        Activity activity = repository.save(Mapper.mapFromDto(activityDto, new Activity()));
-        return Mapper.mapToDto(activity, activityDto);
+        Activity activity = repository.save(Mapper.mapFromDto(activityDto));
+        return Mapper.mapToDto(activity);
     }
 
+    private Activity buildActivity(String name, String content, String image) {
+        Activity activity = new Activity();
+        activity.setName(name);
+        activity.setContent(content);
+        activity.setImage(image);
+        return activity;
+    }
 }
