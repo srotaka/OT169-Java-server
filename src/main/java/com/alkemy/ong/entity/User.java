@@ -1,16 +1,25 @@
 package com.alkemy.ong.entity;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import java.sql.Timestamp;
+import java.time.Instant;
+import java.util.List;
+
+import javax.persistence.CascadeType;
+import javax.persistence.Column;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
+import javax.persistence.Table;
+
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
-import javax.persistence.*;
-import java.sql.Timestamp;
-import java.time.Instant;
-import java.util.UUID;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
 @Entity
 @Table(name = "users")
@@ -49,14 +58,13 @@ public class User {
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
-    
-    @JoinColumn(name = "role_id",nullable = false,foreignKey=@ForeignKey(name = "Fk_role_id"))
     @ManyToOne(cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
-    private Role roleId;
+    @JoinColumn(name = "users",nullable = false)
+    private Role role;//changed "_"
     
 
     @Column(name = "soft_delete")
-    private boolean softDelete = Boolean.FALSE;
+    private boolean soft_delete = Boolean.FALSE;//changed "_"
 
 
 }
