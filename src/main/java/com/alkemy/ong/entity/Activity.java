@@ -47,5 +47,6 @@ public class Activity {
 	private String image;
 	private Timestamp timestamp = Timestamp.from(Instant.now());
 	private boolean softDelete = Boolean.FALSE;
+	
 
 }
