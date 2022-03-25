@@ -26,6 +26,8 @@ public class OrganizationController {
 	}
 
 	@PostMapping("/public")
-	public OrganizationResponseDto postPublicInfo(@RequestBody @Valid OrganizationRequestDto organizationRequestDto) { return service.postPublicInfo(organizationRequestDto); }
+	public OrganizationResponseDto postPublicInfo(@RequestBody @Valid OrganizationRequestDto organizationRequestDto) {
+		return service.postPublicInfo(organizationRequestDto);
+	}
 
 }
