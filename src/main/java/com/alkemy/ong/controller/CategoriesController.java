@@ -1,13 +1,12 @@
 package com.alkemy.ong.controller;
 
+import java.util.List;
+
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RequestParam;
 
 import com.alkemy.ong.entity.Category;
 import com.alkemy.ong.repository.CategoryRepository;
@@ -25,17 +24,12 @@ public class CategoriesController {
 
 	/**
 	 * @author Franco Lamberti
-	 * The id is sent by parameters, if any Category has that ID then, the method returns the entity. If it doesn't, returns a 404 Error code.
+	 * This method is only allowed to Admins. Returns all the categories.
 	 */
-	@GetMapping("/{id}") //OT169-41
-	@Secured("ROLE_ADMIN")
-	public ResponseEntity<Category> getById(@RequestParam (name = "id") String id) {
-		if(categoryRepository.existsById(id)){//If the ID corresponds to an Category, return it
-			return new ResponseEntity<Category>(categoryRepository.getById(id), HttpStatus.OK);
-		}
-		//If the ID doesn't corresponds to an Category, send an error
-		return new ResponseEntity<Category>(HttpStatus.NOT_FOUND);
-				
+	@GetMapping("/")// OT169-40
+	@Secured("ROLE_ADMIN") // This method only permits the current role to enter this endpoint
+	public List<Category> getAll(){
+		return categoryRepository.findAll();
 	}
 	
 	
