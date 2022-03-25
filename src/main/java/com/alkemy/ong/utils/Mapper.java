@@ -2,16 +2,16 @@ package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.OrganizationDto;
 import com.alkemy.ong.entities.OrganizationMock;
-import com.alkemy.ong.entity.OrganizationEntity;
 
 public class Mapper {
 	
-	public static OrganizationDto mapToDto(OrganizationEntity organization) {
+	public static OrganizationDto mapToDto(OrganizationMock organizationMock) {
 		OrganizationDto dto = new OrganizationDto();
-		dto.setName(organization.getName());
-		dto.setImage(organization.getImage());
-		dto.setPhone(organization.getPhone());
-		dto.setAddress(organization.getAddress());
+		dto.setId(organizationMock.getId());
+		dto.setName(organizationMock.getName());
+		dto.setImage(organizationMock.getImage());
+		dto.setPhone(organizationMock.getPhone());
+		dto.setAddress(organizationMock.getAddress());
 		return dto;
 	}
 	

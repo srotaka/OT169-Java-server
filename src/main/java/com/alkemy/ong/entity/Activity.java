@@ -25,12 +25,11 @@ import lombok.NonNull;
 @SQLDelete(sql = "UPDATE activities SET soft_delete = true WHERE id=?")
 @Where(clause = "soft_delete = false")
 public class Activity {
-
+	
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private String id;
-
+	private UUID id;
 	@NonNull
 	@Column(unique = true)
 	private String name;

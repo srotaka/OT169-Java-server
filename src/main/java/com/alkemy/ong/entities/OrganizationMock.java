@@ -1,16 +1,19 @@
-package com.alkemy.ong.dto;
+package com.alkemy.ong.entities;
 
 import java.util.UUID;
 
-public class OrganizationDto {
+//Clase de prueba para probar la lógica del Mapper, reemplazar por la verdadera clase "Organization" cuando esté disponible.
+public class OrganizationMock {
 	
 	private UUID id;
 	private String name;
-	private String image; 
+	private String image;
 	private Integer phone;
 	private String address;
+	//Valor secreto que no se mapea al DTO
+	private int secretValue;
 	
-	public OrganizationDto() {
+	public OrganizationMock() {
 		// TODO Auto-generated constructor stub
 	}
 	
@@ -52,5 +55,13 @@ public class OrganizationDto {
 
 	public void setAddress(String address) {
 		this.address = address;
+	}
+	
+	public int getSecretValue() {
+		return secretValue;
+	}
+	
+	public void setSecretValue(int secretValue) {
+		this.secretValue = secretValue;
 	}
 }

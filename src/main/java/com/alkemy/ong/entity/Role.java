@@ -1,19 +1,13 @@
 package com.alkemy.ong.entity;
 
 import java.sql.Date;
-import java.sql.Timestamp;
-import java.util.UUID;
+import java.util.List;
 
-<<<<<<< HEAD
-=======
 import javax.persistence.Column;
->>>>>>> 3f4d31c (Unidirectional User->Role)
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -30,14 +24,9 @@ import lombok.Setter;
 @AllArgsConstructor// Added by Franco Lamberti
 @NoArgsConstructor// Added by Franco Lamberti
 @Table(name="role")
-<<<<<<< HEAD
-@SQLDelete(sql = "UPDATE role SET softDeleted = true WHERE id=?")
-@Where(clause="deleted=false")
-=======
 @SQLDelete(sql = "UPDATE role SET soft_deleted = true WHERE id=?")
 @Where(clause="soft_deleted = false")
 
->>>>>>> 3f4d31c (Unidirectional User->Role)
 public class Role {
 
     @Id
@@ -53,10 +42,8 @@ public class Role {
     //@Temporal(TemporalType.TIMESTAMP) //The code doesn't compile with this annotation. Updated by Franco Lamberti
     private Date timestamps;
 
-    private boolean softDeleted = Boolean.FALSE;
+    private boolean soft_deleted = Boolean.FALSE;// changed "_"
 
-<<<<<<< HEAD
-=======
    /*
     @OneToMany(
 			mappedBy = "role",
@@ -68,7 +55,6 @@ public class Role {
     
     
     
->>>>>>> 3f4d31c (Unidirectional User->Role)
     //Added by Franco Lamberti
     public Role(String id) {
     	this.id = id;
