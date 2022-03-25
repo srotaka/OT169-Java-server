@@ -12,6 +12,6 @@ import java.util.UUID;
 public class OrganizationDto {
 	private String name;
 	private String image; 
-	private Long phone;
+	private String phone;
 	private String address;
 }
