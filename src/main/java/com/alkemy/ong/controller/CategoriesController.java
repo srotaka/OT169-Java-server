@@ -28,8 +28,8 @@ public class CategoriesController {
 	 */
 	@GetMapping("/")// OT169-40
 	@Secured("ROLE_ADMIN") // This method only permits the current role to enter this endpoint
-	public List<Category> getAll(){
-		return categoryRepository.findAll();
+	public List<Category> getNamesFromAll(){
+		return categoryRepository.getNamesFromAll();
 	}
 	
 	
