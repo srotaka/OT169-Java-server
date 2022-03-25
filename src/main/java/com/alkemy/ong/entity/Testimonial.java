@@ -24,7 +24,7 @@ public class Testimonial {
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
-    private UUID id;
+    private String id;
 
     @NonNull
     private String name;
@@ -36,6 +36,7 @@ public class Testimonial {
     private String content;
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
+
 
     @Column(name = "soft_delete")
     private boolean softDelete = Boolean.FALSE;
