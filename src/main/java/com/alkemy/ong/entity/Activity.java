@@ -13,6 +13,7 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
 
@@ -24,10 +25,12 @@ import lombok.NonNull;
 @SQLDelete(sql = "UPDATE activities SET soft_delete = true WHERE id=?")
 @Where(clause = "soft_delete = false")
 public class Activity {
-	
+
 	@Id
-	@GeneratedValue(strategy = GenerationType.IDENTITY)
-	private UUID id;
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")
+	private String id;
+
 	@NonNull
 	@Column(unique = true)
 	private String name;
