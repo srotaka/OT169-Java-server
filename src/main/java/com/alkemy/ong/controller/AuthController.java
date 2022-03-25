@@ -31,8 +31,6 @@ public class AuthController {
 	@Autowired 
 	private UserRepository userRepository;
 
-
-
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
@@ -50,6 +48,8 @@ public class AuthController {
 		return ResponseEntity.ok(usuario);
 
 	}
+
+	@PostMapping("/register")
 
 	public ResponseEntity<User> register(@RequestBody User user){//recibe un json	
 		System.out.println("Actual user: "+ user);
