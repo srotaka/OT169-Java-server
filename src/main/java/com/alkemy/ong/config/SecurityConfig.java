@@ -3,6 +3,7 @@ package com.alkemy.ong.config;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.config.Customizer;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
@@ -27,10 +28,12 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/organization/public")
-                    .hasAnyRole( "ADMIN")
                 .antMatchers("/activities")
-                .hasAnyRole("ADMIN")
+                    .hasAnyRole("ADMIN")
+                .antMatchers(HttpMethod.GET, "/organization/public")
+                    .hasAnyRole("USER", "ADMIN")
+                .antMatchers(HttpMethod.POST, "/organization/public")
+                    .hasAnyRole("ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()

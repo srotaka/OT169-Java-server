@@ -17,14 +17,6 @@ public class Mapper {
 		return dto;
 	}
 
-    public static Activity mapFromDto(ActivityDto dto) {
-		Activity activity = new Activity();
-		activity.setName(dto.getName());
-		activity.setContent(dto.getContent());
-		activity.setImage(dto.getImage());
-		return activity;
-    }
-
 	public static ActivityDto mapToDto(Activity activity) {
 		ActivityDto dto = new ActivityDto();
 		dto.setId(activity.getId());
@@ -32,5 +24,14 @@ public class Mapper {
 		dto.setContent(activity.getContent());
 		dto.setImage(activity.getImage());
 		return dto;
+	}
+
+	public static Activity mapFromDto(ActivityDto dto) {
+		Activity activity = new Activity();
+		activity.setId(dto.getId());
+		activity.setName(dto.getName());
+		activity.setContent(dto.getContent());
+		activity.setImage(dto.getImage());
+		return activity;
 	}
 }

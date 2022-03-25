@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import javax.persistence.Lob;
 import javax.validation.constraints.NotBlank;
 import javax.validation.constraints.NotNull;
 
@@ -14,12 +15,13 @@ public class ActivityDto {
 
     private String id;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "You must provide a name.")
     private String name;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "You must provide a content.")
+    @Lob
     private String content;
     @NotNull
-    @NotBlank
+    @NotBlank(message = "You must provide an image")
     private String image;
 }
