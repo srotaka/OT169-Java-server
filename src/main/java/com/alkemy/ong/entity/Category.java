@@ -21,10 +21,10 @@ import java.util.UUID;
 @Where(clause = "soft_delete=false")
 public class Category {
 
-    @Id
-    @GeneratedValue(generator = "uuid")
-    @GenericGenerator(name = "uuid", strategy = "org.hibernate.id.UUIDGenerator")
-    private UUID id;
+	@Id
+	@GeneratedValue(generator = "uuid")
+	@GenericGenerator(name = "uuid", strategy = "uuid2")	
+	private String id;//Updated by Franco Lamberti (UUID --> String)
     @NonNull
     private String name;
     @Nullable
