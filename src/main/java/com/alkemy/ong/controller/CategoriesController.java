@@ -5,7 +5,8 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.stereotype.Controller;
-import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PutMapping;
+import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
@@ -23,18 +24,20 @@ public class CategoriesController {
 	@Autowired
 	private CategoryRepository categoryRepository;	
 	/**
-	 * @author Lamberti
-	 * Method only allowed to admins. If the ID is of an existing entity, the method returns it. If it doesn't exists, then returns a 404 error code.
+	 * @author Franco Lamberti
+	 * Method only allowed to admins. If the ID is of an existing entity, the method returns it updated version. If it doesn't exists, then returns a 500 error code.
 	 */
-	@GetMapping("/{id}") //OT169-41
+	@PutMapping("/{id}")//OT169-43
 	@Secured("ROLE_ADMIN")
-	public ResponseEntity<Category> getById(@RequestParam (name = "id") String id) {
-		if(categoryRepository.existsById(id)){//If the ID corresponds to an Category, returns it
-			return new ResponseEntity<Category>(categoryRepository.getById(id), HttpStatus.OK);
+	public ResponseEntity<Category> updateCategory(@RequestParam (name = "id") String id, // I get the ID
+			@RequestBody Category category){ //I get the Category to be updated
+		if(categoryRepository.existsById(id)) {//If the category exists			
+			return new ResponseEntity<Category>(categoryRepository.save(category), HttpStatus.OK); //I update it. 
 		}
-		//If the ID doesn't corresponds to an Category, sends an error
-		return new ResponseEntity<Category>(HttpStatus.NOT_FOUND);
-				
+		//If it doesn't exists, then I return a 500 error code
+		return new ResponseEntity<Category>(HttpStatus.INTERNAL_SERVER_ERROR);
 	}
+	
+	
 	
 }
