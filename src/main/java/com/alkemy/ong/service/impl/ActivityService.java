@@ -16,13 +16,8 @@ public class ActivityService implements IActivityService {
 
     @Override
     public ActivityDto updateActivity(String id, ActivityDto activityDto) {
-
-            Activity activityToUpdate = repository.findById(id).get();
-            Activity updatedActivity = Mapper.mapFromDto(activityDto);
-            activityToUpdate.setName(updatedActivity.getName());
-            activityToUpdate.setContent(updatedActivity.getContent());
-            activityToUpdate.setImage(updatedActivity.getImage());
-            repository.save(activityToUpdate);
-            return Mapper.mapToDto(activityToUpdate);
+            Activity updatedActivity = Mapper.mapFromDto(activityDto, repository.findById(id).get());
+            repository.save(updatedActivity);
+            return Mapper.mapToDto(updatedActivity, activityDto);
     }
 }
