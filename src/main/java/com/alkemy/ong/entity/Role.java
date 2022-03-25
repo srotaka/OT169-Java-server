@@ -3,11 +3,10 @@ package com.alkemy.ong.entity;
 import java.sql.Date;
 import java.util.List;
 
-import javax.persistence.CascadeType;
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
-import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
 import org.hibernate.annotations.GenericGenerator;
@@ -27,11 +26,13 @@ import lombok.Setter;
 @Table(name="role")
 @SQLDelete(sql = "UPDATE role SET soft_deleted = true WHERE id=?")
 @Where(clause="soft_deleted = false")
+
 public class Role {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "role_id")
     private String id;
 
     private String name;
@@ -43,12 +44,16 @@ public class Role {
 
     private boolean soft_deleted = Boolean.FALSE;// changed "_"
 
+   /*
     @OneToMany(
 			mappedBy = "role",
 			cascade = CascadeType.ALL,
 			orphanRemoval = true
-			)
-    private List<User> users;
+			)			
+			private List<User> users;
+    */
+    
+    
     
     //Added by Franco Lamberti
     public Role(String id) {
