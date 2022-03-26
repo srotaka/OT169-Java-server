@@ -51,15 +51,11 @@ public class AuthController {
 
 	@PostMapping("/register")
 
-	public ResponseEntity<User> register(@RequestBody User user){//recibe un json	
-		System.out.println("Actual user: "+ user);
-		System.out.println("User's role ID:" + user.getRole().getId());
+	public ResponseEntity<User> register(@RequestBody User user){//recibe un json			
 		String encoded = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encoded);
-		user.setRole( roleRepository.getById( user.getRole().getId() ) );
-		System.out.println("Actual user: "+ user);
-		User obj = userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json
-		
+		user.setRole( roleRepository.getById( user.getRole().getId() ) );		
+		User obj = userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json		
 		
 		return new ResponseEntity<User>(obj, HttpStatus.OK);//retorna una respuesta que contiene el user creado + el codigo 200
 	}	
