@@ -43,5 +43,5 @@ public class Mapper {
 		activity.setImage(dto.getImage());
 		return activity;
 	}
-	
+
 }
