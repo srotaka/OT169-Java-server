@@ -23,7 +23,5 @@ public class ActivityDto {
     @NotBlank(message = "You must provide a content.")
     @Lob
     private String content;
-    @NotNull
-    @NotBlank(message = "You must provide an image")
     private String image;
 }
