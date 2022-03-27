@@ -5,6 +5,7 @@ import com.alkemy.ong.repository.ContactRepository;
 import com.alkemy.ong.service.ContactService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 @Service
 public class ContactServiceImpl implements ContactService {
@@ -13,6 +14,7 @@ public class ContactServiceImpl implements ContactService {
     private ContactRepository contactRepository;
 
     @Override
+    @Transactional
     public Contact create(Contact contact) throws Exception {
         if(contact.getName().isEmpty() || contact.getName() == null){
             throw new Exception("Name is empty");
