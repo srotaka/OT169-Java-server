@@ -11,7 +11,9 @@ import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
 import java.io.Serializable;
-import java.time.LocalDateTime;
+import java.sql.Timestamp;
+import java.time.Instant;
+
 
 @Entity
 @Setter
@@ -31,6 +33,7 @@ public class Contact implements Serializable {
     private String email;
     private String message;
 
-    private boolean deleted = Boolean.FALSE;
-    private LocalDateTime deletedAt;
+    private Timestamp timestamp = Timestamp.from(Instant.now());
+    private boolean softDelete = Boolean.FALSE;
+
 }
