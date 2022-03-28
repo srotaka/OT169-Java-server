@@ -2,15 +2,16 @@ package com.alkemy.ong.controller;
 
 import java.util.List;
 
+import com.alkemy.ong.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+
+import org.springframework.web.bind.annotation.*;
+
 
 import com.alkemy.ong.entity.Category;
 import com.alkemy.ong.entity.User;
@@ -33,6 +34,9 @@ public class AuthController {
 	
 	@Autowired 
 	private UserRepository userRepository;
+
+	@Autowired
+	private UserService userService;
 	
 	@Autowired 
 	private CategoryRepository categoryRepository;
@@ -57,5 +61,22 @@ public class AuthController {
 		System.out.println("Get all");
 		return categoryRepository.getNamesFromAll();
 	}
-	
+
+	@PostMapping("/login")
+	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		User usuario = new User();
+		try {
+			usuario = userService.findByEmail(mail);
+			if (!encoder.matches(password, usuario.getPassword())){
+				return ResponseEntity.ok().body(null);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		}
+
+		return ResponseEntity.ok(usuario);
+
+	}
 }
