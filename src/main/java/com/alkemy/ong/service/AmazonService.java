@@ -76,50 +76,11 @@ public class AmazonService {
         return fileUrl;
     }
 
-    //Method to be call from Controller to upload a Base64 file
-    public String uploadFileBase64(String base64, String fileName) {
-        MultipartFile imageFrom64 = this.base64ToImage(base64, fileName);
-
-        String fileUrl = "";
-        try {
-            File file = convertMultiPartToFile(imageFrom64);
-            String newFileName = generateFileName(imageFrom64);
-            fileUrl = endpointUrl + "/" + bucketName + "/" + newFileName;
-            uploadFileTos3bucket(newFileName, file);
-            file.delete();
-        } catch (Exception e) {
-            e.printStackTrace();
-        }
-        return fileUrl;
-    }
-
-    public MultipartFile base64ToImage(String encoded, String fileName) {
-
-        // We need to remove "data:image/jpeg;base64", just to keep the bytes to decode
-        String trimmedEncodedImage = encoded.substring(encoded.indexOf(",") + 1);
-
-        byte[] decodedBytes = Base64.decode(trimmedEncodedImage);
-
-        CustomMultipartFile customMultipartFile = new CustomMultipartFile(decodedBytes, fileName);
-
-        try {
-            customMultipartFile.transferTo(customMultipartFile.getFile());
-        } catch (IllegalStateException e) {
-            System.out.println("IllegalStateException : " + e);
-        } catch (IOException e) {
-            System.out.println("IOException : " + e);
-        }
-
-        return customMultipartFile;
-    }
-
     // S3 bucket cannot delete file by url. It requires a bucket name and a file name
     public String deleteFileFromS3Bucket(String fileUrl) {
         String fileName = fileUrl.substring(fileUrl.lastIndexOf("/") + 1);
         s3client.deleteObject(new DeleteObjectRequest(bucketName + "/", fileName));
         return "Successfully deleted";
     }
-
-
 
 }
