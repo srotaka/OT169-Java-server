@@ -27,10 +27,4 @@ public class AmazonController {
         return this.amazonService.deleteFileFromS3Bucket(fileUrl);
     }
 
-    // Method recieves a Base64 File as a RequestPart
-    @PostMapping("/uploadFile64")
-    public String uploadFile64(@RequestPart(value = "file") String file, @RequestPart(value = "name") String fileName) {
-        return this.amazonService.uploadFileBase64(file, fileName);
-    }
-
 }

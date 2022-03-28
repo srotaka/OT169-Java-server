@@ -24,10 +24,8 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http
-                .cors().and()
-                .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/organization/public", "/storage/uploadFile", "/storage/uploadFile64")
+                .antMatchers("/organization/public")
                 .hasAnyRole( "ADMIN")
                 .anyRequest()
                 .authenticated()
