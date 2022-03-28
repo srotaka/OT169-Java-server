@@ -10,6 +10,6 @@ import lombok.NoArgsConstructor;
 public class OrganizationResponseDto {
 	private String name;
 	private String image; 
-	private String phone;
+	private Long phone;
 	private String address;
 }
