@@ -2,15 +2,16 @@ package com.alkemy.ong.controller;
 
 import java.util.List;
 
+
+import com.alkemy.ong.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.web.bind.annotation.*;
+
 
 import com.alkemy.ong.entity.Category;
 import com.alkemy.ong.entity.User;
@@ -33,11 +34,12 @@ public class AuthController {
 	
 	@Autowired 
 	private UserRepository userRepository;
+
+	@Autowired
+	private UserService userService;
 	
 	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody User user){//recibe un json	
-		System.out.println("Actual user: "+ user);
-		System.out.println("User's role ID:" + user.getRole().getId());
+	public ResponseEntity<User> register(@RequestBody User user){//recibe un json
 		String encoded = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encoded);
 		user.setRole( roleRepository.getById( user.getRole().getId() ) );
@@ -46,6 +48,24 @@ public class AuthController {
 		
 		
 		return new ResponseEntity<User>(obj, HttpStatus.OK);//retorna una respuesta que contiene el user creado + el codigo 200
-	}	
-	
+	}		
+
+	@PostMapping("/login")
+	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
+		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
+		User usuario = new User();
+		try {
+			usuario = userService.findByEmail(mail);
+			if (!encoder.matches(password, usuario.getPassword())){
+				return ResponseEntity.ok().body(null);
+			}
+
+		} catch (Exception e) {
+			e.getMessage();
+		}
+
+		return ResponseEntity.ok(usuario);
+
+	}
+
 }
