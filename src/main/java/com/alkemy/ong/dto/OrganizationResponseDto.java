@@ -4,14 +4,12 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
-import java.util.UUID;
-
 @Data
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizationDto {
+public class OrganizationResponseDto {
 	private String name;
 	private String image; 
-	private String phone;
+	private Long phone;
 	private String address;
 }
