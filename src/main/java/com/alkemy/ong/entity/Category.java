@@ -15,9 +15,15 @@ import org.hibernate.annotations.Where;
 import org.springframework.lang.NonNull;
 import org.springframework.lang.Nullable;
 
+
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+
+import javax.persistence.*;
+import java.sql.Timestamp;
+import java.time.Instant;
+
 
 @Entity
 @Table(name = "categories")
@@ -28,10 +34,11 @@ import lombok.NoArgsConstructor;
 @Where(clause = "soft_delete=false")
 public class Category {
 
-	@Id
-	@GeneratedValue(generator = "uuid")
-	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private String id;//Updated by Franco Lamberti (UUID --> String)
+    @Id
+    @GeneratedValue(generator = "uuid")
+    @GenericGenerator(name = "uuid", strategy = "uuid2")
+    private String id;
+
     @NonNull
     private String name;
     @Nullable
