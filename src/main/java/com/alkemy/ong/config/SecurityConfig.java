@@ -28,8 +28,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
                 .cors().and()
                 .csrf().disable()
                 .authorizeRequests()
-                .antMatchers("/organization/public", "/storage/uploadFile")
-                .hasAnyRole( "ADMIN")
                 .anyRequest()
                 .authenticated()
                 .and()
