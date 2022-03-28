@@ -1,7 +1,6 @@
 package com.alkemy.ong.entity;
 
-import lombok.Getter;
-import lombok.Setter;
+import lombok.*;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -14,8 +13,9 @@ import java.time.Instant;
 
 @Entity
 @Table(name = "categories")
-@Getter
-@Setter
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @SQLDelete(sql = "UPDATE categories SET soft_delete = true WHERE id=?")
 @Where(clause = "soft_delete=false")
 public class Category {
@@ -34,9 +34,4 @@ public class Category {
     @Column(name = "soft_delete")
     private boolean softDelete = Boolean.FALSE;
 
-    public Category(String name, String description, String image) {
-        this.name = name;
-        this.description = description;
-        this.image = image;
-    }
 }
