@@ -19,5 +19,5 @@ public interface CategoryRepository extends JpaRepository<Category, String> { //
 	
 	@Query("SELECT a FROM Category a WHERE id = :id")
 	public List<CategoryDTO> getDTOById(@Param("id")String id);
-	
+
 }
