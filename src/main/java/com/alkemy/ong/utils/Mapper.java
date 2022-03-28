@@ -16,7 +16,7 @@ public class Mapper {
 		return dto;
 	}
 
-    public static OrganizationEntity mapFromDto(OrganizationRequestDto dto,
+	public static OrganizationEntity mapFromDto(OrganizationRequestDto dto,
 												OrganizationEntity organization) {
 		organization.setName(dto.getName());
 		organization.setImage(dto.getImage());
@@ -26,8 +26,8 @@ public class Mapper {
 		organization.setWelcomeText(dto.getWelcomeText());
 		organization.setAboutUsText(dto.getAboutUsText());
 		return organization;
-		
-    }
+
+	}
 
 	public static ActivityDto mapToDto(Activity activity, ActivityDto dto) {
 		dto.setId(activity.getId());
@@ -43,4 +43,5 @@ public class Mapper {
 		activity.setImage(dto.getImage());
 		return activity;
 	}
+	
 }
