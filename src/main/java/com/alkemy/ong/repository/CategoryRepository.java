@@ -7,6 +7,7 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+
 import com.alkemy.ong.dto.CategoryDTO;
 import com.alkemy.ong.entity.Category;
 
@@ -19,5 +20,5 @@ public interface CategoryRepository extends JpaRepository<Category, String> { //
 	
 	@Query("SELECT a FROM Category a WHERE id = :id")
 	public List<CategoryDTO> getDTOById(@Param("id")String id);
-	
+
 }
