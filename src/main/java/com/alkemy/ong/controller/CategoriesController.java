@@ -30,7 +30,7 @@ public class CategoriesController {
 	private CategoryService categoryService;
 
 	@PutMapping("/{id}")//OT169-43
-	//@Secured("ROLE_ADMIN")
+	@PreAuthorize("hasRole('ROLE_ADMIN')") // This method only permits the current role to enter this endpoint
 	public ResponseEntity<Category> updateCategory(@RequestParam (name = "id") String id, // I get the ID
 			@RequestBody Category category){ //I get the Category to be updated
 		System.out.println("Update");
