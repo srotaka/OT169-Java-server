@@ -39,9 +39,6 @@ public class AuthController {
 	@Autowired
 	private UserService userService;
 	
-	@Autowired 
-	private CategoryRepository categoryRepository;
-	
 	@PostMapping("/register")
 	public ResponseEntity<User> register(@RequestBody User user){//recibe un json	
 		System.out.println("Actual user: "+ user);
@@ -55,13 +52,6 @@ public class AuthController {
 		
 		return new ResponseEntity<User>(obj, HttpStatus.OK);//retorna una respuesta que contiene el user creado + el codigo 200
 	}	
-	
-	@GetMapping("/categories")// OT169-40
-	//@Secured("ROLE_ADMIN") // This method only permits the current role to enter this endpoint
-	public List<Category> getNamesFromAll(){
-		System.out.println("Get all");
-		return categoryRepository.getNamesFromAll();
-	}
 
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
