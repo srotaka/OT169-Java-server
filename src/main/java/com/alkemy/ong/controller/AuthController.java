@@ -60,7 +60,6 @@ public class AuthController {
 		return categoryRepository.getNamesFromAll();
 	}			
 
-
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
 		BCryptPasswordEncoder encoder = new BCryptPasswordEncoder();
