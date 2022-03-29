@@ -27,6 +27,7 @@ public class NewsMapper {
 
   public NewsDto newsEntity2Dto(News news, NewsDto dto){
 
+      dto.setId(news.getId());
       dto.setName(news.getName());
       dto.setContent(news.getContent());
       dto.setImage(news.getImage());

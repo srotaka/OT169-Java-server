@@ -6,4 +6,6 @@ import com.alkemy.ong.dto.NewsDto;
 public  interface  NewsService {
 
      NewsDto save(NewsDto newsDto);
+
+    NewsDto getNewsById(String id);
 }
