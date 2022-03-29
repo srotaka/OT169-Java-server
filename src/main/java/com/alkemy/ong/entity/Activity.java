@@ -13,6 +13,9 @@ import javax.persistence.Id;
 import javax.persistence.Lob;
 import javax.persistence.Table;
 
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
 import org.hibernate.annotations.Where;
@@ -24,6 +27,9 @@ import lombok.NonNull;
 @Table(name = "activities")
 @SQLDelete(sql = "UPDATE activities SET soft_delete = true WHERE id=?")
 @Where(clause = "soft_delete = false")
+@NoArgsConstructor
+@AllArgsConstructor
+@Data
 public class Activity {
 
 	@Id
@@ -42,54 +48,5 @@ public class Activity {
 	private String image;
 	private Timestamp timestamp = Timestamp.from(Instant.now());
 	private boolean softDelete = Boolean.FALSE;
-	
-	public Activity() {
-		// TODO Auto-generated constructor stub
-	}
-	
-	public Activity(String name, String content, String image) {
-		this.name = name;
-		this.image = image;
-		this.content = content;
-	}
-	
-	public String getName() {
-		return name;
-	}
-	
-	public void setName(String name) {
-		this.name = name;
-	}
-	
-	public String getContent() {
-		return content;
-	}
-	
-	public void setContent(String content) {
-		this.content = content;
-	}
-	
-	public String getImage() {
-		return image;
-	}
-	
-	public void setImage(String image) {
-		this.image = image;
-	}
-	
-	public Timestamp getTimestamp() {
-		return timestamp;
-	}
-	
-	public void setTimestamp(Timestamp timestamp) {
-		this.timestamp = timestamp;
-	}
-	
-	public boolean isSoftDeleted() {
-		return softDelete;
-	}
-	
-	public void setSoftDelete(boolean softDelete) {
-		this.softDelete = softDelete;
-	}
+
 }
