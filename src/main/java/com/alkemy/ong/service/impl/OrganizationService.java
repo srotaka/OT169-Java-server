@@ -1,12 +1,12 @@
 package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.OrganizationRequestDto;
+import com.alkemy.ong.dto.OrganizationResponseDto;
 import com.alkemy.ong.entity.OrganizationEntity;
 import com.alkemy.ong.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.alkemy.ong.dto.OrganizationResponseDto;
 import com.alkemy.ong.service.IOrganizationService;
 import com.alkemy.ong.utils.Mapper;
 
@@ -20,7 +20,6 @@ public class OrganizationService implements IOrganizationService {
 	public OrganizationResponseDto getPublicInfo() {
 		return Mapper.mapToDto(repository.findAll().get(0), new OrganizationResponseDto());
 	}
-
 	@Override
 	public OrganizationResponseDto postPublicInfo(OrganizationRequestDto organizationRequestDto) {
 
@@ -33,9 +32,9 @@ public class OrganizationService implements IOrganizationService {
 			repository.save(organization);
 		}
 		OrganizationEntity updatedOrganization = Mapper.mapFromDto(organizationRequestDto,
-				                                                   repository.findAll().get(0));
+				repository.findAll().get(0));
 		repository.save(updatedOrganization);
 		return Mapper.mapToDto(updatedOrganization, new OrganizationResponseDto());
 	}
-
+	
 }
