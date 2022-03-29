@@ -5,6 +5,7 @@ import com.alkemy.ong.entity.OrganizationEntity;
 import com.alkemy.ong.entity.Slide;
 import com.alkemy.ong.repository.OrganizationRepository;
 import com.alkemy.ong.repository.SlideRepository;
+import com.alkemy.ong.service.AmazonService;
 import com.alkemy.ong.service.SlideService;
 import com.alkemy.ong.utils.CustomMultipartFile;
 import org.apache.commons.codec.binary.Base64;
@@ -26,7 +27,7 @@ public class SlideServiceImpl implements SlideService {
     @Autowired
     private OrganizationRepository organizationRepository;
     @Autowired
-    private AmazonService amazonService;/*not created yet, branch OT169-31*/
+    private AmazonService amazonService;
 
 
 
@@ -36,7 +37,7 @@ public class SlideServiceImpl implements SlideService {
         Slide slide = new Slide();
         Integer dOrder;
         if (slideRequestDto.getOrder()==null){
-              dOrder= Math.toIntExact(slideRepository.count());
+              dOrder= Math.toIntExact(slideRepository.count()+1);
               slide.setOrder(dOrder);
         }else {
             slide.setOrder(slideRequestDto.getOrder());
@@ -55,6 +56,7 @@ public class SlideServiceImpl implements SlideService {
             slide.setOrganizationId(orgFind.get());
         }
 
+        slide.setImageUrl(amazonUrl);
         slide.setText(slideRequestDto.getText());
 
         slideRepository.save(slide);
