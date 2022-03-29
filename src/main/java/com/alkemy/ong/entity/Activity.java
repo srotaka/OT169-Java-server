@@ -37,7 +37,6 @@ public class Activity {
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
 
 	private String id;
-
 	@NonNull
 	@Column(unique = true)
 	private String name;

@@ -1,6 +1,7 @@
 package com.alkemy.ong.controller;
 
 
+
 import java.util.List;
 
 import com.alkemy.ong.service.UserService;
@@ -60,7 +61,8 @@ public class AuthController {
 	public List<Category> getNamesFromAll(){
 		System.out.println("Get all");
 		return categoryRepository.getNamesFromAll();
-	}		
+	}			
+
 
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
