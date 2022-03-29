@@ -28,7 +28,8 @@ public class NewsController {
         return ResponseEntity.status(HttpStatus.CREATED).body(savedNews);
     }
 
-    @DeleteMapping("{id}")
+
+    @DeleteMapping("/{id}")
     public ResponseEntity<Void>delete(@PathVariable String id) {
         if (newsRepository.existsById(id)) {
             this.newsService.delete(id);
@@ -36,9 +37,18 @@ public class NewsController {
         } else {
             return ResponseEntity.status(HttpStatus.INTERNAL_SERVER_ERROR).build();
         }
+    }
+
+    @GetMapping("/{id}")
+    public ResponseEntity<NewsDto> getNewsById(@PathVariable String id) {
+
+        return new ResponseEntity<>(newsService.getNewsById(id), HttpStatus.OK);
+    }
+
+
 
     }
 
 
 
-}
+

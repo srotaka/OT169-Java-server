@@ -8,6 +8,8 @@ import com.alkemy.ong.utils.NewsMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 public class NewsServiceImpl implements NewsService {
 
@@ -30,5 +32,12 @@ public class NewsServiceImpl implements NewsService {
     @Override
     public void delete(String id) {
         newsRepository.deleteById(id);
+    }
+
+    @Override
+    public NewsDto getNewsById(String id) {
+       News news = newsRepository.getById(id);
+       return newsMapper.newsEntity2Dto(news, new NewsDto());
+
     }
 }
