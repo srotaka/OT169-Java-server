@@ -20,4 +20,11 @@ public class ActivityService implements IActivityService {
         return Mapper.mapToDto(activity, activityDto);
     }
 
+    @Override
+    public ActivityDto updateActivity(String id, ActivityDto activityDto) {
+        Activity updatedActivity = Mapper.mapFromDto(activityDto, repository.findById(id).get());
+        repository.save(updatedActivity);
+        return Mapper.mapToDto(updatedActivity, activityDto);
+    }
+
 }
