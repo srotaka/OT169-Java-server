@@ -17,9 +17,6 @@ import com.alkemy.ong.service.CategoryService;
 public class CategoriesController {
 	
 	@Autowired
-	private CategoryRepository categoryRepository;
-	
-	@Autowired
 	private CategoryService categoryService;
 
 	/**
