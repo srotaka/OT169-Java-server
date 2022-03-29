@@ -10,6 +10,9 @@ import org.springframework.stereotype.Repository;
 import com.alkemy.ong.dto.CategoryDTO;
 import com.alkemy.ong.entity.Category;
 
+import com.alkemy.ong.dto.CategoryDTO;
+import com.alkemy.ong.entity.Category;
+
 @Repository
 public interface CategoryRepository extends JpaRepository<Category, String> { //Updated by Franco Lamberti (UUID --> String)
 		
