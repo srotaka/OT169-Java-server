@@ -24,7 +24,7 @@ public class SlideController {
     @Autowired
     private SlideService slideService;
 
-    @PreAuthorize("hasRole('ADMIN')")
+    
     @PostMapping
     private ResponseEntity<Void> createSlide(@Valid @RequestBody SlideRequestDto slideRequestDto){
         try {
