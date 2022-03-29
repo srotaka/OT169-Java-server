@@ -36,6 +36,7 @@ import javax.persistence.CascadeType;
 import java.sql.Timestamp;
 import java.time.Instant;
 
+
 @Entity
 @Table(name = "users")
 @Data

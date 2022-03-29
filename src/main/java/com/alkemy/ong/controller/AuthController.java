@@ -3,6 +3,7 @@ package com.alkemy.ong.controller;
 import java.util.List;
 
 import com.alkemy.ong.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -40,9 +41,7 @@ public class AuthController {
 	private CategoryRepository categoryRepository;
 	
 	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody User user){//recibe un json	
-		System.out.println("Actual user: "+ user);
-		System.out.println("User's role ID:" + user.getRole().getId());
+	public ResponseEntity<User> register(@RequestBody User user){//recibe un json
 		String encoded = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encoded);
 		user.setRole( roleRepository.getById( user.getRole().getId() ) );
@@ -77,4 +76,5 @@ public class AuthController {
 		return ResponseEntity.ok(usuario);
 
 	}
+
 }
