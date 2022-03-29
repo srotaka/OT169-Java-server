@@ -1,6 +1,10 @@
 package com.alkemy.ong.controller;
 
+import java.util.List;
+
+
 import com.alkemy.ong.service.UserService;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -8,7 +12,11 @@ import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.web.bind.annotation.*;
 
+
+import com.alkemy.ong.entity.Category;
 import com.alkemy.ong.entity.User;
+import com.alkemy.ong.repository.CategoryRepository;
+import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 
 @RestController
@@ -21,6 +29,8 @@ public class AuthController {
 	@Autowired
 	private PasswordEncoder passwordEncoder;
 	
+	@Autowired
+	private RoleRepository roleRepository;
 	
 	@Autowired 
 	private UserRepository userRepository;
@@ -29,10 +39,16 @@ public class AuthController {
 	private UserService userService;
 	
 	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody User user){		
-		userRepository.save(user); 
-		return new ResponseEntity<User>(user, HttpStatus.OK);
-	}
+	public ResponseEntity<User> register(@RequestBody User user){//recibe un json
+		String encoded = passwordEncoder.encode(user.getPassword());
+		user.setPassword(encoded);
+		user.setRole( roleRepository.getById( user.getRole().getId() ) );
+		System.out.println("Actual user: "+ user);
+		User obj = userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json
+		
+		
+		return new ResponseEntity<User>(obj, HttpStatus.OK);//retorna una respuesta que contiene el user creado + el codigo 200
+	}		
 
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
@@ -51,4 +67,5 @@ public class AuthController {
 		return ResponseEntity.ok(usuario);
 
 	}
+
 }
