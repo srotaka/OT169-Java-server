@@ -9,12 +9,8 @@ import org.springframework.web.multipart.MultipartFile;
 @RequestMapping("/storage/")
 public class AmazonController {
 
-    private AmazonService amazonService;
-
     @Autowired
-    AmazonController(AmazonService amazonService) {
-        this.amazonService = amazonService;
-    }
+    private AmazonService amazonService;
 
     // Method recieves MultipartFile as a RequestPart
     @PostMapping("/uploadFile")

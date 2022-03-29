@@ -6,8 +6,7 @@ import com.alkemy.ong.entity.OrganizationEntity;
 import com.alkemy.ong.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import com.alkemy.ong.dto.OrganizationDto;
-import com.alkemy.ong.dto.OrganizationResponseDto;
+
 import com.alkemy.ong.service.IOrganizationService;
 import com.alkemy.ong.utils.Mapper;
 
