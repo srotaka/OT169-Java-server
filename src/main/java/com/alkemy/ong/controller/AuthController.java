@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
+
 import org.springframework.web.bind.annotation.*;
 
 
@@ -57,7 +58,7 @@ public class AuthController {
 	public List<Category> getNamesFromAll(){
 		System.out.println("Get all");
 		return categoryRepository.getNamesFromAll();
-	}
+	}			
 
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
