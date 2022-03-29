@@ -25,4 +25,9 @@ public class UserServiceImpl implements UserService {
 
         return usuario;
     }
+    //cami
+    @Override
+    public void delete(String id) {
+        userRepository.deleteById(id);
+    }
 }
