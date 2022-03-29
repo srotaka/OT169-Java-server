@@ -43,9 +43,8 @@ public class AuthController {
 	private CategoryRepository categoryRepository;
 	
 	@PostMapping("/register")
-	public ResponseEntity<User> register(@RequestBody User user){//recibe un json	
-		System.out.println("Actual user: "+ user);
-		System.out.println("User's role ID:" + user.getRole().getId());
+	public ResponseEntity<User> register(@RequestBody User user){//recibe un json
+
 		String encoded = passwordEncoder.encode(user.getPassword());
 		user.setPassword(encoded);
 		user.setRole( roleRepository.getById( user.getRole().getId() ) );
@@ -61,7 +60,7 @@ public class AuthController {
 	public List<Category> getNamesFromAll(){
 		System.out.println("Get all");
 		return categoryRepository.getNamesFromAll();
-	}
+	}		
 
 	@PostMapping("/login")
 	public ResponseEntity<User> login(@RequestParam String mail,@RequestParam String password)  {
@@ -80,4 +79,5 @@ public class AuthController {
 		return ResponseEntity.ok(usuario);
 
 	}
+
 }

@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 import org.springframework.stereotype.Repository;
 
+import com.alkemy.ong.dto.CategoryDTO;
+import com.alkemy.ong.entity.Category;
 
 import com.alkemy.ong.dto.CategoryDTO;
 import com.alkemy.ong.entity.Category;
