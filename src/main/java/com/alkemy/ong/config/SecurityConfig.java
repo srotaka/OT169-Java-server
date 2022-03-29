@@ -6,8 +6,10 @@ import com.alkemy.ong.service.impl.UserDetailsCustomServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
+import org.springframework.http.HttpMethod;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.config.annotation.authentication.builders.AuthenticationManagerBuilder;
+import org.springframework.security.config.annotation.method.configuration.EnableGlobalMethodSecurity;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
 import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
@@ -19,6 +21,9 @@ import org.springframework.security.web.authentication.UsernamePasswordAuthentic
 
 @EnableWebSecurity
 @Configuration
+@EnableGlobalMethodSecurity(
+        prePostEnabled = true
+)
 public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Autowired
     private UserDetailsCustomServiceImpl userDetailsCustomService;
@@ -46,7 +51,24 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
     @Override
     protected void configure(HttpSecurity http) throws Exception {
         http.csrf().disable()
-                .authorizeRequests().antMatchers("/auth/*").permitAll()
+                .authorizeRequests().antMatchers("/auth/register","/auth/login").permitAll()
+                .antMatchers(HttpMethod.GET,"/users").hasRole("ADMIN")
+                .antMatchers("/Slides").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/Slides/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/Slides").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/activities").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/activities/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/organization/public").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/news").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/news/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/news/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/categories").hasRole("ADMIN")
+                .antMatchers(HttpMethod.PUT,"/categories/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/categories/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/categories").hasRole("ADMIN")
+                .antMatchers(HttpMethod.GET,"/categories/{id}").hasRole("ADMIN")
+                .antMatchers(HttpMethod.POST,"/storage/uploadFile").hasRole("ADMIN")
+                .antMatchers(HttpMethod.DELETE,"/storage/deleteFile").hasRole("ADMIN")
                 .anyRequest().authenticated()
                 .and().exceptionHandling()
                 .and().sessionManagement()
@@ -54,22 +76,6 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
         http.addFilterBefore(jwtRequestFilter, UsernamePasswordAuthenticationFilter.class);
     }
-
-    /*
-    @Override
-    protected void configure(AuthenticationManagerBuilder auth) throws Exception {
-        auth.inMemoryAuthentication()
-                .withUser("admin")
-                .password(passwordEncoder.encode("123"))
-                .roles("ADMIN");
-
-        auth.inMemoryAuthentication()
-                .withUser("user")
-                .password(passwordEncoder.encode("123"))
-                .roles("USER");
-    }
-
-     */
 }
 
 

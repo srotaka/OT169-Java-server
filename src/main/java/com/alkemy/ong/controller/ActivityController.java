@@ -21,13 +21,11 @@ public class ActivityController {
     @Autowired
     private ActivityService service;
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PostMapping
     public ActivityDto addActivity(@Valid @RequestBody ActivityDto activityDto) {
         return service.addActivity(activityDto);
     }
 
-    @PreAuthorize("hasRole('ADMIN')")
     @PutMapping("/{id}")
     public ActivityDto updateActivity(@PathVariable("id")String id,
                                       @Valid @RequestBody ActivityDto activityDto) throws ResponseStatusException {
