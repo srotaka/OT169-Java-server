@@ -27,6 +27,7 @@ import java.time.Instant;
 @Where(clause = "soft_delete=false")
 public class Category {
 
+
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")

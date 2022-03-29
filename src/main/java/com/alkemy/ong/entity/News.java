@@ -28,6 +28,8 @@ import org.hibernate.annotations.*;
 @NoArgsConstructor
 @Table(name = "news")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@SQLDelete(sql = "UPDATE news SET soft_delete = TRUE WHERE id=?")
+@Where(clause = "soft_delete = false")
 public class News {
 
 	@Id
@@ -53,7 +55,8 @@ public class News {
 	private List<Category> categories;
 	
 	private Timestamp timestamp = Timestamp.from(Instant.now());
-	
+
+	@Column(name = "soft_delete")
     private boolean softDelete = false;
 	
 
