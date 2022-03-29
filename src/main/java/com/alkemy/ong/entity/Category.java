@@ -1,13 +1,7 @@
 package com.alkemy.ong.entity;
 
-import java.sql.Timestamp;
-import java.time.Instant;
 
-import javax.persistence.Column;
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.Id;
-import javax.persistence.Table;
+import lombok.*;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -48,9 +42,4 @@ public class Category {
     @Column(name = "soft_delete")
     private boolean soft_delete = Boolean.FALSE;
 
-    public Category(String name, String description, String image) {
-        this.name = name;
-        this.description = description;
-        this.image = image;
-    }
 }
