@@ -68,13 +68,10 @@ public class User {
     private String photo;
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
-/*
+
     @ManyToOne(fetch = FetchType.LAZY ,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "users",nullable = false)
-    */
-    @ManyToOne(optional = false, fetch = FetchType.LAZY)
-	@JoinColumn(name = "role_id")
-    private Role role;//changed "_"
+    private Role role;
     
 
     @Column(name = "soft_delete")

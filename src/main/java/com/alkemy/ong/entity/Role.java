@@ -1,6 +1,8 @@
 package com.alkemy.ong.entity;
 
 import java.sql.Date;
+import java.sql.Timestamp;
+import java.time.Instant;
 import java.util.List;
 
 import javax.persistence.Column;
@@ -39,23 +41,10 @@ public class Role {
 
     private String description;
 
-    //@Temporal(TemporalType.TIMESTAMP) //The code doesn't compile with this annotation. Updated by Franco Lamberti
-    private Date timestamps;
+    private Timestamp timestamp = Timestamp.from(Instant.now());
 
-    private boolean soft_deleted = Boolean.FALSE;// changed "_"
+    private boolean soft_deleted = Boolean.FALSE;
 
-   /*
-    @OneToMany(
-			mappedBy = "role",
-			cascade = CascadeType.ALL,
-			orphanRemoval = true
-			)			
-			private List<User> users;
-    */
-    
-    
-    
-    //Added by Franco Lamberti
     public Role(String id) {
     	this.id = id;
     }
