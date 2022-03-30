@@ -26,7 +26,6 @@ public class CategoriesController {
 	private CategoryRepository categoryRepository;
 	
 	@DeleteMapping("/{id}")//OT169-44
-	@PreAuthorize("hasRole('ROLE_ADMIN')") // This method only permits the current role to enter this endpoint
 	public ResponseEntity<Category> deleteCategory(@RequestParam (name = "id") String id, // I get the ID
 			@RequestBody Category category) { //I get the Category to be deleted
 		if (categoryRepository.existsById(id)) {//If the category exists
