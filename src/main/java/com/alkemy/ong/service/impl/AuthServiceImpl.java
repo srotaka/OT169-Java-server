@@ -46,7 +46,7 @@ public class AuthServiceImpl implements AuthService {
 
         String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
-        user.setRoleId(roleRepository.findById(user.getRoleId().getId()).get());
+        user.setRole(roleRepository.findById(user.getRole().getId()).get());
         User obj = userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json
 
         return new ResponseEntity<User>(obj, HttpStatus.OK);

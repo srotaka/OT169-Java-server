@@ -1,12 +1,10 @@
 package com.alkemy.ong.utils;
 
-import com.alkemy.ong.dto.CategoryBasicDto;
+import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.Category;
-import com.alkemy.ong.dto.ActivityDto;
-import com.alkemy.ong.dto.OrganizationRequestDto;
-import com.alkemy.ong.dto.OrganizationResponseDto;
 import com.alkemy.ong.entity.Activity;
 import com.alkemy.ong.entity.OrganizationEntity;
+import com.alkemy.ong.entity.User;
 
 public class Mapper {
 
@@ -55,6 +53,15 @@ public class Mapper {
 		activity.setContent(dto.getContent());
 		activity.setImage(dto.getImage());
 		return activity;
+	}
+
+	public static UserDto mapToUserDto(User user) {
+
+		return new UserDto(
+				user.getFirstName(),
+				user.getLastName(),
+				user.getEmail(),
+				user.getPhoto());
 	}
 
 
