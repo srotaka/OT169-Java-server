@@ -10,6 +10,8 @@ import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
 
 import java.lang.reflect.Field;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 
@@ -60,5 +62,21 @@ public class UserServiceImpl implements UserService {
     @Override
     public void delete(String id) {
         userRepository.deleteById(id);
+    }
+
+    @Override
+    public ResponseEntity<?> getAllUser() {
+        List<User> userList = userRepository.findAll();
+        List<String> list = new ArrayList<>();
+
+        if(userList.size() == 0){
+            return ResponseEntity.noContent().build();
+        }
+
+        for(User user : userList){
+            list.add(user.getEmail());
+        }
+
+        return ResponseEntity.ok(list);
     }
 }
