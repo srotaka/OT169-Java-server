@@ -21,13 +21,11 @@ public class OrganizationController {
 	@Autowired
 	private OrganizationService service;
 
-	@PreAuthorize("hasAnyRole('USER', 'ADMIN')")
 	@GetMapping("/public") 
 	public OrganizationResponseDto getPublicInfo() {
 		return service.getPublicInfo();
 	}
 
-	@PreAuthorize("hasRole('ADMIN')")
 	@PostMapping("/public")
 	public OrganizationResponseDto postPublicInfo(@RequestBody @Valid OrganizationRequestDto organizationRequestDto) {
 		return service.postPublicInfo(organizationRequestDto);

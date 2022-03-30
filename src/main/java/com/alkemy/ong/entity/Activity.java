@@ -35,8 +35,8 @@ public class Activity {
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	private String id;
 
+	private String id;
 	@NonNull
 	@Column(unique = true)
 	private String name;

@@ -2,14 +2,14 @@ package com.alkemy.ong.entity;
 
 import java.sql.Date;
 import java.sql.Timestamp;
-import java.util.UUID;
+import java.time.Instant;
+import java.util.List;
 
+import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.Id;
 import javax.persistence.Table;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
 
 import org.hibernate.annotations.GenericGenerator;
 import org.hibernate.annotations.SQLDelete;
@@ -26,25 +26,25 @@ import lombok.Setter;
 @AllArgsConstructor// Added by Franco Lamberti
 @NoArgsConstructor// Added by Franco Lamberti
 @Table(name="role")
-@SQLDelete(sql = "UPDATE role SET softDeleted = true WHERE id=?")
-@Where(clause="deleted=false")
+@SQLDelete(sql = "UPDATE role SET soft_deleted = true WHERE id=?")
+@Where(clause="soft_deleted = false")
+
 public class Role {
 
     @Id
     @GeneratedValue(generator = "uuid")
     @GenericGenerator(name = "uuid", strategy = "uuid2")
+    @Column(name = "role_id")
     private String id;
 
     private String name;
 
     private String description;
 
-    //@Temporal(TemporalType.TIMESTAMP) //The code doesn't compile with this annotation. Updated by Franco Lamberti
-    private Date timestamps;
+    private Timestamp timestamp = Timestamp.from(Instant.now());
 
-    private boolean softDeleted = Boolean.FALSE;
+    private boolean soft_deleted = Boolean.FALSE;
 
-    //Added by Franco Lamberti
     public Role(String id) {
     	this.id = id;
     }
