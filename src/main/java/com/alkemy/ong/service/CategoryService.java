@@ -53,4 +53,8 @@ public class CategoryService {
 		return new ResponseEntity<Category>(HttpStatus.OK);
 	}
 	
+	public boolean existsById(String id) {
+		return categoryRepository.existsById(id);
+	}
+	
 }
