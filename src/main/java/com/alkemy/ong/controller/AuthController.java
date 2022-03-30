@@ -8,11 +8,13 @@ import org.springframework.web.bind.annotation.*;
 
 import com.alkemy.ong.entity.User;
 
+import javax.servlet.http.HttpServletRequest;
+
 
 @RestController
 @RequestMapping("/auth")
 public class AuthController {
-	
+
 	@Autowired
 	private AuthService authService;
 
@@ -25,5 +27,10 @@ public class AuthController {
 	@PostMapping("/login")
 	public ResponseEntity<AuthenticationResponse> login(@RequestParam String mail,@RequestParam String password)  throws Exception{
 		return authService.login(mail,password);
+	}
+
+	@GetMapping("/me")
+	public ResponseEntity<?> getAuthenticateUserData(HttpServletRequest httpServletRequest){
+		return authService.getAuthenticatedUserData(httpServletRequest);
 	}
 }

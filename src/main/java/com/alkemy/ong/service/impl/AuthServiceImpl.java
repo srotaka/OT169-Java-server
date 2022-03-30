@@ -1,11 +1,13 @@
 package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.AuthenticationResponse;
+import com.alkemy.ong.dto.UserDto;
 import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.AuthService;
 import com.alkemy.ong.utils.JwtUtils;
+import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -15,7 +17,9 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -62,6 +66,22 @@ public class AuthServiceImpl implements AuthService {
         final String jwt = jwtUtils.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
+
+    @Override
+    public ResponseEntity<?> getAuthenticatedUserData(HttpServletRequest httpServletRequest) {
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+
+        String jwt = authorizationHeader.substring(7);
+        String email = jwtUtils.extractEmail(jwt);
+        User user = userRepository.findByEmail(email);
+
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(Mapper.mapToUserDto(user));
+
     }
 
 }
