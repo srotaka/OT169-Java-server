@@ -26,6 +26,10 @@ public class UserController {
         return userService.updatePartialInfo(id,fields);
     }
 
+    @GetMapping()
+    public ResponseEntity<?> getAllUsers(){
+        return userService.getAllUser();
+    }
 
 
 }
