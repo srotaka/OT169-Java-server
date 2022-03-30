@@ -13,17 +13,23 @@ import javax.persistence.OneToMany;
 import javax.persistence.Table;
 import javax.validation.constraints.NotNull;
 
-import org.hibernate.annotations.Cache;
-import org.hibernate.annotations.CacheConcurrencyStrategy;
-import org.hibernate.annotations.GenericGenerator;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
+import org.hibernate.annotations.*;
 
 /**
  * @author Franco Lamberti
  */
 
 @Entity
+@Data
+@AllArgsConstructor
+@NoArgsConstructor
 @Table(name = "news")
 @Cache(usage = CacheConcurrencyStrategy.NONSTRICT_READ_WRITE)
+@SQLDelete(sql = "UPDATE news SET soft_delete = TRUE WHERE id=?")
+@Where(clause = "soft_delete = false")
 public class News {
 
 	@Id
@@ -45,72 +51,14 @@ public class News {
 	
 	@OneToMany
 	@JoinColumn(name="Category_ID")
+	@Cascade(CascadeType.ALL)
 	private List<Category> categories;
 	
 	private Timestamp timestamp = Timestamp.from(Instant.now());
-	
+
+	@Column(name = "soft_delete")
     private boolean softDelete = false;
 	
-    public News() {    	
-    }
 
-	public News(String id, @NotNull(message = "Name cannot be null") String name, String content, String image,
-			Timestamp timestamp, boolean softDelete) {
-		super();
-		this.id = id;
-		this.name = name;
-		this.content = content;
-		this.image = image;
-		this.timestamp = timestamp;
-		this.softDelete = softDelete;
-	}
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
-
-	public String getName() {
-		return name;
-	}
-
-	public void setName(String name) {
-		this.name = name;
-	}
-
-	public String getContent() {
-		return content;
-	}
-
-	public void setContent(String content) {
-		this.content = content;
-	}
-
-	public String getImage() {
-		return image;
-	}
-
-	public void setImage(String image) {
-		this.image = image;
-	}
-
-	public boolean isSoftDelete() {
-		return softDelete;
-	}
-
-	public void setSoftDelete(boolean softDelete) {
-		this.softDelete = softDelete;
-	}
-
-	public Timestamp getTimestamp() {
-		return timestamp;
-	}
-
-	public void setTimestamp(Timestamp timestamp) {
-		this.timestamp = timestamp;
-	}
     
 }
