@@ -9,6 +9,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
+import static org.springframework.http.HttpStatus.*;
 
 import javax.validation.Valid;
 
@@ -22,7 +23,16 @@ public class SlideController {
     @Autowired
     private SlideService slideService;
 
-    
+
+    @GetMapping
+    public ResponseEntity<?> getAll(){
+        try{
+            return ResponseEntity.status(OK).body(slideService.findAll());
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        }
+    }
+
     @PostMapping
     private ResponseEntity<Void> createSlide(@Valid @RequestBody SlideRequestDto slideRequestDto){
         try {

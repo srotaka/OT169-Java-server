@@ -1,10 +1,7 @@
 package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.*;
-import com.alkemy.ong.entity.Category;
-import com.alkemy.ong.entity.Activity;
-import com.alkemy.ong.entity.OrganizationEntity;
-import com.alkemy.ong.entity.User;
+import com.alkemy.ong.entity.*;
 
 public class Mapper {
 
@@ -64,5 +61,9 @@ public class Mapper {
 				user.getPhoto());
 	}
 
-
+	public static SlideDto mapToDto(Slide slide, SlideDto slideDto){
+		slideDto.setImageUrl(slide.getImageUrl());
+		slideDto.setOrder(slide.getOrder());
+		return slideDto;
+	}
 }
