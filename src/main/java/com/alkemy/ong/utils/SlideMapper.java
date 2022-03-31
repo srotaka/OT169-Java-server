@@ -8,10 +8,9 @@ import com.alkemy.ong.repository.OrganizationRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 public class SlideMapper {
+
     @Autowired
     private OrganizationRepository orgRepository;
-
-
 
     public SlideResponseDto fullSlideToDto(Slide slide){
 
@@ -27,8 +26,5 @@ public class SlideMapper {
         dto.setOrg(last);
 
         return dto;
-
-
-
     }
 }

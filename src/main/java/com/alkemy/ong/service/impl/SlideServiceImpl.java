@@ -14,6 +14,7 @@ import com.alkemy.ong.utils.Mapper;
 import com.alkemy.ong.utils.SlideMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
@@ -38,6 +39,8 @@ public class SlideServiceImpl implements SlideService {
     private SlideMapper slideMapper;
 
 
+    @Bean
+    public SlideMapper slideMapper(){return new SlideMapper();}
 
     @Override
     public void createSlide(SlideRequestDto slideRequestDto) throws Exception {
@@ -68,14 +71,8 @@ public class SlideServiceImpl implements SlideService {
         slide.setText(slideRequestDto.getText());
 
         slideRepository.save(slide);
-
-
-
-
-
-
-
     }
+
     @Override
     public SlideResponseDto getSlideDetails(String id) throws Exception {
 
