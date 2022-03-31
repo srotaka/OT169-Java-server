@@ -24,7 +24,6 @@ public class OrganizationRequestDto {
     @NotBlank
     private String image;
     @NotNull
-    @NotBlank
     private Long phone;
     @NotNull
     @NotBlank

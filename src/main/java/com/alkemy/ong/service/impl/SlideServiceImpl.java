@@ -3,7 +3,7 @@ package com.alkemy.ong.service.impl;
 import com.alkemy.ong.dto.SlideDto;
 import com.alkemy.ong.dto.SlideRequestDto;
 import com.alkemy.ong.dto.SlideResponseDto;
-import com.alkemy.ong.entity.OrganizationEntity;
+import com.alkemy.ong.entity.Organization;
 import com.alkemy.ong.entity.Slide;
 import com.alkemy.ong.repository.OrganizationRepository;
 import com.alkemy.ong.repository.SlideRepository;
@@ -18,12 +18,8 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Base64.Encoder;
 import java.util.List;
 import java.util.Optional;
 
@@ -60,7 +56,7 @@ public class SlideServiceImpl implements SlideService {
         String amazonUrl=amazonService.uploadFile(imgSend);
         /*
         * find organization to add to slide*/
-        Optional<OrganizationEntity> orgFind = organizationRepository.findById(slideRequestDto.getOrganizationId());
+        Optional<Organization> orgFind = organizationRepository.findById(slideRequestDto.getOrganizationId());
         if (!orgFind.isPresent()){
             throw new Exception("Organization not found in Slide creation");
         }else {

@@ -5,7 +5,7 @@ import com.alkemy.ong.entity.*;
 
 public class Mapper {
 
-	public static OrganizationResponseDto mapToDto(OrganizationEntity organization, OrganizationResponseDto dto) {
+	public static OrganizationResponseDto mapToDto(Organization organization, OrganizationResponseDto dto) {
 		dto.setName(organization.getName());
 		dto.setImage(organization.getImage());
 		dto.setPhone(organization.getPhone());
@@ -25,7 +25,7 @@ public class Mapper {
 		return basicDto;
 	}
 
-	public static OrganizationEntity mapFromDto(OrganizationRequestDto dto, OrganizationEntity organization) {
+	public static Organization mapFromDto(OrganizationRequestDto dto, Organization organization) {
 		organization.setName(dto.getName());
 		organization.setImage(dto.getImage());
 		organization.setEmail(dto.getEmail());

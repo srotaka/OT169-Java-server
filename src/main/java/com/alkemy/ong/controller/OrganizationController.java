@@ -2,12 +2,11 @@ package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.OrganizationRequestDto;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
 import com.alkemy.ong.dto.OrganizationResponseDto;
-import com.alkemy.ong.service.impl.OrganizationService;
+import com.alkemy.ong.service.impl.OrganizationServiceImpl;
 
 import javax.validation.Valid;
 
@@ -19,7 +18,7 @@ import javax.validation.Valid;
 public class OrganizationController {
 	
 	@Autowired
-	private OrganizationService service;
+	private OrganizationServiceImpl service;
 
 	@GetMapping("/public") 
 	public OrganizationResponseDto getPublicInfo() {
