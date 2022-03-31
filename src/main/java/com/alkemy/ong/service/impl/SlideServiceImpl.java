@@ -1,5 +1,6 @@
 package com.alkemy.ong.service.impl;
 
+import com.alkemy.ong.dto.SlideDto;
 import com.alkemy.ong.dto.SlideRequestDto;
 import com.alkemy.ong.dto.SlideResponseDto;
 import com.alkemy.ong.entity.OrganizationEntity;
@@ -9,6 +10,7 @@ import com.alkemy.ong.repository.SlideRepository;
 import com.alkemy.ong.service.AmazonService;
 import com.alkemy.ong.service.SlideService;
 import com.alkemy.ong.utils.CustomMultipartFile;
+import com.alkemy.ong.utils.Mapper;
 import com.alkemy.ong.utils.SlideMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -19,7 +21,9 @@ import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.OutputStream;
+import java.util.ArrayList;
 import java.util.Base64.Encoder;
+import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -83,6 +87,19 @@ public class SlideServiceImpl implements SlideService {
         SlideResponseDto dto = slideMapper.fullSlideToDto(entity);
 
         return dto;
+    }
+
+    @Override
+    public List<SlideDto> findAll() throws Exception {
+        List<Slide> slides = slideRepository.findAll();
+        if(slides.isEmpty()){
+            throw new Exception("List Slide is empty");
+        }
+        List<SlideDto> dtos = new ArrayList<>();
+        for(Slide entity : slides){
+            dtos.add(Mapper.mapToDto(entity,new SlideDto()));
+        }
+        return dtos;
     }
 
     public MultipartFile base64ToImage(String encoded, String fileName) {
