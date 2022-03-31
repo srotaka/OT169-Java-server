@@ -69,7 +69,7 @@ public class User {
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
     @ManyToOne(fetch = FetchType.EAGER ,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
-    @JoinColumn(name = "users",nullable = false,foreignKey=@ForeignKey(name = "fk_role_id"))
+    @JoinColumn(name = "role_id",nullable = false,foreignKey=@ForeignKey(name = "FK_role"))
     private Role roleId;
     
 
