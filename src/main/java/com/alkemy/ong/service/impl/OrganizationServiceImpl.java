@@ -11,7 +11,7 @@ import com.alkemy.ong.service.IOrganizationService;
 import com.alkemy.ong.utils.Mapper;
 
 @Service
-public class OrganizationService implements IOrganizationService {
+public class OrganizationServiceImpl implements IOrganizationService {
 
 	@Autowired
 	private OrganizationRepository repository;
