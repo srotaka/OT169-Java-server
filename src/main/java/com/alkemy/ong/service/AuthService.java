@@ -9,7 +9,7 @@ import javax.servlet.http.HttpServletRequest;
 
 public interface AuthService {
 
-    ResponseEntity<User> register (User user);
+    ResponseEntity<AuthenticationResponse> register (User user) throws Exception;
 
     ResponseEntity<AuthenticationResponse> login (String mail, String password) throws Exception;
 

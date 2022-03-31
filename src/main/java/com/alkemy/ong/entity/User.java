@@ -50,7 +50,6 @@ public class User {
 	@Id
 	@GeneratedValue(generator = "uuid")
 	@GenericGenerator(name = "uuid", strategy = "uuid2")
-	@Column(name = "user_id")
 	private String id;
 	
     @Column(nullable = false)
@@ -70,12 +69,12 @@ public class User {
     private Timestamp timestamp = Timestamp.from(Instant.now());
 
     @ManyToOne(fetch = FetchType.EAGER ,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
-    @JoinColumn(name = "users",nullable = false)
-    private Role role;
+    @JoinColumn(name = "users",nullable = false,foreignKey=@ForeignKey(name = "fk_role_id"))
+    private Role roleId;
     
 
     @Column(name = "soft_delete")
-    private boolean soft_delete = Boolean.FALSE;//changed "_"
+    private boolean soft_delete = Boolean.FALSE;
 
 
 }
