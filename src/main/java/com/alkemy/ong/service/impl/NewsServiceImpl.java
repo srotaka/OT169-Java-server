@@ -4,7 +4,9 @@ import com.alkemy.ong.dto.NewsDto;
 import com.alkemy.ong.entity.News;
 import com.alkemy.ong.repository.NewsRepository;
 import com.alkemy.ong.service.NewsService;
+import com.alkemy.ong.utils.Mapper;
 import com.alkemy.ong.utils.NewsMapper;
+import com.amazonaws.services.simplesystemsmanagement.model.ParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -30,14 +32,39 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
+    public NewsDto getNewsById(String id) throws Exception {
+
+        Optional<News> response = newsRepository.findById(id);
+        if (response.isPresent()) {
+            News news = response.get();
+            return newsMapper.newsEntity2Dto(news, new NewsDto());
+        } else {
+            throw new Exception("The id entered is not valid or was not found in the database");
+        }
+
+        /*News news = newsRepository.getById(id);
+        return newsMapper.newsEntity2Dto(news, new NewsDto());*/
+
+    }
+
+    @Override
     public void delete(String id) {
         newsRepository.deleteById(id);
     }
 
-    @Override
-    public NewsDto getNewsById(String id) {
-       News news = newsRepository.getById(id);
-       return newsMapper.newsEntity2Dto(news, new NewsDto());
 
+    @Override
+    public NewsDto updateNews(String id, NewsDto newsDto) {
+        Optional<News> optional = newsRepository.findById(id);
+
+        if (!optional.isPresent()) {
+            throw new ParameterNotFoundException("-");
+        } else {
+            News updatedNews = newsMapper.updateValues(newsRepository.findById(id).get(), newsDto);
+            newsRepository.save(updatedNews);
+            newsMapper.updateValues(updatedNews, newsDto);
+            return newsDto;
+
+        }
     }
 }

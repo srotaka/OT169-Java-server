@@ -9,6 +9,7 @@ public  interface  NewsService {
 
     void delete(String id);
 
-    NewsDto getNewsById(String id);
+    NewsDto getNewsById(String id) throws Exception;
 
+    NewsDto updateNews(String id, NewsDto newsDto);
 }
