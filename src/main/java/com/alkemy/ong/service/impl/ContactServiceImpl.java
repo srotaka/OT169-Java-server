@@ -3,6 +3,7 @@ package com.alkemy.ong.service.impl;
 import com.alkemy.ong.entity.Contact;
 import com.alkemy.ong.repository.ContactRepository;
 import com.alkemy.ong.service.ContactService;
+import com.alkemy.ong.service.EmailService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
@@ -12,6 +13,8 @@ public class ContactServiceImpl implements ContactService {
 
     @Autowired
     private ContactRepository contactRepository;
+    @Autowired
+    private EmailService emailService;
 
     @Override
     @Transactional
@@ -23,6 +26,7 @@ public class ContactServiceImpl implements ContactService {
             throw new Exception("Email is empty");
         }
         contactRepository.save(contact);
+        emailService.sendContactMail(contact.getEmail(), contact.getName());
         return contact;
     }
 }
