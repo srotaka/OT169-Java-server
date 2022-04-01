@@ -95,6 +95,16 @@ public class SlideServiceImpl implements SlideService {
         return dtos;
     }
 
+    @Override
+    public void deleteSlide(String id) throws Exception {
+        Optional<Slide> find = slideRepository.findById(id);
+        if (!find.isPresent()){
+            throw new Exception("Slide not found");
+        }else{
+            slideRepository.deleteById(id);
+        }
+    }
+
     public MultipartFile base64ToImage(String encoded, String fileName) {
 
         // We need to remove "data:image/jpeg;base64", just to keep the bytes to decode

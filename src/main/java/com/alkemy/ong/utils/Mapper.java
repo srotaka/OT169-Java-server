@@ -2,11 +2,15 @@ package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.*;
+import com.alkemy.ong.repository.OrganizationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Mapper {
+	@Autowired
+	private OrganizationRepository orgRepository;
 
 	public static OrganizationResponseDto mapToDto(Organization organization, OrganizationResponseDto dto) {
 		dto.setName(organization.getName());

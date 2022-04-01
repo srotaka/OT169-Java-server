@@ -57,4 +57,11 @@ public class SlideController {
         return ResponseEntity.ok().body(dto);
     }
 
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> deleteSlide(@PathVariable String id){
+        try{
+
+        }
+    }
+
 }
