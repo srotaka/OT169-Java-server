@@ -1,6 +1,6 @@
 # OT169-Java-server
 
-# LISTA DE USUSARIOS DEL SISTEMA #
+# LISTA DE USUARIOS DEL SISTEMA #
 
 | Mail | Password | Rol |
 | ------------- | ------------- |------------- |
