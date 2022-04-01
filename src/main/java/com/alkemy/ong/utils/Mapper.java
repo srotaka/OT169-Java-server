@@ -102,6 +102,11 @@ public class Mapper {
 		return dto;
 	}
 
+	public static CommentResponseDto mapToDto(Comment comment, CommentResponseDto dto) {
+		dto.setBody(comment.getBody());
+		return dto;
+	}
+
 	public static ContactDto mapToDto(Contact contact, ContactDto contactDto){
 		contactDto.setId(contact.getId());
 		contactDto.setName(contact.getName());
