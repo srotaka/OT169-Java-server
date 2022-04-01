@@ -25,4 +25,13 @@ public class ContactController {
         }
 
     }
+
+    @GetMapping
+    public ResponseEntity<?> getContactList(){
+        try{
+            return ResponseEntity.status(OK).body(contactService.getContactList());
+        }catch (Exception e){
+            return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
+        }
+    }
 }
