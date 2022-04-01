@@ -101,4 +101,13 @@ public class Mapper {
 
 		return dto;
 	}
+
+	public static ContactDto mapToDto(Contact contact, ContactDto contactDto){
+		contactDto.setId(contact.getId());
+		contactDto.setName(contact.getName());
+		contactDto.setPhone(contact.getPhone());
+		contactDto.setEmail(contact.getEmail());
+		contactDto.setMessage(contact.getMessage());
+		return contactDto;
+	}
 }
