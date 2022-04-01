@@ -24,12 +24,9 @@ public class OrganizationServiceImpl implements IOrganizationService {
 	public OrganizationResponseDto postPublicInfo(OrganizationRequestDto organizationRequestDto) {
 
 		if(repository.count() == 0) {
-			Organization organization = new Organization();
-			organization.setName("Organization Name");
-			organization.setEmail("organization@mail.com");
-			organization.setImage("organizationImage.jpg");
-			organization.setWelcomeText("Welcome to the organization");
+			Organization organization = Mapper.mapFromDto(organizationRequestDto, new Organization());
 			repository.save(organization);
+			return Mapper.mapToDto(organization, new OrganizationResponseDto());
 		}
 		Organization updatedOrganization = Mapper.mapFromDto(organizationRequestDto,
 				repository.findAll().get(0));

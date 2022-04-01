@@ -3,6 +3,9 @@ package com.alkemy.ong.utils;
 import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.*;
 
+import java.util.HashMap;
+import java.util.Map;
+
 public class Mapper {
 
 	public static OrganizationResponseDto mapToDto(Organization organization, OrganizationResponseDto dto) {
@@ -10,7 +13,31 @@ public class Mapper {
 		dto.setImage(organization.getImage());
 		dto.setPhone(organization.getPhone());
 		dto.setAddress(organization.getAddress());
+
+		Map<String, String> contactUrls = new HashMap<String, String>();
+		contactUrls.put("Email", organization.getEmail());
+		contactUrls.put("Facebook", organization.getFacebookUrl());
+		contactUrls.put("LinkedIn", organization.getLinkedinUrl());
+		contactUrls.put("Instagram", organization.getInstagramUrl());
+
+		dto.setContact(contactUrls);
+
 		return dto;
+	}
+
+	public static Organization mapFromDto(OrganizationRequestDto dto, Organization organization) {
+		organization.setName(dto.getName());
+		organization.setImage(dto.getImage());
+		organization.setEmail(dto.getEmail());
+		organization.setFacebookUrl(dto.getFacebookUrl());
+		organization.setLinkedinUrl(dto.getLinkedinUrl());
+		organization.setInstagramUrl(dto.getInstagramUrl());
+		organization.setPhone(dto.getPhone());
+		organization.setAddress(dto.getAddress());
+		organization.setWelcomeText(dto.getWelcomeText());
+		organization.setAboutUsText(dto.getAboutUsText());
+		return organization;
+
 	}
 
 
@@ -24,18 +51,6 @@ public class Mapper {
 
 		return basicDto;
 	}
-
-	public static Organization mapFromDto(OrganizationRequestDto dto, Organization organization) {
-		organization.setName(dto.getName());
-		organization.setImage(dto.getImage());
-		organization.setEmail(dto.getEmail());
-		organization.setPhone(dto.getPhone());
-		organization.setAddress(dto.getAddress());
-		organization.setWelcomeText(dto.getWelcomeText());
-		organization.setAboutUsText(dto.getAboutUsText());
-		return organization;
-		
-    }
 
 	public static ActivityDto mapToDto(Activity activity, ActivityDto dto) {
 		dto.setId(activity.getId());
