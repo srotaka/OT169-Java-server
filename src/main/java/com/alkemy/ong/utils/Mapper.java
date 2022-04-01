@@ -2,11 +2,15 @@ package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.*;
+import com.alkemy.ong.repository.OrganizationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
 import java.util.Map;
 
 public class Mapper {
+	@Autowired
+	private OrganizationRepository orgRepository;
 
 	public static OrganizationResponseDto mapToDto(Organization organization, OrganizationResponseDto dto) {
 		dto.setName(organization.getName());
@@ -80,5 +84,21 @@ public class Mapper {
 		slideDto.setImageUrl(slide.getImageUrl());
 		slideDto.setOrder(slide.getOrder());
 		return slideDto;
+	}
+
+	public SlideResponseDto fullSlideToDto(Slide slide){
+
+		SlideResponseDto dto = new SlideResponseDto();
+		OrganizationResponseDto orgDto = new OrganizationResponseDto();
+		String idOrg = String.valueOf(slide.getOrganizationId());
+		/*Creation OrganizationDto*/
+		Organization organizationEntity = orgRepository.findById(idOrg).get();
+		OrganizationResponseDto last= Mapper.mapToDto(organizationEntity, orgDto);
+		dto.setImgUrl(slide.getImageUrl());
+		dto.setOrder(slide.getOrder());
+		dto.setText(slide.getText());
+		dto.setOrg(last);
+
+		return dto;
 	}
 }

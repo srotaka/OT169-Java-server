@@ -18,6 +18,7 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
+import javax.transaction.Transactional;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.List;
@@ -32,11 +33,11 @@ public class SlideServiceImpl implements SlideService {
     @Autowired
     private AmazonService amazonService;
     @Autowired
-    private SlideMapper slideMapper;
+    private Mapper mapper;
 
 
     @Bean
-    public SlideMapper slideMapper(){return new SlideMapper();}
+    public Mapper mapper(){return new Mapper();}
 
     @Override
     public void createSlide(SlideRequestDto slideRequestDto) throws Exception {
@@ -77,7 +78,7 @@ public class SlideServiceImpl implements SlideService {
             throw new Exception("Slide not found");
         }
         Slide entity =find.get();
-        SlideResponseDto dto = slideMapper.fullSlideToDto(entity);
+        SlideResponseDto dto = mapper.fullSlideToDto(entity);
 
         return dto;
     }
@@ -93,6 +94,18 @@ public class SlideServiceImpl implements SlideService {
             dtos.add(Mapper.mapToDto(entity,new SlideDto()));
         }
         return dtos;
+    }
+
+    @Override
+    @Transactional
+    public void deleteSlide(String id) throws Exception {
+        Optional<Slide> find = slideRepository.findById(id);
+        if (!find.isPresent()){
+            throw new Exception("Slide not found");
+        }else{
+            Slide entidad = find.get();
+            slideRepository.delete(entidad);
+        }
     }
 
     public MultipartFile base64ToImage(String encoded, String fileName) {
