@@ -20,10 +20,10 @@ public class MemberController {
 	
 	@Autowired
 	private MemberService memberService;
-	
-	@PostMapping("/")//OT169-69
-	public ResponseEntity<Member> createMember(@RequestBody Member member){
-		if(member.getName() instanceof String) {//If the name is an String
+
+	@PutMapping("/{id}")//OT169-71
+	public ResponseEntity<Member> updateMember(@RequestParam(name="id") String id,@RequestBody Member member){
+		if(memberService.existsById(id)) {//If the member exists
 			return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);//I create the member
 		}
 		return new ResponseEntity<Member>(HttpStatus.INTERNAL_SERVER_ERROR);//If it doesn't or the Member is null/not valid, I throw 500 error code
