@@ -53,7 +53,15 @@ public class CategoryService {
 		return new ResponseEntity<Category>(HttpStatus.OK);
 	}
 	
-	public boolean existsById(String id) {
+	public List<String> getNamesFromAll(){
+		List<String> names = new ArrayList();
+		for (Category category : categoryRepository.findAll() ) {
+			names.add(category.getName());
+		}
+		return names;
+	}
+
+	public boolean existsById(String id){
 		return categoryRepository.existsById(id);
 	}
 	

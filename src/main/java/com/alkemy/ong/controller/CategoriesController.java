@@ -22,8 +22,12 @@ public class CategoriesController {
 	@Autowired
 	private CategoryService categoryService;
 
+	@GetMapping("/")//OT169-40
+	public List<String> getNamesFromAll(){
+		return categoryService.getNamesFromAll();
+	}
+
 	@GetMapping("/{id}") // OT169-41
-	// @Secured("ROLE_ADMIN")
 	public ResponseEntity<Category> getById(@RequestParam(name = "id", required = false) String id) {
 		if (categoryService.existsById(id)) {// If the ID corresponds to an Category, returns it
 			return new ResponseEntity<Category>(categoryService.getById(id), HttpStatus.OK);
@@ -34,13 +38,11 @@ public class CategoriesController {
 	}
 
 	@PostMapping("/") // OT169-42
-	// @Secured("ROLE_ADMIN")
 	public ResponseEntity<Category> createCategory(@RequestBody Category category) { // I get the entity
 		return new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK); // if it doesn't had errors,
 	}
 
 	@PutMapping("/{id}") // OT169-43
-	// @Secured("ROLE_ADMIN")
 	public ResponseEntity<Category> updateCategory(@RequestParam(name = "id") String id, // I get the ID
 			@RequestBody Category category) { // I get the Category to be updated
 		if (categoryService.existsById(id)) {// If the category exists
@@ -51,7 +53,6 @@ public class CategoriesController {
 	}
 
 	@DeleteMapping("/{id}") // OT169-44
-	// @Secured("ROLE_ADMIN")
 	public ResponseEntity<Category> deleteCategory(@RequestParam(name = "id") String id, // I get the ID
 			@RequestBody Category category) { // I get the Category to be deleted
 		if (categoryService.existsById(id)) {// If the category exists
