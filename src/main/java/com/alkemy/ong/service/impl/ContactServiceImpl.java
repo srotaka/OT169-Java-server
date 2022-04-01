@@ -37,7 +37,6 @@ public class ContactServiceImpl implements ContactService {
     }
 
     @Override
-    @PreAuthorize("hasRole('ROLE_ADMIN')")
     public List<ContactDto> getContactList() throws Exception {
         List<Contact> contacts = contactRepository.findAll();
         if(contacts.isEmpty()){
