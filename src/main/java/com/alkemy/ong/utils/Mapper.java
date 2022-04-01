@@ -85,4 +85,20 @@ public class Mapper {
 		slideDto.setOrder(slide.getOrder());
 		return slideDto;
 	}
+
+	public SlideResponseDto fullSlideToDto(Slide slide){
+
+		SlideResponseDto dto = new SlideResponseDto();
+		OrganizationResponseDto orgDto = new OrganizationResponseDto();
+		String idOrg = String.valueOf(slide.getOrganizationId());
+		/*Creation OrganizationDto*/
+		Organization organizationEntity = orgRepository.findById(idOrg).get();
+		OrganizationResponseDto last= Mapper.mapToDto(organizationEntity, orgDto);
+		dto.setImgUrl(slide.getImageUrl());
+		dto.setOrder(slide.getOrder());
+		dto.setText(slide.getText());
+		dto.setOrg(last);
+
+		return dto;
+	}
 }
