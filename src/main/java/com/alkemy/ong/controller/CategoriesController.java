@@ -15,6 +15,8 @@ import org.springframework.web.bind.annotation.RestController;
 import com.alkemy.ong.entity.Category;
 import com.alkemy.ong.service.CategoryService;
 
+import java.util.List;
+
 @RestController
 @RequestMapping("/categories")
 public class CategoriesController {
