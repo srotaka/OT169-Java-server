@@ -51,7 +51,7 @@ public class CategoriesController {
 			return new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK); // I update it.
 		}
 		// If it doesn't exists, then I return a 500 error code
-		return new ResponseEntity<Category>(HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<Category>(HttpStatus.NOT_FOUND);
 	}
 
 	@DeleteMapping("/{id}") // OT169-44
@@ -62,7 +62,7 @@ public class CategoriesController {
 			return new ResponseEntity<Category>(HttpStatus.OK); // I return a 200 code
 		}
 		// If it doesn't exists, then I return a 500 error code
-		return new ResponseEntity<Category>(HttpStatus.INTERNAL_SERVER_ERROR);
+		return new ResponseEntity<Category>(HttpStatus.NOT_FOUND);
 	}
 
 }
