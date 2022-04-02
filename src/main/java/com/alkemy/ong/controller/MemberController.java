@@ -27,7 +27,7 @@ public class MemberController {
 			memberService.delete(member);//I delete the member
 			return new ResponseEntity<Member>(HttpStatus.OK);//I send an OK(200) code
 		}
-		return new ResponseEntity<Member>(HttpStatus.INTERNAL_SERVER_ERROR);//If the member doesn't exists, throws 500 error code
+		return new ResponseEntity<Member>(HttpStatus.NOT_FOUND);//If the member doesn't exists, throws 404 error code
 	}
 	
 }
