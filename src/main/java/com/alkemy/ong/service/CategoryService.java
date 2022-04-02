@@ -1,5 +1,6 @@
 package com.alkemy.ong.service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -51,6 +52,18 @@ public class CategoryService {
 	public ResponseEntity<Category> delete(Category category) {
 		categoryRepository.delete(category);
 		return new ResponseEntity<Category>(HttpStatus.OK);
+	}
+	
+	public List<String> getNamesFromAll(){
+		List<String> names = new ArrayList();
+		for (Category category : categoryRepository.findAll() ) {
+			names.add(category.getName());
+		}
+		return names;
+	}
+
+	public boolean existsById(String id){
+		return categoryRepository.existsById(id);
 	}
 	
 }
