@@ -15,8 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class NewsDto {
 
-    @NotNull
-    @NotBlank
+
     private String id;
 
     @NotNull
@@ -31,8 +30,7 @@ public class NewsDto {
     @NotBlank
     private String image;
 
-    @NotNull
-    @NotBlank
+
     private List<CategoryBasicDto> categories;
 
 }

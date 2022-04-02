@@ -29,21 +29,23 @@ public class NewsController {
 
     @GetMapping("/{id}")
     public ResponseEntity<NewsDto> getNewsById(@PathVariable String id) throws Exception {
-        return new ResponseEntity<>(newsService.getNewsById(id), HttpStatus.OK);
+        try{
+            newsService.getNewsById(id);
+            return ResponseEntity.status(HttpStatus.OK).build();
+        } catch (Exception e){
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     @PutMapping("/{id}")
     public ResponseEntity<NewsDto> updateNews(@PathVariable String id,@Valid @RequestBody NewsDto newsDto) throws ResponseStatusException {
         try{
             newsService.updateNews( id, newsDto);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        }
-        catch (Exception e){
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-
+            return ResponseEntity.status(HttpStatus.OK).body(newsDto);
+          }
+            catch (Exception e){
+             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
             }
-
-
     }
 
     @DeleteMapping("/{id}")

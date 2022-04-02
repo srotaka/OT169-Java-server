@@ -32,18 +32,15 @@ public class NewsServiceImpl implements NewsService {
     }
 
     @Override
-    public NewsDto getNewsById(String id) throws Exception {
+    public NewsDto getNewsById(String id) {
 
         Optional<News> response = newsRepository.findById(id);
         if (response.isPresent()) {
             News news = response.get();
             return newsMapper.newsEntity2Dto(news, new NewsDto());
         } else {
-            throw new Exception("The id entered is not valid or was not found in the database");
+            throw new ParameterNotFoundException("");
         }
-
-        /*News news = newsRepository.getById(id);
-        return newsMapper.newsEntity2Dto(news, new NewsDto());*/
 
     }
 
@@ -55,15 +52,16 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public NewsDto updateNews(String id, NewsDto newsDto) {
+
         Optional<News> optional = newsRepository.findById(id);
 
-        if (!optional.isPresent()) {
-            throw new ParameterNotFoundException("-");
-        } else {
+        if (optional.isPresent()) {
             News updatedNews = newsMapper.updateValues(newsRepository.findById(id).get(), newsDto);
             newsRepository.save(updatedNews);
-            newsMapper.updateValues(updatedNews, newsDto);
-            return newsDto;
+             newsMapper.updateValues(updatedNews,  newsDto);
+                return newsDto;
+        } else {
+            throw new ParameterNotFoundException("------");
 
         }
     }
