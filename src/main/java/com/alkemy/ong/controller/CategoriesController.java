@@ -30,7 +30,7 @@ public class CategoriesController {
 	}
 
 	@GetMapping("/{id}") // OT169-41
-	public ResponseEntity<Category> getById(@RequestParam(name = "id", required = false) String id) {
+	public ResponseEntity<Category> getById(@PathVariable(name = "id", required = false) String id) {
 		if (categoryService.existsById(id)) {// If the ID corresponds to an Category, returns it
 			return new ResponseEntity<Category>(categoryService.getById(id), HttpStatus.OK);
 		}
@@ -45,7 +45,7 @@ public class CategoriesController {
 	}
 
 	@PutMapping("/{id}") // OT169-43
-	public ResponseEntity<Category> updateCategory(@RequestParam(name = "id") String id, // I get the ID
+	public ResponseEntity<Category> updateCategory(@PathVariable(name = "id") String id, // I get the ID
 			@RequestBody Category category) { // I get the Category to be updated
 		if (categoryService.existsById(id)) {// If the category exists
 			return new ResponseEntity<Category>(categoryService.save(category), HttpStatus.OK); // I update it.
@@ -55,7 +55,7 @@ public class CategoriesController {
 	}
 
 	@DeleteMapping("/{id}") // OT169-44
-	public ResponseEntity<Category> deleteCategory(@RequestParam(name = "id") String id, // I get the ID
+	public ResponseEntity<Category> deleteCategory(@PathVariable(name = "id") String id, // I get the ID
 			@RequestBody Category category) { // I get the Category to be deleted
 		if (categoryService.existsById(id)) {// If the category exists
 			categoryService.delete(category);// I delete it
