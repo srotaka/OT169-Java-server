@@ -58,10 +58,10 @@ public class NewsServiceImpl implements NewsService {
         if (optional.isPresent()) {
             News updatedNews = newsMapper.updateValues(newsRepository.findById(id).get(), newsDto);
             newsRepository.save(updatedNews);
-             newsMapper.updateValues(updatedNews,  newsDto);
+            // newsMapper.updateValues(updatedNews,  newsDto);
                 return newsDto;
         } else {
-            throw new ParameterNotFoundException("------");
+            throw new ParameterNotFoundException("");
 
         }
     }
