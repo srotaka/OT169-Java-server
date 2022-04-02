@@ -22,9 +22,17 @@ public class OrganizationRequestDto {
     private String email;
     @NotNull
     @NotBlank
-    private String image;
+    private String facebookUrl;
     @NotNull
     @NotBlank
+    private String linkedinUrl;
+    @NotNull
+    @NotBlank
+    private String instagramUrl;
+    @NotNull
+    @NotBlank
+    private String image;
+    @NotNull
     private Long phone;
     @NotNull
     @NotBlank
