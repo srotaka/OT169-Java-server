@@ -7,7 +7,6 @@ import lombok.Setter;
 import org.hibernate.annotations.GenericGenerator;
 
 import javax.persistence.*;
-import java.util.UUID;
 
 @Entity
 @Table(name = "slides")
@@ -32,6 +31,6 @@ public class Slide {
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "slide_organizationId")
-    private OrganizationEntity organizationId;
+    private Organization organizationId;
 
 }

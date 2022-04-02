@@ -5,9 +5,10 @@ import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.AuthService;
+import com.alkemy.ong.service.EmailService;
 import com.alkemy.ong.utils.JwtUtils;
+import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -15,7 +16,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-import org.springframework.web.bind.annotation.RequestParam;
+
+import javax.servlet.http.HttpServletRequest;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -38,14 +40,31 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepository;
 
-    public ResponseEntity<User> register (User user) {
+    @Autowired
+    private EmailService emailService;
 
+    public ResponseEntity<AuthenticationResponse> register (User user) throws Exception {
+
+        String oldPassword = user.getPassword();
         String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
-        user.setRole(roleRepository.findById(user.getRole().getId()).get());
-        User obj = userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json
+        user.setRoleId(roleRepository.findById(user.getRoleId().getId()).get());
+        userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json
 
-        return new ResponseEntity<User>(obj, HttpStatus.OK);
+        try {
+            authenticationManager.authenticate(
+                    new UsernamePasswordAuthenticationToken(user.getEmail(), oldPassword));
+        } catch (
+                BadCredentialsException e) {
+            throw new Exception("Incorrect email or password", e);
+        }
+
+        final UserDetails userDetails = userDetailsCustomService.loadUserByUsername(user.getEmail());
+
+        final String jwt = jwtUtils.generateToken(userDetails);
+        emailService.sendWelcomeMail(user.getEmail(), user.getFirstName());
+
+        return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
     public ResponseEntity<AuthenticationResponse> login(String mail, String password)  throws Exception {
@@ -62,6 +81,22 @@ public class AuthServiceImpl implements AuthService {
         final String jwt = jwtUtils.generateToken(userDetails);
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
+    }
+
+    @Override
+    public ResponseEntity<?> getAuthenticatedUserData(HttpServletRequest httpServletRequest) {
+        String authorizationHeader = httpServletRequest.getHeader("Authorization");
+
+        String jwt = authorizationHeader.substring(7);
+        String email = jwtUtils.extractEmail(jwt);
+        User user = userRepository.findByEmail(email);
+
+        if(user == null){
+            return ResponseEntity.notFound().build();
+        }
+
+        return ResponseEntity.ok(Mapper.mapToUserDto(user));
+
     }
 
 }

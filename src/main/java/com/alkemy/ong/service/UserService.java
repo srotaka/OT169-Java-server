@@ -12,4 +12,6 @@ public interface UserService {
     void delete(String id);
 
     ResponseEntity<?> updatePartialInfo(String id, Map<Object, Object> fields);
+
+    ResponseEntity<?> getAllUser();
 }

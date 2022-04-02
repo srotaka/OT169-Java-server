@@ -1,6 +1,5 @@
 package com.alkemy.ong.service.impl;
 
-import com.alkemy.ong.entity.Role;
 import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -31,7 +30,7 @@ public class UserDetailsCustomServiceImpl implements UserDetailsService {
         }
 
         List<GrantedAuthority> roles = new ArrayList<>();
-        roles.add(new SimpleGrantedAuthority(user.getRole().getName()));
+        roles.add(new SimpleGrantedAuthority("ROLE_"+user.getRoleId().getName()));
 
         return new org.springframework.security.core.userdetails.User(user.getEmail(),user.getPassword(),roles);
 
