@@ -3,7 +3,7 @@ package com.alkemy.ong.service.impl;
 import com.alkemy.ong.dto.SlideDto;
 import com.alkemy.ong.dto.SlideRequestDto;
 import com.alkemy.ong.dto.SlideResponseDto;
-import com.alkemy.ong.entity.OrganizationEntity;
+import com.alkemy.ong.entity.Organization;
 import com.alkemy.ong.entity.Slide;
 import com.alkemy.ong.repository.OrganizationRepository;
 import com.alkemy.ong.repository.SlideRepository;
@@ -18,12 +18,9 @@ import org.springframework.context.annotation.Bean;
 import org.springframework.stereotype.Service;
 import org.springframework.web.multipart.MultipartFile;
 
-import java.io.File;
-import java.io.FileOutputStream;
+import javax.transaction.Transactional;
 import java.io.IOException;
-import java.io.OutputStream;
 import java.util.ArrayList;
-import java.util.Base64.Encoder;
 import java.util.List;
 import java.util.Optional;
 
@@ -36,11 +33,11 @@ public class SlideServiceImpl implements SlideService {
     @Autowired
     private AmazonService amazonService;
     @Autowired
-    private SlideMapper slideMapper;
+    private Mapper mapper;
 
 
     @Bean
-    public SlideMapper slideMapper(){return new SlideMapper();}
+    public Mapper mapper(){return new Mapper();}
 
     @Override
     public void createSlide(SlideRequestDto slideRequestDto) throws Exception {
@@ -60,7 +57,7 @@ public class SlideServiceImpl implements SlideService {
         String amazonUrl=amazonService.uploadFile(imgSend);
         /*
         * find organization to add to slide*/
-        Optional<OrganizationEntity> orgFind = organizationRepository.findById(slideRequestDto.getOrganizationId());
+        Optional<Organization> orgFind = organizationRepository.findById(slideRequestDto.getOrganizationId());
         if (!orgFind.isPresent()){
             throw new Exception("Organization not found in Slide creation");
         }else {
@@ -81,7 +78,7 @@ public class SlideServiceImpl implements SlideService {
             throw new Exception("Slide not found");
         }
         Slide entity =find.get();
-        SlideResponseDto dto = slideMapper.fullSlideToDto(entity);
+        SlideResponseDto dto = mapper.fullSlideToDto(entity);
 
         return dto;
     }
@@ -97,6 +94,18 @@ public class SlideServiceImpl implements SlideService {
             dtos.add(Mapper.mapToDto(entity,new SlideDto()));
         }
         return dtos;
+    }
+
+    @Override
+    @Transactional
+    public void deleteSlide(String id) throws Exception {
+        Optional<Slide> find = slideRepository.findById(id);
+        if (!find.isPresent()){
+            throw new Exception("Slide not found");
+        }else{
+            Slide entidad = find.get();
+            slideRepository.delete(entidad);
+        }
     }
 
     public MultipartFile base64ToImage(String encoded, String fileName) {

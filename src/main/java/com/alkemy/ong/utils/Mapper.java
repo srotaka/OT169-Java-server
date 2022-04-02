@@ -2,15 +2,46 @@ package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.*;
+import com.alkemy.ong.repository.OrganizationRepository;
+import org.springframework.beans.factory.annotation.Autowired;
+
+import java.util.HashMap;
+import java.util.Map;
 
 public class Mapper {
+	@Autowired
+	private OrganizationRepository orgRepository;
 
-	public static OrganizationResponseDto mapToDto(OrganizationEntity organization, OrganizationResponseDto dto) {
+	public static OrganizationResponseDto mapToDto(Organization organization, OrganizationResponseDto dto) {
 		dto.setName(organization.getName());
 		dto.setImage(organization.getImage());
 		dto.setPhone(organization.getPhone());
 		dto.setAddress(organization.getAddress());
+
+		Map<String, String> contactUrls = new HashMap<String, String>();
+		contactUrls.put("Email", organization.getEmail());
+		contactUrls.put("Facebook", organization.getFacebookUrl());
+		contactUrls.put("LinkedIn", organization.getLinkedinUrl());
+		contactUrls.put("Instagram", organization.getInstagramUrl());
+
+		dto.setContact(contactUrls);
+
 		return dto;
+	}
+
+	public static Organization mapFromDto(OrganizationRequestDto dto, Organization organization) {
+		organization.setName(dto.getName());
+		organization.setImage(dto.getImage());
+		organization.setEmail(dto.getEmail());
+		organization.setFacebookUrl(dto.getFacebookUrl());
+		organization.setLinkedinUrl(dto.getLinkedinUrl());
+		organization.setInstagramUrl(dto.getInstagramUrl());
+		organization.setPhone(dto.getPhone());
+		organization.setAddress(dto.getAddress());
+		organization.setWelcomeText(dto.getWelcomeText());
+		organization.setAboutUsText(dto.getAboutUsText());
+		return organization;
+
 	}
 
 
@@ -24,18 +55,6 @@ public class Mapper {
 
 		return basicDto;
 	}
-
-	public static OrganizationEntity mapFromDto(OrganizationRequestDto dto, OrganizationEntity organization) {
-		organization.setName(dto.getName());
-		organization.setImage(dto.getImage());
-		organization.setEmail(dto.getEmail());
-		organization.setPhone(dto.getPhone());
-		organization.setAddress(dto.getAddress());
-		organization.setWelcomeText(dto.getWelcomeText());
-		organization.setAboutUsText(dto.getAboutUsText());
-		return organization;
-		
-    }
 
 	public static ActivityDto mapToDto(Activity activity, ActivityDto dto) {
 		dto.setId(activity.getId());
@@ -65,5 +84,35 @@ public class Mapper {
 		slideDto.setImageUrl(slide.getImageUrl());
 		slideDto.setOrder(slide.getOrder());
 		return slideDto;
+	}
+
+	public SlideResponseDto fullSlideToDto(Slide slide){
+
+		SlideResponseDto dto = new SlideResponseDto();
+		OrganizationResponseDto orgDto = new OrganizationResponseDto();
+		String idOrg = String.valueOf(slide.getOrganizationId());
+		/*Creation OrganizationDto*/
+		Organization organizationEntity = orgRepository.findById(idOrg).get();
+		OrganizationResponseDto last= Mapper.mapToDto(organizationEntity, orgDto);
+		dto.setImgUrl(slide.getImageUrl());
+		dto.setOrder(slide.getOrder());
+		dto.setText(slide.getText());
+		dto.setOrg(last);
+
+		return dto;
+	}
+
+	public static CommentResponseDto mapToDto(Comment comment, CommentResponseDto dto) {
+		dto.setBody(comment.getBody());
+		return dto;
+	}
+
+	public static ContactDto mapToDto(Contact contact, ContactDto contactDto){
+		contactDto.setId(contact.getId());
+		contactDto.setName(contact.getName());
+		contactDto.setPhone(contact.getPhone());
+		contactDto.setEmail(contact.getEmail());
+		contactDto.setMessage(contact.getMessage());
+		return contactDto;
 	}
 }

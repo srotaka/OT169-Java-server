@@ -10,12 +10,11 @@ import java.time.Instant;
 
 @Entity
 @Table(name="organizations")
-@Setter
-@Getter
 @SQLDelete(sql = "UPDATE organizations SET soft_delete  = true WHERE id = ?")
 @NoArgsConstructor
 @AllArgsConstructor
-public class OrganizationEntity {
+@Data
+public class Organization {
 
     @Id
     @GeneratedValue(generator = "uuid")
@@ -28,10 +27,8 @@ public class OrganizationEntity {
     @Column(nullable = false)
     private String image;
 
-    @Column
     private String address;
 
-    @Column
     private Long phone;
 
     @Column(nullable = false)
@@ -42,6 +39,12 @@ public class OrganizationEntity {
 
     @Column(name = "about_us_text")
     private String aboutUsText;
+
+    private String facebookUrl;
+
+    private String linkedinUrl;
+
+    private String instagramUrl;
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
 

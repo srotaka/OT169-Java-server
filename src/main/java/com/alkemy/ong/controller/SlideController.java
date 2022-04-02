@@ -14,7 +14,7 @@ import static org.springframework.http.HttpStatus.*;
 import javax.validation.Valid;
 
 @RestController
-@RequestMapping("/Slide")
+@RequestMapping("/Slides")
 public class SlideController {
 
     @Autowired
@@ -55,6 +55,16 @@ public class SlideController {
             ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.ok().body(dto);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<?> deleteSlide(@PathVariable String id){
+        try{
+            slideService.deleteSlide(id);
+        } catch (Exception e) {
+            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(OK).build();
     }
 
 }

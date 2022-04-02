@@ -5,6 +5,7 @@ import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.AuthService;
+import com.alkemy.ong.service.EmailService;
 import com.alkemy.ong.utils.JwtUtils;
 import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -39,6 +40,9 @@ public class AuthServiceImpl implements AuthService {
     @Autowired
     private UserRepository userRepository;
 
+    @Autowired
+    private EmailService emailService;
+
     public ResponseEntity<AuthenticationResponse> register (User user) throws Exception {
 
         String oldPassword = user.getPassword();
@@ -58,6 +62,7 @@ public class AuthServiceImpl implements AuthService {
         final UserDetails userDetails = userDetailsCustomService.loadUserByUsername(user.getEmail());
 
         final String jwt = jwtUtils.generateToken(userDetails);
+        emailService.sendWelcomeMail(user.getEmail(), user.getFirstName());
 
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
