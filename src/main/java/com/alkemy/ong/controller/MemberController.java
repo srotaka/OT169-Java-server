@@ -35,5 +35,4 @@ public class MemberController {
 			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
 		}
 	}
-	
 }
