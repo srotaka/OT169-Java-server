@@ -6,4 +6,6 @@ import java.util.List;
 
 public interface ICommentService {
     List<CommentResponseDto> getAllComments();
+
+    List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
 }

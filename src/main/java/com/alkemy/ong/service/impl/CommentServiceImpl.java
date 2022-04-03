@@ -1,6 +1,7 @@
 package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.CommentResponseDto;
+import com.alkemy.ong.dto.NewsDto;
 import com.alkemy.ong.repository.CommentRepository;
 import com.alkemy.ong.service.ICommentService;
 import com.alkemy.ong.utils.Mapper;
@@ -16,6 +17,8 @@ public class CommentServiceImpl implements ICommentService {
 
     @Autowired
     private CommentRepository repository;
+    @Autowired
+    private NewsServiceImpl newsService;
 
     @Override
     public List<CommentResponseDto> getAllComments() {
@@ -23,5 +26,13 @@ public class CommentServiceImpl implements ICommentService {
                          .stream()
                          .map(comment -> Mapper.mapToDto(comment, new CommentResponseDto()))
                          .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<CommentResponseDto> getAllCommetsNews(String idNews) throws Exception {
+        NewsDto dto = newsService.getNewsById(idNews);
+        if(dto){
+
+        }
     }
 }
