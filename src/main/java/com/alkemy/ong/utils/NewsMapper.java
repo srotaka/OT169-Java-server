@@ -38,5 +38,15 @@ public class NewsMapper {
   }
 
 
+    public News updateValues(News news, NewsDto newsDto) {
+        news.setName(newsDto.getName());
+        news.setContent(newsDto.getContent());
+        news.setImage(newsDto.getImage());
+        news.setCategories(newsDto.getCategories().stream()
+                .map(categoryDto->Mapper.mapToEntity(categoryDto, new Category()))
+                .collect(Collectors.toList()));
 
+        return news;
+
+    }
 }

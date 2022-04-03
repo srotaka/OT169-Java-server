@@ -15,6 +15,7 @@ import java.util.List;
 @NoArgsConstructor
 public class NewsDto {
 
+
     private String id;
 
     @NotNull
@@ -25,7 +26,10 @@ public class NewsDto {
     @NotBlank(message = "you must provide a content")
     private String content;
 
+    @NotNull
+    @NotBlank
     private String image;
+
 
     private List<CategoryBasicDto> categories;
 
