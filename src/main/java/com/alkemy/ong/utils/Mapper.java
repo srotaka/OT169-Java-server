@@ -90,7 +90,8 @@ public class Mapper {
 
 		SlideResponseDto dto = new SlideResponseDto();
 		OrganizationResponseDto orgDto = new OrganizationResponseDto();
-		String idOrg = String.valueOf(slide.getOrganizationId());
+		//Modifation find by Ong
+		String idOrg= slide.getOrganizationId().getId();
 		/*Creation OrganizationDto*/
 		Organization organizationEntity = orgRepository.findById(idOrg).get();
 		OrganizationResponseDto last= Mapper.mapToDto(organizationEntity, orgDto);
