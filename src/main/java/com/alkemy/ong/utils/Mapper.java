@@ -88,18 +88,15 @@ public class Mapper {
 
 	public SlideResponseDto fullSlideToDto(Slide slide){
 
-		SlideResponseDto dto = new SlideResponseDto();
-		OrganizationResponseDto orgDto = new OrganizationResponseDto();
-		String idOrg = String.valueOf(slide.getOrganizationId());
-		/*Creation OrganizationDto*/
-		Organization organizationEntity = orgRepository.findById(idOrg).get();
-		OrganizationResponseDto last= Mapper.mapToDto(organizationEntity, orgDto);
-		dto.setImgUrl(slide.getImageUrl());
-		dto.setOrder(slide.getOrder());
-		dto.setText(slide.getText());
-		dto.setOrg(last);
+			SlideResponseDto dto = new SlideResponseDto();
+			OrganizationResponseDto orgDto = new OrganizationResponseDto();
+			String idOrg = String.valueOf(slide.getOrganizationId());
+			dto.setImgUrl(slide.getImageUrl());
+			dto.setOrder(slide.getOrder());
+			dto.setText(slide.getText());
+			dto.setOrg(slide.getOrganizationId().getName());
 
-		return dto;
+			return dto;
 	}
 
 	public static CommentResponseDto mapToDto(Comment comment, CommentResponseDto dto) {
