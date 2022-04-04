@@ -18,8 +18,6 @@ public class NewsController {
     @Autowired
     private NewsService newsService;
 
-    @Autowired
-    private NewsRepository newsRepository;
 
     @PostMapping
     public ResponseEntity<NewsDto> save(@Valid @RequestBody NewsDto news){
@@ -50,12 +48,8 @@ public class NewsController {
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void>delete(@PathVariable String id) {
-        if (newsRepository.existsById(id)) {
-            this.newsService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else {
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
+       newsService.delete(id);
+       return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
