@@ -1,6 +1,7 @@
 package com.alkemy.ong.service.impl;
 
 import com.alkemy.ong.dto.AuthenticationResponse;
+import com.alkemy.ong.dto.UserCredentialsDto;
 import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
@@ -67,16 +68,16 @@ public class AuthServiceImpl implements AuthService {
         return ResponseEntity.ok(new AuthenticationResponse(jwt));
     }
 
-    public ResponseEntity<AuthenticationResponse> login(String mail, String password)  throws Exception {
+    public ResponseEntity<AuthenticationResponse> login(UserCredentialsDto credentials)  throws Exception {
         try {
             authenticationManager.authenticate(
-                    new UsernamePasswordAuthenticationToken(mail, password));
+                    new UsernamePasswordAuthenticationToken(credentials.getEmail(), credentials.getPassword()));
         } catch (
                 BadCredentialsException e) {
             throw new Exception("Incorrect email or password", e);
         }
 
-        final UserDetails userDetails = userDetailsCustomService.loadUserByUsername(mail);
+        final UserDetails userDetails = userDetailsCustomService.loadUserByUsername(credentials.getEmail());
 
         final String jwt = jwtUtils.generateToken(userDetails);
 

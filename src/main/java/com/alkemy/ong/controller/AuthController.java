@@ -1,6 +1,7 @@
 package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.AuthenticationResponse;
+import com.alkemy.ong.dto.UserCredentialsDto;
 import com.alkemy.ong.service.AuthService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.ResponseEntity;
@@ -8,6 +9,7 @@ import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.web.bind.annotation.*;
 import com.alkemy.ong.entity.User;
 import javax.servlet.http.HttpServletRequest;
+import javax.validation.Valid;
 
 
 @RestController
@@ -26,8 +28,8 @@ public class AuthController {
 	}
 
 	@PostMapping("/login")
-	public ResponseEntity<AuthenticationResponse> login(@RequestParam String mail,@RequestParam String password)  throws Exception{
-		return authService.login(mail,password);
+	public ResponseEntity<AuthenticationResponse> login(@RequestBody @Valid UserCredentialsDto credentials)  throws Exception{
+		return authService.login(credentials);
 	}
 
 	@GetMapping("/me")
