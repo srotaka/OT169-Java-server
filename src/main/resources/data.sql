@@ -42,6 +42,7 @@ WHERE NOT EXISTS (SELECT * FROM users WHERE id = '18');
 INSERT INTO `gr169`.`users` (`id`, `email`, `first_name`, `last_name`, `password`, `photo`, `soft_delete`,`timestamp`,`role_id`)
 SELECT '19', 'jorge@mail.com', 'Jorge', 'Ocaña', '$2a$10$Jk6NgmOL5BsqkbnWOhy5YupoIYo9hmkfufhY8flxrrr5KVayab/tS', "https://s3.us-east-1.amazonaws.com/cohorte-marzo-77238c6a/1648653148013-user-admin.png", 0, NOW(), 1
 WHERE NOT EXISTS (SELECT * FROM users WHERE id = '19');
+
 -- Inserción de 10 usuarios
 INSERT INTO `gr169`.`users` (`id`, `email`, `first_name`, `last_name`, `password`, `photo`, `soft_delete`,`timestamp`,`role_id`)
 SELECT '20', 'clotilde@mail.com', 'Clotilde', 'Recio', '$2a$10$Jk6NgmOL5BsqkbnWOhy5YupoIYo9hmkfufhY8flxrrr5KVayab/tS', "https://s3.us-east-1.amazonaws.com/cohorte-marzo-77238c6a/1648653249138-user-girl-1.png", 0, NOW(), 2
