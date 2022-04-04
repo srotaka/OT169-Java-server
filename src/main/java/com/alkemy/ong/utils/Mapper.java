@@ -116,4 +116,21 @@ public class Mapper {
 		contactDto.setMessage(contact.getMessage());
 		return contactDto;
 	}
+
+	public static TestimonialDto mapToDto(Testimonial testimonial, TestimonialDto testimonialDto){
+		testimonialDto.setId(testimonial.getId());
+		testimonialDto.setName(testimonial.getName());
+		testimonialDto.setImage(testimonial.getImage());
+		testimonialDto.setContent(testimonial.getContent());
+
+		return testimonialDto;
+	}
+
+	public static Testimonial mapFromDto(TestimonialDto testimonialDto, Testimonial testimonial){
+		testimonial.setName(testimonialDto.getName());
+		testimonial.setImage(testimonialDto.getImage());
+		testimonial.setContent(testimonialDto.getContent());
+
+		return testimonial;
+	}
 }
