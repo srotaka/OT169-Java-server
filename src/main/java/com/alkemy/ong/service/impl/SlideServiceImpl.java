@@ -11,7 +11,6 @@ import com.alkemy.ong.service.AmazonService;
 import com.alkemy.ong.service.SlideService;
 import com.alkemy.ong.utils.CustomMultipartFile;
 import com.alkemy.ong.utils.Mapper;
-import com.alkemy.ong.utils.SlideMapper;
 import org.apache.commons.codec.binary.Base64;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Bean;
@@ -106,6 +105,28 @@ public class SlideServiceImpl implements SlideService {
             Slide entidad = find.get();
             slideRepository.delete(entidad);
         }
+    }
+    //OP169-60 Slides for public Endpoint
+    @Override
+    @Transactional
+    public List<SlideResponseDto> slideForOng(String idOng) throws Exception {
+
+        Optional<Organization> organization=organizationRepository.findById(idOng);
+        if (!organization.isPresent()) {//Validation for exception
+            throw new Exception("Organization not found");
+        }
+
+        List<Slide> entities= slideRepository.findByOrgOrderByOrderAsc(idOng);
+        if (entities.isEmpty()){
+            throw new Exception("No slide found for that organization");
+        }
+        List<SlideResponseDto> dtos = new ArrayList<>();
+        for (Slide entity: entities) {
+            dtos.add(mapper.fullSlideToDto(entity));
+        }
+        return dtos;
+
+
     }
 
     public MultipartFile base64ToImage(String encoded, String fileName) {

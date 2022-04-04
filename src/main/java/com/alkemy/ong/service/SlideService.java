@@ -16,4 +16,7 @@ public interface SlideService {
     List<SlideDto> findAll() throws Exception;
 
     void deleteSlide (String id) throws Exception;
+
+    List<SlideResponseDto> slideForOng(String idOng) throws Exception;
+
 }
