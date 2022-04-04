@@ -2,7 +2,9 @@ package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.*;
+import com.alkemy.ong.repository.NewsRepository;
 import com.alkemy.ong.repository.OrganizationRepository;
+import com.alkemy.ong.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -88,23 +90,28 @@ public class Mapper {
 
 	public SlideResponseDto fullSlideToDto(Slide slide){
 
-		SlideResponseDto dto = new SlideResponseDto();
-		OrganizationResponseDto orgDto = new OrganizationResponseDto();
-		String idOrg = String.valueOf(slide.getOrganizationId());
-		/*Creation OrganizationDto*/
-		Organization organizationEntity = orgRepository.findById(idOrg).get();
-		OrganizationResponseDto last= Mapper.mapToDto(organizationEntity, orgDto);
-		dto.setImgUrl(slide.getImageUrl());
-		dto.setOrder(slide.getOrder());
-		dto.setText(slide.getText());
-		dto.setOrg(last);
+			SlideResponseDto dto = new SlideResponseDto();
+			OrganizationResponseDto orgDto = new OrganizationResponseDto();
+			String idOrg = String.valueOf(slide.getOrganizationId());
+			dto.setImgUrl(slide.getImageUrl());
+			dto.setOrder(slide.getOrder());
+			dto.setText(slide.getText());
+			dto.setOrg(slide.getOrganizationId().getName());
 
-		return dto;
+			return dto;
+
 	}
 
 	public static CommentResponseDto mapToDto(Comment comment, CommentResponseDto dto) {
 		dto.setBody(comment.getBody());
 		return dto;
+	}
+
+	public Comment mapFromDto(CommentRequestDto commentRequestDto, Comment comment,User user, News news){
+		comment.setBody(commentRequestDto.getBody());
+		comment.setNews_id(news);
+		comment.setUser_id(user);
+		return comment;
 	}
 
 	public static ContactDto mapToDto(Contact contact, ContactDto contactDto){
@@ -114,5 +121,29 @@ public class Mapper {
 		contactDto.setEmail(contact.getEmail());
 		contactDto.setMessage(contact.getMessage());
 		return contactDto;
+	}
+
+	public static TestimonialDto mapToDto(Testimonial testimonial, TestimonialDto testimonialDto){
+		testimonialDto.setId(testimonial.getId());
+		testimonialDto.setName(testimonial.getName());
+		testimonialDto.setImage(testimonial.getImage());
+		testimonialDto.setContent(testimonial.getContent());
+
+		return testimonialDto;
+	}
+
+	public static Testimonial mapFromDto(TestimonialDto testimonialDto, Testimonial testimonial){
+		testimonial.setName(testimonialDto.getName());
+		testimonial.setImage(testimonialDto.getImage());
+		testimonial.setContent(testimonialDto.getContent());
+
+		return testimonial;
+	}
+
+	public Testimonial updateValues(Testimonial testimonial, TestimonialDto testimonialDto){
+		testimonial.setName(testimonialDto.getName());
+		testimonial.setImage(testimonialDto.getImage());
+		testimonial.setContent(testimonialDto.getContent());
+		return testimonial;
 	}
 }

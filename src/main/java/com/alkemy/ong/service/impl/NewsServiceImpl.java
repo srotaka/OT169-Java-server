@@ -8,7 +8,9 @@ import com.alkemy.ong.utils.Mapper;
 import com.alkemy.ong.utils.NewsMapper;
 import com.amazonaws.services.simplesystemsmanagement.model.ParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.Optional;
 
@@ -46,7 +48,14 @@ public class NewsServiceImpl implements NewsService {
 
     @Override
     public void delete(String id) {
-        newsRepository.deleteById(id);
+        Optional<News> optional = newsRepository.findById(id);
+
+        if (optional.isPresent()) {
+            newsRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
     }
 
 

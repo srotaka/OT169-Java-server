@@ -3,6 +3,7 @@ package com.alkemy.ong.service;
 import com.alkemy.ong.dto.SlideDto;
 import com.alkemy.ong.dto.SlideRequestDto;
 import com.alkemy.ong.dto.SlideResponseDto;
+import com.alkemy.ong.dto.SlideUpdateDto;
 
 import java.util.List;
 
@@ -16,4 +17,8 @@ public interface SlideService {
     List<SlideDto> findAll() throws Exception;
 
     void deleteSlide (String id) throws Exception;
+
+    List<SlideResponseDto> slideForOng(String idOng) throws Exception;
+
+    void updateSlide (String id, SlideUpdateDto update) throws Exception;
 }

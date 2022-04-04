@@ -2,12 +2,12 @@ package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.SlideRequestDto;
 import com.alkemy.ong.dto.SlideResponseDto;
+import com.alkemy.ong.dto.SlideUpdateDto;
 import com.alkemy.ong.repository.SlideRepository;
 import com.alkemy.ong.service.SlideService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 import static org.springframework.http.HttpStatus.*;
 
@@ -62,7 +62,19 @@ public class SlideController {
         try{
             slideService.deleteSlide(id);
         } catch (Exception e) {
-            ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
+        }
+        return ResponseEntity.status(OK).build();
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<?> updateSlide(@PathVariable String id, @RequestBody SlideUpdateDto dto){
+
+        try{
+            slideService.updateSlide(id, dto);
+
+        } catch (Exception e) {
+           return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
         }
         return ResponseEntity.status(OK).build();
     }

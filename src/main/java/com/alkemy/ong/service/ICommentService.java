@@ -1,11 +1,13 @@
 package com.alkemy.ong.service;
 
+import com.alkemy.ong.dto.CommentRequestDto;
 import com.alkemy.ong.dto.CommentResponseDto;
+import org.springframework.http.ResponseEntity;
 
 import java.util.List;
 
 public interface ICommentService {
     List<CommentResponseDto> getAllComments();
 
-    List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
+    ResponseEntity<Void> addComment(CommentRequestDto commentRequestDto);
 }
