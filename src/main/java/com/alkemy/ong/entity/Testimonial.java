@@ -17,7 +17,7 @@ import java.util.UUID;
 @AllArgsConstructor
 @Getter
 @Setter
-@SQLDelete(sql = "UPDATE testimonials SET deleted = true WHERE id=?")
+@SQLDelete(sql = "UPDATE testimonials SET soft_delete = true WHERE id=?")
 @Where(clause = "soft_delete = false")
 public class Testimonial {
 
