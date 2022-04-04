@@ -2,7 +2,9 @@ package com.alkemy.ong.utils;
 
 import com.alkemy.ong.dto.*;
 import com.alkemy.ong.entity.*;
+import com.alkemy.ong.repository.NewsRepository;
 import com.alkemy.ong.repository.OrganizationRepository;
+import com.alkemy.ong.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.util.HashMap;
@@ -105,6 +107,13 @@ public class Mapper {
 		return dto;
 	}
 
+	public Comment mapFromDto(CommentRequestDto commentRequestDto, Comment comment,User user, News news){
+		comment.setBody(commentRequestDto.getBody());
+		comment.setNews_id(news);
+		comment.setUser_id(user);
+		return comment;
+	}
+
 	public static ContactDto mapToDto(Contact contact, ContactDto contactDto){
 		contactDto.setId(contact.getId());
 		contactDto.setName(contact.getName());
@@ -128,6 +137,13 @@ public class Mapper {
 		testimonial.setImage(testimonialDto.getImage());
 		testimonial.setContent(testimonialDto.getContent());
 
+		return testimonial;
+	}
+
+	public Testimonial updateValues(Testimonial testimonial, TestimonialDto testimonialDto){
+		testimonial.setName(testimonialDto.getName());
+		testimonial.setImage(testimonialDto.getImage());
+		testimonial.setContent(testimonialDto.getContent());
 		return testimonial;
 	}
 }
