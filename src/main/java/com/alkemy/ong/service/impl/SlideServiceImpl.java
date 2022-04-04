@@ -63,7 +63,7 @@ public class SlideServiceImpl implements SlideService {
         }else {
             slide.setOrganizationId(orgFind.get());
         }
-
+        slide.setOrg(slideRequestDto.getOrganizationId());
         slide.setImageUrl(amazonUrl);
         slide.setText(slideRequestDto.getText());
 
