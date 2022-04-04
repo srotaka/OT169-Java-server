@@ -139,4 +139,11 @@ public class Mapper {
 
 		return testimonial;
 	}
+
+	public Testimonial updateValues(Testimonial testimonial, TestimonialDto testimonialDto){
+		testimonial.setName(testimonialDto.getName());
+		testimonial.setImage(testimonialDto.getImage());
+		testimonial.setContent(testimonialDto.getContent());
+		return testimonial;
+	}
 }
