@@ -107,6 +107,28 @@ public class SlideServiceImpl implements SlideService {
             slideRepository.delete(entidad);
         }
     }
+    //OP169-60 Slides for public Endpoint
+    @Override
+    @Transactional
+    public List<SlideResponseDto> slideForOng(String idOng) throws Exception {
+
+        Optional<Organization> organization=organizationRepository.findById(idOng);
+        if (!organization.isPresent()) {//Validation for exception
+            throw new Exception("Organization not found");
+        }
+
+        List<Slide> entities= slideRepository.findByOrgOrderByOrderAsc(idOng);
+        if (entities.isEmpty()){
+            throw new Exception("No slide found for that organization");
+        }
+        List<SlideResponseDto> dtos = new ArrayList<>();
+        for (Slide entity: entities) {
+            dtos.add(mapper.fullSlideToDto(entity));
+        }
+        return dtos;
+
+
+    }
 
     @Override
     @Transactional

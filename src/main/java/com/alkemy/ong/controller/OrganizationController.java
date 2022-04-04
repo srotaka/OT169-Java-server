@@ -1,7 +1,11 @@
 package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.OrganizationRequestDto;
+import com.alkemy.ong.dto.SlideResponseDto;
+import com.alkemy.ong.service.SlideService;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 
@@ -9,6 +13,8 @@ import com.alkemy.ong.dto.OrganizationResponseDto;
 import com.alkemy.ong.service.impl.OrganizationServiceImpl;
 
 import javax.validation.Valid;
+import java.util.ArrayList;
+import java.util.List;
 
 
 @RestController
@@ -19,6 +25,8 @@ public class OrganizationController {
 	
 	@Autowired
 	private OrganizationServiceImpl service;
+	@Autowired
+	private SlideService slideService;
 
 	@GetMapping("/public") 
 	public OrganizationResponseDto getPublicInfo() {
@@ -30,4 +38,16 @@ public class OrganizationController {
 		return service.postPublicInfo(organizationRequestDto);
 	}
 
+	@GetMapping("/public/Slides/{id}")
+	public ResponseEntity<List<SlideResponseDto>> slideList(@PathVariable String id){
+		List<SlideResponseDto> dots = new ArrayList<>();
+		try {
+			dots=slideService.slideForOng(id);
+
+		} catch (Exception e) {
+			ResponseEntity.status(HttpStatus.NOT_FOUND).build();;
+		}
+
+		return ResponseEntity.ok().body(dots);
+	}
 }

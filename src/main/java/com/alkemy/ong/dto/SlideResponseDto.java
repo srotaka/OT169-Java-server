@@ -14,5 +14,5 @@ public class SlideResponseDto {
 
     private String text;
 
-    private OrganizationResponseDto org;
+    private String org;
 }
