@@ -5,4 +5,6 @@ import com.alkemy.ong.dto.TestimonialDto;
 public interface TestimonialService {
 
      TestimonialDto save(TestimonialDto testimonialDto);
+
+    void delete(String id);
 }

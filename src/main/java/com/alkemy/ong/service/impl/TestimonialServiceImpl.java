@@ -6,7 +6,11 @@ import com.alkemy.ong.repository.TestimonialRepository;
 import com.alkemy.ong.service.TestimonialService;
 import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
+import org.springframework.web.server.ResponseStatusException;
+
+import java.util.Optional;
 
 @Service
 public class TestimonialServiceImpl implements TestimonialService {
@@ -26,4 +30,15 @@ public class TestimonialServiceImpl implements TestimonialService {
         return result;
     }
 
+    @Override
+    public void delete(String id) {
+        Optional<Testimonial> optional = testimonialRepository.findById(id);
+
+        if (optional.isPresent()) {
+            testimonialRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
+
+    }
 }
