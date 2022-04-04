@@ -16,18 +16,11 @@ public class UserController {
     @Autowired
     private UserService  userService;
 
-    @Autowired
-    private UserRepository userRepository;
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable  String id) {
-        if (userRepository.existsById(id)) {
-            userService.delete(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
-        } else{
-            return ResponseEntity.status(HttpStatus.NOT_FOUND).build();
-        }
-
+       userService.delete(id);
+       return ResponseEntity.status(HttpStatus.OK).build();
     }
 
     @PatchMapping("/{id}")
