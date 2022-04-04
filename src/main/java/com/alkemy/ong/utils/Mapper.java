@@ -97,6 +97,7 @@ public class Mapper {
 			dto.setOrg(slide.getOrganizationId().getName());
 
 			return dto;
+
 	}
 
 	public static CommentResponseDto mapToDto(Comment comment, CommentResponseDto dto) {
@@ -111,5 +112,22 @@ public class Mapper {
 		contactDto.setEmail(contact.getEmail());
 		contactDto.setMessage(contact.getMessage());
 		return contactDto;
+	}
+
+	public static TestimonialDto mapToDto(Testimonial testimonial, TestimonialDto testimonialDto){
+		testimonialDto.setId(testimonial.getId());
+		testimonialDto.setName(testimonial.getName());
+		testimonialDto.setImage(testimonial.getImage());
+		testimonialDto.setContent(testimonial.getContent());
+
+		return testimonialDto;
+	}
+
+	public static Testimonial mapFromDto(TestimonialDto testimonialDto, Testimonial testimonial){
+		testimonial.setName(testimonialDto.getName());
+		testimonial.setImage(testimonialDto.getImage());
+		testimonial.setContent(testimonialDto.getContent());
+
+		return testimonial;
 	}
 }
