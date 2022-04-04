@@ -33,4 +33,6 @@ public class Slide {
     @JoinColumn(name = "slide_organizationId")
     private Organization organizationId;
 
+    private String org;/*Parametro necesario para guardar solo el Id de la organización  asociada*/
+
 }
