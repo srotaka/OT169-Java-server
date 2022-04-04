@@ -8,6 +8,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import org.springframework.util.ReflectionUtils;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.lang.reflect.Field;
 import java.util.ArrayList;
@@ -61,7 +62,14 @@ public class UserServiceImpl implements UserService {
 
     @Override
     public void delete(String id) {
-        userRepository.deleteById(id);
+
+        Optional<User> optional = userRepository.findById(id);
+
+        if (optional.isPresent()) {
+            userRepository.deleteById(id);
+        } else {
+            throw new ResponseStatusException(HttpStatus.NOT_FOUND);
+        }
     }
 
     @Override
