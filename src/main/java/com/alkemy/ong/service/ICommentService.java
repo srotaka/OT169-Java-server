@@ -10,4 +10,7 @@ public interface ICommentService {
     List<CommentResponseDto> getAllComments();
 
     ResponseEntity<Void> addComment(CommentRequestDto commentRequestDto);
+
+    List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
+
 }

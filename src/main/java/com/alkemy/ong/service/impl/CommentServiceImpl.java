@@ -15,6 +15,7 @@ import org.springframework.data.domain.Sort;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -35,6 +36,9 @@ public class CommentServiceImpl implements ICommentService {
 
     @Autowired
     private CommentRepository commentRepository;
+
+    @Autowired
+    private NewsServiceImpl newsService;
 
     @Override
     public List<CommentResponseDto> getAllComments() {
@@ -59,4 +63,22 @@ public class CommentServiceImpl implements ICommentService {
 
         return ResponseEntity.ok().build();
     }
+
+    @Override
+    public List<CommentResponseDto> getAllCommetsNews(String idNews) throws Exception {
+        News entity = newsService.getOne(idNews);
+        if(entity == null){
+            throw new Exception("Id not found");
+        }
+        List<Comment> entities = commentRepository.findCommentsByNewsId(idNews);
+        if(entities.isEmpty()){
+            throw new Exception("Empty list");
+        }
+        List<CommentResponseDto> dtos = new ArrayList<>();
+        for (Comment comment : entities){
+            dtos.add(Mapper.mapToDto(comment,new CommentResponseDto()));
+        }
+        return dtos;
+    }
+
 }
