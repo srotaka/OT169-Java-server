@@ -1,10 +1,15 @@
 package com.alkemy.ong.service;
 
 import java.util.ArrayList;
+import java.util.LinkedHashMap;
 import java.util.List;
+import java.util.Map;
 import java.util.stream.Collectors;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
@@ -64,6 +69,42 @@ public class CategoryService {
 
 	public boolean existsById(String id){
 		return categoryRepository.existsById(id);
+	}
+
+	public Map<String, Object> getAllPages (Integer page) throws Exception {
+		Integer size = 10;
+		try {
+			List<List<LinkedHashMap>> categoriesList = new ArrayList<List<LinkedHashMap>>();
+
+			Pageable paging = PageRequest.of(page, size);
+			String url = "/categories/pages?page=";
+
+			Page<List<LinkedHashMap>> pagedCategories;
+			pagedCategories = categoryRepository.findPage(paging);
+
+			categoriesList = pagedCategories.getContent();
+			Map<String, Object> response = new LinkedHashMap<>();
+			response.put("Total Items", pagedCategories.getTotalElements());
+			response.put("Total Pages", pagedCategories.getTotalPages());
+			response.put("Current Page", pagedCategories.getNumber());
+
+			if (pagedCategories.getNumber() == pagedCategories.getTotalPages() - 1) {
+				response.put("Next Page", "This is the last page");
+			} else {
+				response.put("Next Page", url.concat(String.valueOf(pagedCategories.getNumber() + 1)));
+			}
+			if (pagedCategories.getNumber() == 0) {
+				response.put("Previous Page", "This is the first page");
+			} else {
+				response.put("Previous Page", url.concat(String.valueOf(pagedCategories.getNumber() - 1)));
+			}
+			response.put("Categories", categoriesList);
+
+			return response;
+
+		} catch (Exception e) {
+			throw new Exception("Faild to load pages");
+		}
 	}
 	
 }
