@@ -68,8 +68,8 @@ public class CommentServiceImpl implements ICommentService {
 
     @Override
     public ResponseEntity<Void> putComment(String id, CommentRequestDto commentRequestDto) {
-        Optional<User> optionalUser = optionalUser = userRepository.findById(commentRequestDto.getUser_id());//check if new user id exits
-        Optional<News> optionalNews = optionalNews = newsRepository.findById(commentRequestDto.getPost_id());//check if new news id exists
+        Optional<User> optionalUser = userRepository.findById(commentRequestDto.getUser_id());//check if new user id exits
+        Optional<News> optionalNews = newsRepository.findById(commentRequestDto.getPost_id());//check if new news id exists
         Optional<Comment> optionalComment = commentRepository.findById(id);//check if the comment exits
 
         if(optionalComment.isEmpty() || optionalUser.isEmpty() || optionalNews.isEmpty()) {
