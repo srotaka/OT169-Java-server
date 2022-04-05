@@ -84,6 +84,7 @@ public class CommentServiceImpl implements ICommentService {
         if(!(usuario.getEmail().equals(userEmail) && usuario.getPassword().equals(userPassword)) || !usuario.getRoleId().getName().equals("ADMIN") ){
             return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
         }
+        repository.deleteById(id);
         return ResponseEntity.ok().build();
     }
 }
