@@ -103,7 +103,7 @@ public class CategoryService {
 			return response;
 
 		} catch (Exception e) {
-			throw new Exception("Faild to load pages");
+			throw new Exception("Fail to load pages");
 		}
 	}
 	
