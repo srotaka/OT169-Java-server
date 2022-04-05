@@ -25,14 +25,18 @@ public class CommentController {
     }
 
     @PostMapping()
-    public ResponseEntity<Void> addComment(@Valid @RequestBody CommentRequestDto commentRequestDto) {
+    public ResponseEntity<Void> addComment(@Valid @RequestBody CommentRequestDto commentRequestDto){
         return service.addComment(commentRequestDto);
     }
 
-    @GetMapping("/{idNews}")
-    public ResponseEntity<?> getAllCommentsNews(String idNews) {
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> putComment(@PathVariable String id, @RequestBody @Valid CommentRequestDto commentRequestDto){
+        return service.putComment(id,commentRequestDto);
+    }
+    @GetMapping(" /posts/{id}/comments")
+    public ResponseEntity<?> getAllCommentsNews(String id) {
         try {
-            return ResponseEntity.status(OK).body(service.getAllCommetsNews(idNews));
+            return ResponseEntity.status(OK).body(service.getAllCommetsNews(id));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
