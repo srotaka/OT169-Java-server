@@ -8,7 +8,9 @@ import org.springframework.web.bind.annotation.*;
 import com.alkemy.ong.entity.Category;
 import com.alkemy.ong.service.CategoryService;
 
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/categories")
@@ -56,6 +58,16 @@ public class CategoriesController {
 		}
 		// If it doesn't exists, then I return a 500 error code
 		return new ResponseEntity<Category>(HttpStatus.NOT_FOUND);
+	}
+	@GetMapping("/pages")
+	public ResponseEntity<Map<String, Object>> getAllPage( @RequestParam(defaultValue = "0") int page) {
+		Map<String, Object> cate = new HashMap<>();
+		try {
+			cate = categoryService.getAllPages(page);
+			return new ResponseEntity<>(cate, HttpStatus.OK);
+		} catch (Exception e) {
+			return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+		}
 	}
 
 }
