@@ -27,4 +27,9 @@ public class CommentController {
     public ResponseEntity<Void> addComment(@Valid @RequestBody CommentRequestDto commentRequestDto){
         return service.addComment(commentRequestDto);
     }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void>delete(@PathVariable String id){
+        return service.delete(id);
+    }
 }

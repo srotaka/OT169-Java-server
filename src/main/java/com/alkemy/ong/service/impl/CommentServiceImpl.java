@@ -12,9 +12,14 @@ import com.alkemy.ong.service.ICommentService;
 import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Sort;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 
+import java.security.Principal;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -33,8 +38,6 @@ public class CommentServiceImpl implements ICommentService {
     @Autowired
     private NewsRepository newsRepository;
 
-    @Autowired
-    private CommentRepository commentRepository;
 
     @Override
     public List<CommentResponseDto> getAllComments() {
@@ -55,8 +58,33 @@ public class CommentServiceImpl implements ICommentService {
             return ResponseEntity.notFound().build(); //return 404 if the given post does not exist
         }
 
-        commentRepository.save(new Mapper().mapFromDto(commentRequestDto,new Comment(),optionalUser.get(),optionalNews.get()));
+        repository.save(new Mapper().mapFromDto(commentRequestDto,new Comment(),optionalUser.get(),optionalNews.get()));
 
+        return ResponseEntity.ok().build();
+    }
+
+    @Override
+    public ResponseEntity<Void> delete(String id){
+        if(!repository.existsById(id)){
+            return ResponseEntity.notFound().build();//Valida si existe el comentario
+        }
+        Optional<Comment> comment  = repository.findById(id);
+        User usuario = comment.get().getUser_id();//Usuario que realizo el comentario
+
+        Object principal = SecurityContextHolder.getContext().getAuthentication().getPrincipal();
+        UserDetails userDetails = null;
+        if (principal instanceof UserDetails) {
+            userDetails = (UserDetails) principal;
+        }
+        String userEmail = userDetails.getUsername();
+        String userPassword = userDetails.getPassword();
+
+        if(!(usuario.getEmail().equals(userEmail) && usuario.getPassword().equals(userPassword))){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
+        if(!usuario.getRoleId().getName().equals("ADMIN")){
+            return ResponseEntity.status(HttpStatus.FORBIDDEN).build();
+        }
         return ResponseEntity.ok().build();
     }
 }
