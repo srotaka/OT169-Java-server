@@ -27,4 +27,9 @@ public class CommentController {
     public ResponseEntity<Void> addComment(@Valid @RequestBody CommentRequestDto commentRequestDto){
         return service.addComment(commentRequestDto);
     }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<Void> putComment(@PathVariable String id, @RequestBody @Valid CommentRequestDto commentRequestDto){
+        return service.putComment(id,commentRequestDto);
+    }
 }
