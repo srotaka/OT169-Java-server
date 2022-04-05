@@ -14,4 +14,6 @@ public interface ICommentService {
     ResponseEntity<Void> addComment(CommentRequestDto commentRequestDto);
 
     ResponseEntity<Void> putComment(@PathVariable String id, @RequestBody CommentRequestDto commentRequestDto);
+
+    List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
 }

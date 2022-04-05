@@ -73,4 +73,13 @@ public class NewsServiceImpl implements NewsService {
 
         }
     }
+
+    @Override
+    public News getOne(String id) throws Exception {
+        Optional<News> entity = newsRepository.findById(id);
+        if(!entity.isPresent()){
+            throw new Exception("Id news not found");
+        }
+        return entity.get();
+    }
 }

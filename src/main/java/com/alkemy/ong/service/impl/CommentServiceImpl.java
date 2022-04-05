@@ -18,6 +18,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -41,6 +42,9 @@ public class CommentServiceImpl implements ICommentService {
 
     @Autowired
     private UserService userService;
+
+    @Autowired
+    private NewsServiceImpl newsService;
 
     @Override
     public List<CommentResponseDto> getAllComments() {
@@ -80,4 +84,21 @@ public class CommentServiceImpl implements ICommentService {
         commentRepository.save(new Mapper().mapFromDto(commentRequestDto,optionalComment.get(),optionalUser.get(),optionalNews.get()));
         return ResponseEntity.status(HttpStatus.OK).build();
         }
+
+    @Override
+    public List<CommentResponseDto> getAllCommetsNews(String idNews) throws Exception {
+        News entity = newsService.getOne(idNews);
+        if(entity == null){
+            throw new Exception("Id not found");
+        }
+        List<Comment> entities = commentRepository.findCommentsByNewsId(idNews);
+        if(entities.isEmpty()){
+            throw new Exception("Empty list");
+        }
+        List<CommentResponseDto> dtos = new ArrayList<>();
+        for (Comment comment : entities){
+            dtos.add(Mapper.mapToDto(comment,new CommentResponseDto()));
+        }
+        return dtos;
+    }
 }
