@@ -22,11 +22,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-<<<<<<< HEAD
+
 import java.util.ArrayList;
-=======
+
 import java.security.Principal;
->>>>>>> ticket 78
+
 import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
@@ -103,14 +103,14 @@ public class CommentServiceImpl implements ICommentService {
     public ResponseEntity<Void> putComment(String id, CommentRequestDto commentRequestDto) {
         Optional<User> optionalUser = userRepository.findById(commentRequestDto.getUser_id());//check if new user id exits
         Optional<News> optionalNews = newsRepository.findById(commentRequestDto.getPost_id());//check if new news id exists
-        Optional<Comment> optionalComment = commentRepository.findById(id);//check if the comment exits
+        Optional<Comment> optionalComment = repository.findById(id);//check if the comment exits
 
         if(optionalComment.isEmpty() || optionalUser.isEmpty() || optionalNews.isEmpty()) {
             return ResponseEntity.status(HttpStatus.NOT_FOUND).build();//return 404 if the given id comment,id news or id user does not exist
         }
 
         userService.isUserAllowed(optionalComment.get().getUser_id().getId()); //return 403 if the user is not the one who wrote the comment or authenticated user has no admin role
-        commentRepository.save(new Mapper().mapFromDto(commentRequestDto,optionalComment.get(),optionalUser.get(),optionalNews.get()));
+        repository.save(new Mapper().mapFromDto(commentRequestDto,optionalComment.get(),optionalUser.get(),optionalNews.get()));
         return ResponseEntity.status(HttpStatus.OK).build();
         }
 
@@ -120,7 +120,7 @@ public class CommentServiceImpl implements ICommentService {
         if(entity == null){
             throw new Exception("Id not found");
         }
-        List<Comment> entities = commentRepository.findCommentsByNewsId(idNews);
+        List<Comment> entities = repository.findCommentsByNewsId(idNews);
         if(entities.isEmpty()){
             throw new Exception("Empty list");
         }
