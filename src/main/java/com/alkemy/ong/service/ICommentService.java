@@ -13,7 +13,12 @@ public interface ICommentService {
 
     ResponseEntity<Void> addComment(CommentRequestDto commentRequestDto);
 
+<<<<<<< HEAD
     ResponseEntity<Void> putComment(@PathVariable String id, @RequestBody CommentRequestDto commentRequestDto);
 
     List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
+=======
+    public ResponseEntity<Void> delete(String id);
+
+>>>>>>> ticket 78
 }

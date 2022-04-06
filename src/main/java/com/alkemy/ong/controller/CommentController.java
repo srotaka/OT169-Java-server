@@ -29,6 +29,7 @@ public class CommentController {
         return service.addComment(commentRequestDto);
     }
 
+<<<<<<< HEAD
     @PutMapping("/{id}")
     public ResponseEntity<Void> putComment(@PathVariable String id, @RequestBody @Valid CommentRequestDto commentRequestDto){
         return service.putComment(id,commentRequestDto);
@@ -41,5 +42,10 @@ public class CommentController {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }
 
+=======
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void>delete(@PathVariable String id){
+        return service.delete(id);
+>>>>>>> ticket 78
     }
 }
