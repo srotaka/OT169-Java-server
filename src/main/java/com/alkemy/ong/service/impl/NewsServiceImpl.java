@@ -8,11 +8,15 @@ import com.alkemy.ong.utils.Mapper;
 import com.alkemy.ong.utils.NewsMapper;
 import com.amazonaws.services.simplesystemsmanagement.model.ParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import javax.persistence.criteria.CriteriaBuilder;
+import java.util.*;
 
 @Service
 public class NewsServiceImpl implements NewsService {
@@ -82,4 +86,41 @@ public class NewsServiceImpl implements NewsService {
         }
         return entity.get();
     }
+
+    @Override
+    public Map<String, Object> getAllPages(Integer page) throws Exception{
+        Integer size = 10;
+        try {
+            List<List<LinkedHashMap>> newsList = new ArrayList<List<LinkedHashMap>>();
+            Pageable paging = PageRequest.of(page,size);
+            String url = "/news/pages?page=";
+
+            Page<List<LinkedHashMap>> pagedNews;
+            pagedNews = newsRepository.findPage(paging);
+            newsList = pagedNews.getContent();
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("Total Items", pagedNews.getTotalElements());
+            response.put("Total Pages", pagedNews.getTotalPages());
+            response.put("Current Page", pagedNews.getNumber());
+
+            if (pagedNews.getNumber() == pagedNews.getTotalPages() - 1) {
+                response.put("Next Page", "This is the last page");
+            } else {
+                response.put("Next Page", url.concat(String.valueOf(pagedNews.getNumber() + 1)));
+            }
+            if (pagedNews.getNumber() == 0) {
+                response.put("Previous Page", "This is the first page");
+            } else {
+                response.put("Previous Page", url.concat(String.valueOf(pagedNews.getNumber() - 1)));
+            }
+            response.put("News", newsList);
+
+            return response;
+
+        } catch (Exception e) {
+            throw new Exception("Fail to load pages");
+        }
+        }
+
+
 }
