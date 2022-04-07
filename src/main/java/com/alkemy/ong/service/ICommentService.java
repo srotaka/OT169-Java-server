@@ -11,6 +11,10 @@ public interface ICommentService {
 
     ResponseEntity<Void> addComment(CommentRequestDto commentRequestDto);
 
-    public ResponseEntity<Void> delete(String id);
+    ResponseEntity<Void> delete(String id);
+
+    ResponseEntity<Void> putComment(String id,CommentRequestDto commentRequestDto);
+
+    List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
 
 }

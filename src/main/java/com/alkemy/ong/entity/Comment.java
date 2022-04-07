@@ -35,7 +35,7 @@ public class Comment {
 
     @ManyToOne(fetch = FetchType.EAGER ,cascade = {CascadeType.PERSIST,CascadeType.MERGE,CascadeType.REFRESH})
     @JoinColumn(name = "news_id",nullable = false,foreignKey=@ForeignKey(name = "FK_news"))
-    private News news_id;
+    private News newsId;
 
     private Timestamp timestamp = Timestamp.from(Instant.now());
 

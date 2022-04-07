@@ -23,10 +23,8 @@ public interface CategoryRepository extends JpaRepository<Category, String> { //
 	@Query("SELECT a.name FROM Category a")
 	public List<Category> getNamesFromAll();
 	
-	@Query("SELECT a FROM Category a WHERE id = :id")
+	@Query(value = "SELECT a FROM Category a WHERE id = :id",nativeQuery = true)
 	public List<CategoryDTO> getDTOById(@Param("id")String id);
-
-	Page<Category> findAll(Pageable pageable);
 
 	@Query(value="SELECT id, name, description, image from Categories",nativeQuery=true)
 	Page<List<LinkedHashMap>> findPage(Pageable pageable);
