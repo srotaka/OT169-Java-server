@@ -1,12 +1,18 @@
 package com.alkemy.ong.service;
 
+import com.alkemy.ong.dto.MemberDto;
+import com.alkemy.ong.dto.MembersResponseDto;
+import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.stereotype.Service;
 import com.alkemy.ong.entity.Member;
 import com.alkemy.ong.repository.MemberRepository;
 import java.util.*;
+import java.util.stream.Collectors;
 
 @Service
 public class MemberService {
@@ -25,17 +31,40 @@ public class MemberService {
 		return new ResponseEntity<Member>(HttpStatus.OK);
 	}
 	//List all
-	public ResponseEntity<?> getAllMembers(){
-		List<Member> memberList = memberRepository.findAll();
-		Map<String, String> memberInfoMap = new LinkedHashMap<>();
+	public ResponseEntity<?> getAllMembers(Integer page) {
 
-		if(memberList.size() < 0 || memberList.isEmpty()){
+		MembersResponseDto response = new MembersResponseDto();
+
+		Page<Member> membersPage = memberRepository.findAll(PageRequest.of(page, 10));
+
+		if(membersPage.getTotalPages() < 0 || membersPage.isEmpty()){
 			return ResponseEntity.noContent().build();
 		}
-		for (Member member: memberList) {
-			memberInfoMap.put(member.getName(), member.getDescription());
+
+		List<MemberDto> members = membersPage.stream()
+													 .map(member -> Mapper.mapToDto(member, new MemberDto()))
+													 .collect(Collectors.toList());
+
+
+		Map<String, String> pages = new LinkedHashMap<>();
+		String url = "/members?page=";
+
+
+		if(membersPage.isFirst()) {
+			pages.put("previous", "This is the first page.");
+			pages.put("next", url.concat(String.valueOf(membersPage.getNumber()+1)));
+		} else if(membersPage.isLast()) {
+			pages.put("previous", url.concat(String.valueOf(membersPage.getNumber()-1)));
+			pages.put("next", "This is the last page.");
+		} else {
+			pages.put("previous", url.concat(String.valueOf(membersPage.getNumber()-1)));
+			pages.put("next", url.concat(String.valueOf(membersPage.getNumber()+1)));
 		}
-		return ResponseEntity.ok(memberInfoMap);
+
+		response.setPages(pages);
+		response.setMembers(members);
+
+		return ResponseEntity.ok().body(response);
 	}
 
 	//Exists

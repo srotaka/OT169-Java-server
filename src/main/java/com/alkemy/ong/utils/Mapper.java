@@ -82,7 +82,7 @@ public class Mapper {
 				user.getPhoto());
 	}
 
-	public static SlideDto mapToDto(Slide slide, SlideDto slideDto){
+	public static SlideDto mapToDto(Slide slide, SlideDto slideDto) {
 		slideDto.setImageUrl(slide.getImageUrl());
 		slideDto.setOrder(slide.getOrder());
 		return slideDto;
@@ -109,7 +109,7 @@ public class Mapper {
 
 	public Comment mapFromDto(CommentRequestDto commentRequestDto, Comment comment,User user, News news){
 		comment.setBody(commentRequestDto.getBody());
-		comment.setNews_id(news);
+		comment.setNewsId(news);
 		comment.setUser_id(user);
 		return comment;
 	}
@@ -146,4 +146,12 @@ public class Mapper {
 		testimonial.setContent(testimonialDto.getContent());
 		return testimonial;
 	}
+
+	public static MemberDto mapToDto(Member member, MemberDto dto) {
+		dto.setId(member.getId());
+		dto.setName(member.getName());
+		dto.setDescription(member.getDescription());
+		return dto;
+	}
+
 }

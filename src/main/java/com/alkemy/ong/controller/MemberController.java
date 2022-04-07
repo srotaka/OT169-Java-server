@@ -28,9 +28,9 @@ public class MemberController {
 	}
 
 	@GetMapping() // OT169-68
-	public ResponseEntity<?> getAllUsers(){
+	public ResponseEntity<?> getAllUsers(@RequestParam(required = true) Integer page){
 		try{
-			return ResponseEntity.status(OK).body(memberService.getAllMembers());
+			return ResponseEntity.status(OK).body(memberService.getAllMembers(page));
 		}catch (Exception e){
 			return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
 		}
