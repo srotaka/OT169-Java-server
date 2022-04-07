@@ -44,7 +44,7 @@ public class CommentController {
     @GetMapping("/posts/{id}/comments")
     public ResponseEntity<?> getAllCommentsNews(@PathVariable String id) {
         try {
-            return ResponseEntity.status(OK).body(service.getAllCommetsNews(id));
+            return ResponseEntity.status(OK).body(service.getAllCommentsNews(id));
         } catch (Exception e) {
             return ResponseEntity.status(NOT_FOUND).body(e.getMessage());
         }

@@ -15,6 +15,6 @@ public interface ICommentService {
 
     ResponseEntity<Void> putComment(String id,CommentRequestDto commentRequestDto);
 
-    List<CommentResponseDto> getAllCommetsNews(String idNews)throws Exception;
+    List<CommentResponseDto> getAllCommentsNews(String idNews)throws Exception;
 
 }

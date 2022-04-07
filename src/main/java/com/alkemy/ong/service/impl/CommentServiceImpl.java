@@ -101,7 +101,7 @@ public class CommentServiceImpl implements ICommentService {
     }
 
     @Override
-    public List<CommentResponseDto> getAllCommetsNews(String idNews) throws Exception {
+    public List<CommentResponseDto> getAllCommentsNews(String idNews) throws Exception {
         News entity = newsService.getOne(idNews);
         if(entity == null){
             throw new Exception("Id not found");

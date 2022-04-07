@@ -24,7 +24,7 @@ public class MemberController {
 	}
 
 	@DeleteMapping("/{id}")//OT169-70
-	public ResponseEntity<Member> deleteMember(@RequestParam(name="id") String id){
+	public ResponseEntity<Member> deleteMember(@PathVariable String id){
 		if(memberService.existsById(id)) {//If the member exists
 			memberService.delete( memberService.getById(id) );//I delete the member
 			return new ResponseEntity<Member>(HttpStatus.OK);//I send an OK(200) code
