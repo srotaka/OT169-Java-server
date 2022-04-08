@@ -18,6 +18,20 @@ public class MemberController {
 	@Autowired
 	private MemberService memberService;
 
+	@PostMapping("/") // OT169-69
+	public ResponseEntity<Member> createMember(@RequestBody Member member) { // I get the entity
+		return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK); // if it doesn't had errors,
+	}
+
+	@DeleteMapping("/{id}")//OT169-70
+	public ResponseEntity<Member> deleteMember(@PathVariable String id){
+		if(memberService.existsById(id)) {//If the member exists
+			memberService.delete( memberService.getById(id) );//I delete the member
+			return new ResponseEntity<Member>(HttpStatus.OK);//I send an OK(200) code
+		}
+		return new ResponseEntity<Member>(HttpStatus.INTERNAL_SERVER_ERROR);//If the member doesn't exists, throws 500 error code
+	}
+
 	@PutMapping("/{id}")//OT169-71
 	public ResponseEntity<Member> updateMember(@RequestParam(name="id") String id,@RequestBody Member member){
 		if(memberService.existsById(id)) {//If the member exists

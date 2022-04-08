@@ -42,4 +42,8 @@ public class MemberService {
 	public boolean existsById(String id) {
 		return memberRepository.existsById(id);
 	}
+
+	public Member getById(String id){
+		return memberRepository.getById(id);
+	}
 }
