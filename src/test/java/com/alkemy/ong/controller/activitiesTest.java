@@ -13,7 +13,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -35,7 +34,6 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
-@TestPropertySource(locations = "")
 class activitiesTest {
 
     @Autowired
@@ -48,30 +46,37 @@ class activitiesTest {
     @MockBean
     private ActivityRepository repository;
 
-    ObjectMapper mapper = new ObjectMapper();
-
+    private final ObjectMapper mapper = new ObjectMapper();
+    private final ActivityDto activityDtoToSave = new ActivityDto();
+    private final Activity activityInTheDb = new Activity();
     @BeforeEach
     public void setup() {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                                  .apply(springSecurity())
                                  .build();
-    }
 
+        activityDtoToSave.setName("New Activity");
+        activityDtoToSave.setContent("Activity Content");
+        activityDtoToSave.setImage("image.jpg");
+
+        activityInTheDb.setId(String.valueOf(UUID.randomUUID()));
+        activityInTheDb.setName("My Activity");
+        activityInTheDb.setContent("Activity Content");
+        activityInTheDb.setImage("img.jpg");
+        activityInTheDb.setTimestamp(Timestamp.from(Instant.now()));
+        activityInTheDb.setSoftDelete(false);
+
+    }
 
     @Test
     @DisplayName("Add activity method should save new activity and return 200 ok if the user has Role 'ADMIN'")
     void addActivity__ShouldSaveActivityAndReturnOkIfUserHasRoleAdmin() throws Exception {
 
-        ActivityDto activityToSave = new ActivityDto();
-        activityToSave.setName("Activity Name");
-        activityToSave.setContent("Activity Content");
-        activityToSave.setImage("image.jpg");
-
-        when(service.addActivity(activityToSave)).thenReturn(activityToSave);
+        when(service.addActivity(activityDtoToSave)).thenReturn(activityDtoToSave);
 
         mockMvc.perform(post("/activities")
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(activityToSave))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                         .andExpect(status().isOk());
@@ -81,15 +86,10 @@ class activitiesTest {
     @DisplayName("Add activity method should return 403 Forbidden if the user does not have Role 'ADMIN'")
     void addActivity__ShouldReturnForbiddenIfUserHasRoleUser() throws Exception {
 
-        ActivityDto activityToSave = new ActivityDto();
-        activityToSave.setName("Activity Name");
-        activityToSave.setContent("Activity Content");
-        activityToSave.setImage("image.jpg");
-
-        when(service.addActivity(activityToSave)).thenReturn(activityToSave);
+        when(service.addActivity(activityDtoToSave)).thenReturn(activityDtoToSave);
         mockMvc.perform(post("/activities")
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(activityToSave))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("user").roles("USER"))
                         .with(csrf()))
                         .andExpect(status().isForbidden());
@@ -99,29 +99,23 @@ class activitiesTest {
     @DisplayName("Add activity method should return 401 Unauthorized if the user is not Authenticated")
     void addActivity__ShouldReturnUnauthorizedIfUserIsNotAuthenticated() throws Exception {
 
-//        ActivityDto activityToSave = new ActivityDto();
-//        activityToSave.setName("Activity Name");
-//        activityToSave.setContent("Activity Content");
-//        activityToSave.setImage("image.jpg");
-//
-//        when(service.addActivity(activityToSave)).thenReturn(activityToSave);
-//        mockMvc.perform(post("/activities")
-//                        .contentType(APPLICATION_JSON)
-//                        .content(mapper.writeValueAsString(activityToSave))
-//                        .with(csrf()))
-//                .andExpect(status().isForbidden());
+        when(service.addActivity(activityDtoToSave)).thenReturn(activityDtoToSave);
+        mockMvc.perform(post("/activities")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(activityDtoToSave))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
     @DisplayName("Add activity method should return 400 Bad Request if request is not valid")
     void addActivity__ShouldReturnBadRequestIfRequestIsNotValid() throws Exception {
 
-        ActivityDto activityToSave = new ActivityDto();
-
-        when(service.addActivity(activityToSave)).thenReturn(activityToSave);
+        activityDtoToSave.setName("");
+        when(service.addActivity(activityDtoToSave)).thenReturn(activityDtoToSave);
         mockMvc.perform(post("/activities")
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(activityToSave))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isBadRequest());
@@ -131,26 +125,21 @@ class activitiesTest {
     @DisplayName("Update activity method should update activity and return 200 ok if the user has Role 'ADMIN'")
     public void updateActivity__ShouldUpdateActivityAndReturnOkIfUserHasRoleAdmin() throws Exception {
 
-        String id = String.valueOf(UUID.randomUUID());
+        String id = activityInTheDb.getId();
         String url = String.format("/activities/%s", id);
-        Activity activity = new Activity(id, "My Activity", "Activity content", "img.jpg", Timestamp.from(Instant.now()), false);
 
-        ActivityDto dto = new ActivityDto();
-        dto.setName("Updated Activity Name");
-        dto.setContent("Activity content");
-        dto.setImage("img.jpg");
-
-        when(repository.findById(id)).thenReturn(Optional.of(activity));
-        when(service.updateActivity(id, dto)).thenReturn(Mapper.mapToDto(activity, dto));
+        when(repository.findById(id)).thenReturn(Optional.of(activityInTheDb));
+        when(service.updateActivity(id, activityDtoToSave)).thenReturn(Mapper.mapToDto(activityInTheDb, activityDtoToSave));
 
         mockMvc.perform(put(url)
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("admin").roles("ADMIN")))
                         .andExpect(status().isOk())
                         .andExpect(jsonPath("$").isNotEmpty())
                         .andExpect(jsonPath("$.id").value(id))
-                        .andExpect((jsonPath("$.name").value(dto.getName())));
+                        .andExpect((jsonPath("$.name").value(activityDtoToSave.getName())))
+                        .andExpect((jsonPath("$.name").value(activityInTheDb.getName())));
     }
 
     @Test
@@ -159,16 +148,11 @@ class activitiesTest {
 
         String url = String.format("/activities/%s", "1");
 
-        ActivityDto dto = new ActivityDto();
-        dto.setName("Updated Activity Name");
-        dto.setContent("Activity content");
-        dto.setImage("img.jpg");
-
-        when(service.updateActivity("1", dto)).thenThrow(new RuntimeException());
+        when(service.updateActivity("1", activityDtoToSave)).thenThrow(new RuntimeException());
 
         mockMvc.perform(put(url)
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("admin").roles("ADMIN")))
                         .andExpect(status().isNotFound());
     }
@@ -177,15 +161,15 @@ class activitiesTest {
     @DisplayName("Update activity method should return 400 Bad Request if the Request Body is invalid.")
     public void updateActivity__ShouldReturnBadRequestIfRequestIsNotValid() throws Exception {
 
-        String id = String.valueOf(UUID.randomUUID());
+        String id = activityInTheDb.getId();
         String url = String.format("/activities/%s", id);
-        ActivityDto dto = new ActivityDto();
+        activityDtoToSave.setName("");
 
-        when(service.updateActivity(id, dto)).thenReturn(dto);
+        when(service.updateActivity(id, activityDtoToSave)).thenReturn(activityDtoToSave);
 
         mockMvc.perform(put(url)
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("admin").roles("ADMIN")))
                 .andExpect(status().isBadRequest());
     }
@@ -194,18 +178,15 @@ class activitiesTest {
     @DisplayName("Update activity method should return 403 Forbidden if the user has Role 'USER'")
     public void updateActivity__ShouldReturnForbiddenIfUserHasRoleUser() throws Exception {
 
-        String id = String.valueOf(UUID.randomUUID());
+        String id = activityInTheDb.getId();
         String url = String.format("/activities/%s", id);
-        ActivityDto dto = new ActivityDto();
-        dto.setName("Updated Activity Name");
-        dto.setContent("Activity content");
-        dto.setImage("img.jpg");
 
-        when(service.updateActivity(id, dto)).thenReturn(dto);
+
+        when(service.updateActivity(id, activityDtoToSave)).thenReturn(activityDtoToSave);
 
         mockMvc.perform(put(url)
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(dto))
+                        .content(mapper.writeValueAsString(activityDtoToSave))
                         .with(user("user").roles("USER")))
                         .andExpect(status().isForbidden());
     }
