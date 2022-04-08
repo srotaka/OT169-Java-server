@@ -82,7 +82,7 @@ public class Mapper {
 				user.getPhoto());
 	}
 
-	public static SlideDto mapToDto(Slide slide, SlideDto slideDto) {
+	public static SlideDto mapToDto(Slide slide, SlideDto slideDto){
 		slideDto.setImageUrl(slide.getImageUrl());
 		slideDto.setOrder(slide.getOrder());
 		return slideDto;
@@ -109,7 +109,7 @@ public class Mapper {
 
 	public Comment mapFromDto(CommentRequestDto commentRequestDto, Comment comment,User user, News news){
 		comment.setBody(commentRequestDto.getBody());
-		comment.setNewsId(news);
+		comment.setNews_id(news);
 		comment.setUser_id(user);
 		return comment;
 	}
