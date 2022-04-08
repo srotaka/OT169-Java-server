@@ -10,7 +10,9 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.http.MediaType;
+import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
+import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
@@ -25,6 +27,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 @SpringBootTest
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
+@TestPropertySource(locations = "")
 class TestimonialControllerTest {
 
     @Autowired
@@ -37,17 +40,19 @@ class TestimonialControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     private final String URL = "/testimonials";
+
     TestimonialDto testimonialDto = new TestimonialDto ();
 
     @BeforeEach
     public void setup(){
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
-                .apply(springSecurity())
-                .build();
+                                .apply(springSecurity())
+                                .build();
     }
 
     @Test
-    @DisplayName("This test should save a new testimonial and return 201 Created if the user has role 'ADMIN'")
+    @DisplayName("Save Testimonial: Success (Code 201 Created) with role ADMIN")
+    @WithMockUser(roles = "ADMIN")
     void saveTestimonialSuccess() throws Exception {
         testimonialDto.setName("Testimonial Name");
         testimonialDto.setImage("http://aws.com/img01.jpg");
@@ -64,11 +69,45 @@ class TestimonialControllerTest {
                 .andExpect(jsonPath("$.image").value("http://aws.com/img01.jpg"))
                 .andExpect(jsonPath("$.content").value("New content text"))
                 .andDo(MockMvcResultHandlers.print());
+    }
+    @Test
+    @DisplayName("Fail Saving Testimonial due to incorrect role (Error 403 Forbidden)")
+    @WithMockUser(roles = "ADMIN")
+    void saveTestimonialNotAdmin() throws Exception {
+        testimonialDto.setName("Testimonial Name");
+        testimonialDto.setImage("http://aws.com/img01.jpg");
+        testimonialDto.setContent("New content text");
 
+        when(testimonialService.save(testimonialDto)).thenReturn(testimonialDto);
+        mockMvc.perform(post(URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialDto))
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden())
+                .andDo(MockMvcResultHandlers.print());
     }
 
     @Test
-    @DisplayName("This test should soft-delete a testimonial if the user has role 'ADMIN'")
+    @DisplayName("Fail Saving Testimonial due to incomplete fields (Error 400 Bad Request)")
+    void saveTestimonialWithEmptyFields() throws Exception {
+        testimonialDto.setName("");
+        testimonialDto.setImage("");
+        testimonialDto.setContent("New content text");
+
+        when(testimonialService.save(testimonialDto)).thenReturn(testimonialDto);
+        mockMvc.perform(post(URL)
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialDto))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+
+    @Test
+    @DisplayName("Delete Testimonial: Success (Code 200 OK)")
     void deleteTestimonialSuccess() throws Exception {
 
         testimonialService.delete("abc123");
@@ -81,8 +120,8 @@ class TestimonialControllerTest {
     }
 
     @Test
-    @DisplayName("This test should update a testimonial it the user has role 'ADMIN'")
-    void updateTestimonials() throws Exception {
+    @DisplayName("Update Testimonials: Success (Code 200 OK)")
+    void updateTestimonialsSuccess() throws Exception {
         testimonialDto.setId("abc123");
         testimonialDto.setName("Testimonial Name");
         testimonialDto.setImage("http://aws.com/img01.jpg");
