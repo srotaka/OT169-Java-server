@@ -109,7 +109,7 @@ public class Mapper {
 
 	public Comment mapFromDto(CommentRequestDto commentRequestDto, Comment comment,User user, News news){
 		comment.setBody(commentRequestDto.getBody());
-		comment.setNews_id(news);
+		comment.setNewsId(news);
 		comment.setUser_id(user);
 		return comment;
 	}
