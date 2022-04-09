@@ -1,15 +1,18 @@
 package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.TestimonialDto;
+
+import com.alkemy.ong.repository.TestimonialRepository;
 import com.alkemy.ong.service.impl.TestimonialServiceImpl;
+import com.amazonaws.services.applicationdiscovery.model.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.MediaType;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -17,7 +20,14 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import java.util.ArrayList;
+import java.util.List;
+
+import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertThrows;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
+import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -36,52 +46,66 @@ class TestimonialControllerTest {
     @MockBean
     TestimonialServiceImpl testimonialService;
 
+    @MockBean
+    TestimonialRepository testimonialRepository;
+
     private MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
 
     private final String URL = "/testimonials";
-
-    TestimonialDto testimonialDto = new TestimonialDto ();
+    TestimonialDto testimonialDto = new TestimonialDto();
+    List<TestimonialDto> testimonialList = new ArrayList<>();
 
     @BeforeEach
     public void setup(){
+
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                                 .apply(springSecurity())
                                 .build();
-    }
+        testimonialDto.setId("abc123");
+        testimonialDto.setName("Testimonial Name");
+        testimonialDto.setImage("http://aws.com/img01.jpg");
+        testimonialDto.setContent("Some content text");
+        testimonialList.add(testimonialDto);
 
+    }
+    /* ======================================
+        TESTS FOR SAVING A NEW TESTIMONIAL
+    =========================================*/
     @Test
     @DisplayName("Save Testimonial: Success (Code 201 Created) with role ADMIN")
     @WithMockUser(roles = "ADMIN")
-    void saveTestimonialSuccess() throws Exception {
-        testimonialDto.setName("Testimonial Name");
-        testimonialDto.setImage("http://aws.com/img01.jpg");
-        testimonialDto.setContent("New content text");
+    void saveTestimonial__Success() throws Exception {
+        TestimonialDto testimonialToSave = new TestimonialDto();
+        testimonialToSave.setName("New Testimonial Name");
+        testimonialToSave.setImage("http://aws.com/img02.jpg");
+        testimonialToSave.setContent("New content text");
 
-        when(testimonialService.save(testimonialDto)).thenReturn(testimonialDto);
+        when(testimonialService.save(testimonialToSave)).thenReturn(testimonialToSave);
         mockMvc.perform(post(URL)
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(mapper.writeValueAsString(testimonialDto))
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(testimonialToSave))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isCreated())
-                .andExpect(jsonPath("$.name").value("Testimonial Name"))
-                .andExpect(jsonPath("$.image").value("http://aws.com/img01.jpg"))
+                .andExpect(jsonPath("$.name").value("New Testimonial Name"))
+                .andExpect(jsonPath("$.image").value("http://aws.com/img02.jpg"))
                 .andExpect(jsonPath("$.content").value("New content text"))
                 .andDo(MockMvcResultHandlers.print());
     }
     @Test
     @DisplayName("Fail Saving Testimonial due to incorrect role (Error 403 Forbidden)")
     @WithMockUser(roles = "ADMIN")
-    void saveTestimonialNotAdmin() throws Exception {
-        testimonialDto.setName("Testimonial Name");
-        testimonialDto.setImage("http://aws.com/img01.jpg");
-        testimonialDto.setContent("New content text");
+    void saveTestimonial__FailBecauseUserIsNotAdmin() throws Exception {
+        TestimonialDto testimonialToSave = new TestimonialDto();
+        testimonialToSave.setName("New Testimonial Name");
+        testimonialToSave.setImage("http://aws.com/img02.jpg");
+        testimonialToSave.setContent("New content text");
 
-        when(testimonialService.save(testimonialDto)).thenReturn(testimonialDto);
+        when(testimonialService.save(testimonialToSave)).thenReturn(testimonialToSave);
         mockMvc.perform(post(URL)
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(testimonialDto))
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialToSave))
                         .with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden())
@@ -90,14 +114,130 @@ class TestimonialControllerTest {
 
     @Test
     @DisplayName("Fail Saving Testimonial due to incomplete fields (Error 400 Bad Request)")
-    void saveTestimonialWithEmptyFields() throws Exception {
+    @WithMockUser(roles = "ADMIN")
+    void saveTestimonial__FailBecauseOfEmptyFields() throws Exception {
+        TestimonialDto testimonialToSave = new TestimonialDto();
+        testimonialToSave.setName("");
+        testimonialToSave.setImage("");
+        testimonialToSave.setContent("");
+
+        mockMvc.perform(post(URL)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialToSave))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    /* ======================================
+        TESTS FOR DELETING A TESTIMONIAL
+    =========================================*/
+    @Test
+    @DisplayName("Delete Testimonial: Success (Code 200 OK)")
+    @WithMockUser(roles = "ADMIN")
+    void deleteTestimonial__Success() throws Exception {
+
+        testimonialService.delete("abc123");
+        mockMvc.perform(delete(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialDto))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andDo(MockMvcResultHandlers.print());
+
+    }
+
+    @Test
+    @DisplayName("Fail Deleting Testimonial due to incorrect user role (Error 403 Forbidden)")
+    @WithMockUser(roles = "ADMIN")
+    void deleteTestimonial__FailBecauseUserIsNotAdmin() throws Exception {
+        testimonialService.delete("abc123");
+        mockMvc.perform(delete(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("Fail Deleting Testimonial due to non-existent ID (Error 404 Not Found)")
+    @WithMockUser(roles = "ADMIN")
+    void deleteTestimonial__FailBecauseIdNotFound() throws Exception {
+        String notExistingId = "xyz789";
+      /*  testimonialDto.setId("abc123");
+        testimonialDto.setName("New Testimonial Name");
+        testimonialDto.setImage("http://aws.com/new-img01.jpg");
+        testimonialDto.setContent("New content text");*/
+
+        when(testimonialRepository.findById("xyz789")).thenThrow(new ResourceNotFoundException("Id not found"));
+
+        mockMvc.perform(delete(URL + "/xyz789"))
+                .andExpect(status().isNotFound());
+
+        ResourceNotFoundException exceptionThrows = assertThrows(ResourceNotFoundException.class,
+                () -> {
+                    testimonialRepository.findById("xyz789");
+                }, "No Testimonial found with ID xyz789");
+
+    }
+
+
+    /* ======================================
+        TESTS FOR UPDATING A TESTIMONIAL
+    =========================================*/
+    @Test
+    @DisplayName("Update Testimonials: Success (Code 200 OK)")
+    void updateTestimonials__Success() throws Exception {
+
+        testimonialDto.setName("New Testimonial Name");
+        testimonialDto.setImage("http://aws.com/new-img01.jpg");
+        testimonialDto.setContent("New content text");
+
+        when(testimonialService.updateTestimonials(testimonialDto, "abc123")).thenReturn(testimonialDto);
+        mockMvc.perform(put(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialDto))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$.name").value("New Testimonial Name"))
+                .andExpect(jsonPath("$.image").value("http://aws.com/new-img01.jpg"))
+                .andExpect(jsonPath("$.content").value("New content text"))
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("Fail Updating Testimonial due to incorrect role (Error 403 Forbidden)")
+    @WithMockUser(roles = "ADMIN")
+    void updateTestimonial__FailBecauseUserIsNotAdmin() throws Exception {
+
+        testimonialDto.setName("New Testimonial Name");
+        testimonialDto.setImage("http://aws.com/new-img01.jpg");
+        testimonialDto.setContent("New content text");
+
+        when(testimonialService.save(testimonialDto)).thenReturn(testimonialDto);
+        mockMvc.perform(put(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialDto))
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden())
+                .andDo(MockMvcResultHandlers.print());
+    }
+
+    @Test
+    @DisplayName("Fail Updating Testimonial due to incomplete fields (Error 400 Bad Request)")
+    @WithMockUser(roles = "ADMIN")
+    void updateTestimonial__FailBecauseOfEmptyFields() throws Exception {
         testimonialDto.setName("");
         testimonialDto.setImage("");
         testimonialDto.setContent("New content text");
 
-        when(testimonialService.save(testimonialDto)).thenReturn(testimonialDto);
-        mockMvc.perform(post(URL)
-                        .contentType(MediaType.APPLICATION_JSON)
+        mockMvc.perform(put(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(testimonialDto))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
@@ -105,39 +245,22 @@ class TestimonialControllerTest {
                 .andDo(MockMvcResultHandlers.print());
     }
 
-
     @Test
-    @DisplayName("Delete Testimonial: Success (Code 200 OK)")
-    void deleteTestimonialSuccess() throws Exception {
-
-        testimonialService.delete("abc123");
-        mockMvc.perform(delete(URL+"/{id}", "abc123")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .with(user("admin").roles("ADMIN"))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print());
-    }
-
-    @Test
-    @DisplayName("Update Testimonials: Success (Code 200 OK)")
-    void updateTestimonialsSuccess() throws Exception {
-        testimonialDto.setId("abc123");
-        testimonialDto.setName("Testimonial Name");
-        testimonialDto.setImage("http://aws.com/img01.jpg");
+    @DisplayName("Fail Updating Testimonial due to non-existent ID (Error 404 Not Found)")
+    @WithMockUser(roles = "ADMIN")
+    void updateTestimonial__FailBecauseIdNotFound() throws Exception {
+        testimonialDto.setName("New Testimonial Name");
+        testimonialDto.setImage("http://aws.com/new-img01.jpg");
         testimonialDto.setContent("New content text");
+        when(testimonialService.updateTestimonials(testimonialDto, "xyz789")).thenThrow(new RuntimeException());
 
-        when(testimonialService.updateTestimonials(testimonialDto, "abc123")).thenReturn(testimonialDto);
-        mockMvc.perform(put(URL+"/{id}", "abc123")
-                        .contentType(MediaType.APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(testimonialDto))
-                        .with(user("admin").roles("ADMIN"))
-                        .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.name").value("Testimonial Name"))
-                .andExpect(jsonPath("$.image").value("http://aws.com/img01.jpg"))
-                .andExpect(jsonPath("$.content").value("New content text"))
+        mockMvc.perform(put(URL+"/xyz789")
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(testimonialDto))
+                .with(user("admin").roles("ADMIN")))
+                .andExpect(status().isNotFound())
                 .andDo(MockMvcResultHandlers.print());
 
     }
+
 }
