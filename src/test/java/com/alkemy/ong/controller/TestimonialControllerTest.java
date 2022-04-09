@@ -1,18 +1,16 @@
 package com.alkemy.ong.controller;
 
 import com.alkemy.ong.dto.TestimonialDto;
-
 import com.alkemy.ong.repository.TestimonialRepository;
 import com.alkemy.ong.service.impl.TestimonialServiceImpl;
-import com.amazonaws.services.applicationdiscovery.model.ResourceNotFoundException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.stubbing.OngoingStubbing;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -20,19 +18,17 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.server.ResponseStatusException;
 import java.util.ArrayList;
 import java.util.List;
-
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertThrows;
-import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.when;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
+
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.*;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
 @SpringBootTest
@@ -48,6 +44,8 @@ class TestimonialControllerTest {
 
     @MockBean
     TestimonialRepository testimonialRepository;
+    @Autowired
+    TestimonialController testimonialController;
 
     private MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
@@ -67,7 +65,6 @@ class TestimonialControllerTest {
         testimonialDto.setImage("http://aws.com/img01.jpg");
         testimonialDto.setContent("Some content text");
         testimonialList.add(testimonialDto);
-
     }
     /* ======================================
         TESTS FOR SAVING A NEW TESTIMONIAL
@@ -77,6 +74,7 @@ class TestimonialControllerTest {
     @WithMockUser(roles = "ADMIN")
     void saveTestimonial__Success() throws Exception {
         TestimonialDto testimonialToSave = new TestimonialDto();
+        testimonialToSave.setId("def456");
         testimonialToSave.setName("New Testimonial Name");
         testimonialToSave.setImage("http://aws.com/img02.jpg");
         testimonialToSave.setContent("New content text");
@@ -90,8 +88,7 @@ class TestimonialControllerTest {
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("New Testimonial Name"))
                 .andExpect(jsonPath("$.image").value("http://aws.com/img02.jpg"))
-                .andExpect(jsonPath("$.content").value("New content text"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(jsonPath("$.content").value("New content text"));
     }
     @Test
     @DisplayName("Fail Saving Testimonial due to incorrect role (Error 403 Forbidden)")
@@ -108,8 +105,7 @@ class TestimonialControllerTest {
                         .content(mapper.writeValueAsString(testimonialToSave))
                         .with(user("user").roles("USER"))
                         .with(csrf()))
-                .andExpect(status().isForbidden())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -126,8 +122,7 @@ class TestimonialControllerTest {
                         .content(mapper.writeValueAsString(testimonialToSave))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
-                .andExpect(status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isBadRequest());
     }
 
     /* ======================================
@@ -144,8 +139,7 @@ class TestimonialControllerTest {
                         .content(mapper.writeValueAsString(testimonialDto))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
-                .andExpect(status().isOk())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isOk());
 
     }
 
@@ -158,8 +152,7 @@ class TestimonialControllerTest {
                         .contentType(APPLICATION_JSON)
                         .with(user("user").roles("USER"))
                         .with(csrf()))
-                .andExpect(status().isForbidden())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -167,23 +160,14 @@ class TestimonialControllerTest {
     @WithMockUser(roles = "ADMIN")
     void deleteTestimonial__FailBecauseIdNotFound() throws Exception {
         String notExistingId = "xyz789";
-      /*  testimonialDto.setId("abc123");
-        testimonialDto.setName("New Testimonial Name");
-        testimonialDto.setImage("http://aws.com/new-img01.jpg");
-        testimonialDto.setContent("New content text");*/
+        when(testimonialController.delete(notExistingId)).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
 
-        when(testimonialRepository.findById("xyz789")).thenThrow(new ResourceNotFoundException("Id not found"));
-
-        mockMvc.perform(delete(URL + "/xyz789"))
+        mockMvc.perform(delete(URL+"/{id}",notExistingId)
+                        .contentType(APPLICATION_JSON)
+                .with(user("admin").roles("ADMIN"))
+                .with(csrf()))
                 .andExpect(status().isNotFound());
-
-        ResourceNotFoundException exceptionThrows = assertThrows(ResourceNotFoundException.class,
-                () -> {
-                    testimonialRepository.findById("xyz789");
-                }, "No Testimonial found with ID xyz789");
-
     }
-
 
     /* ======================================
         TESTS FOR UPDATING A TESTIMONIAL
@@ -205,8 +189,7 @@ class TestimonialControllerTest {
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("New Testimonial Name"))
                 .andExpect(jsonPath("$.image").value("http://aws.com/new-img01.jpg"))
-                .andExpect(jsonPath("$.content").value("New content text"))
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(jsonPath("$.content").value("New content text"));
     }
 
     @Test
@@ -224,8 +207,7 @@ class TestimonialControllerTest {
                         .content(mapper.writeValueAsString(testimonialDto))
                         .with(user("user").roles("USER"))
                         .with(csrf()))
-                .andExpect(status().isForbidden())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isForbidden());
     }
 
     @Test
@@ -241,8 +223,7 @@ class TestimonialControllerTest {
                         .content(mapper.writeValueAsString(testimonialDto))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
-                .andExpect(status().isBadRequest())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isBadRequest());
     }
 
     @Test
@@ -258,8 +239,7 @@ class TestimonialControllerTest {
                 .contentType(APPLICATION_JSON)
                 .content(mapper.writeValueAsString(testimonialDto))
                 .with(user("admin").roles("ADMIN")))
-                .andExpect(status().isNotFound())
-                .andDo(MockMvcResultHandlers.print());
+                .andExpect(status().isNotFound());
 
     }
 
