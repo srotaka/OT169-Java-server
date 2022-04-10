@@ -6,6 +6,7 @@ import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.impl.UserServiceImpl;
+import com.amazonaws.services.devicefarm.model.transform.OfferingJsonUnmarshaller;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
@@ -33,10 +34,8 @@ import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.user;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+
+import java.util.*;
 
 import static org.mockito.Mockito.when;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
@@ -124,8 +123,6 @@ class UserControllerTest {
         when(userRepository.findAll()).thenReturn(userEntityList);
         mockMvc.perform(get(URL)
                 .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(listToDisplayUserEmail))
-                .with(user("admin").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isOk());
 
@@ -175,8 +172,12 @@ class UserControllerTest {
     @Test
     @DisplayName("Update User: Success Code (200 OK) when being an administrator or user modifying him/herself")
     void updateUser__Success() throws Exception {
-        userDto.setEmail("harry-potter@mail.com");
-        when(userService.updatePartialInfo("101", (Map<Object, Object>) userDto));
+        userEntity.setEmail("harry-potter@mail.com");
+
+        Map<Object, Object> fields = new HashMap<>();
+        fields.put("email","harry-potter@mail.com" );
+
+        when(userService.updatePartialInfo("101", fields)).thenReturn(new ResponseEntity<User>(userEntity, HttpStatus.OK));
 
         mockMvc.perform(patch(URL+"/101")
                         .contentType(APPLICATION_JSON)
