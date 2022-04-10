@@ -12,6 +12,8 @@ import org.springframework.web.server.ResponseStatusException;
 
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/testimonials")
@@ -43,8 +45,17 @@ public class TestimonialController {
         }   catch (Exception e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
+    }
 
-
+    @GetMapping("/pages")
+    public ResponseEntity<Map<String, Object>> getAllPage(@RequestParam(defaultValue = "0") int page) {
+        Map<String, Object> testimonial = new HashMap<>();
+        try {
+            testimonial = testimonialService.getAllPages(page);
+            return new ResponseEntity<>(testimonial, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
 
 
