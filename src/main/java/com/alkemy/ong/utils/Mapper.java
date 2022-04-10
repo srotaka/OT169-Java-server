@@ -146,4 +146,12 @@ public class Mapper {
 		testimonial.setContent(testimonialDto.getContent());
 		return testimonial;
 	}
+
+	public static MemberDto mapToDto(Member member, MemberDto dto) {
+		dto.setId(member.getId());
+		dto.setName(member.getName());
+		dto.setDescription(member.getDescription());
+		return dto;
+	}
+
 }
