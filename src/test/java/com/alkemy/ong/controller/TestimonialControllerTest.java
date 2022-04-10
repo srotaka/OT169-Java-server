@@ -51,8 +51,8 @@ class TestimonialControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     private final String URL = "/testimonials";
+
     TestimonialDto testimonialDto = new TestimonialDto();
-    List<TestimonialDto> testimonialList = new ArrayList<>();
 
     @BeforeEach
     public void setup(){
@@ -64,7 +64,7 @@ class TestimonialControllerTest {
         testimonialDto.setName("Testimonial Name");
         testimonialDto.setImage("http://aws.com/img01.jpg");
         testimonialDto.setContent("Some content text");
-        testimonialList.add(testimonialDto);
+
     }
     /* ======================================
         TESTS FOR SAVING A NEW TESTIMONIAL
@@ -83,7 +83,6 @@ class TestimonialControllerTest {
         mockMvc.perform(post(URL)
                 .contentType(APPLICATION_JSON)
                 .content(mapper.writeValueAsString(testimonialToSave))
-                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isCreated())
                 .andExpect(jsonPath("$.name").value("New Testimonial Name"))
@@ -92,7 +91,7 @@ class TestimonialControllerTest {
     }
     @Test
     @DisplayName("Fail Saving Testimonial due to incorrect role (Error 403 Forbidden)")
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "USER")
     void saveTestimonial__FailBecauseUserIsNotAdmin() throws Exception {
         TestimonialDto testimonialToSave = new TestimonialDto();
         testimonialToSave.setName("New Testimonial Name");
@@ -103,7 +102,6 @@ class TestimonialControllerTest {
         mockMvc.perform(post(URL)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(testimonialToSave))
-                        .with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -112,15 +110,9 @@ class TestimonialControllerTest {
     @DisplayName("Fail Saving Testimonial due to incomplete fields (Error 400 Bad Request)")
     @WithMockUser(roles = "ADMIN")
     void saveTestimonial__FailBecauseOfEmptyFields() throws Exception {
-        TestimonialDto testimonialToSave = new TestimonialDto();
-        testimonialToSave.setName("");
-        testimonialToSave.setImage("");
-        testimonialToSave.setContent("");
 
         mockMvc.perform(post(URL)
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(testimonialToSave))
-                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
@@ -134,10 +126,10 @@ class TestimonialControllerTest {
     void deleteTestimonial__Success() throws Exception {
 
         testimonialService.delete("abc123");
+
         mockMvc.perform(delete(URL+"/abc123")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(testimonialDto))
-                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isOk());
 
@@ -145,12 +137,11 @@ class TestimonialControllerTest {
 
     @Test
     @DisplayName("Fail Deleting Testimonial due to incorrect user role (Error 403 Forbidden)")
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "USER")
     void deleteTestimonial__FailBecauseUserIsNotAdmin() throws Exception {
         testimonialService.delete("abc123");
         mockMvc.perform(delete(URL+"/abc123")
                         .contentType(APPLICATION_JSON)
-                        .with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -164,7 +155,6 @@ class TestimonialControllerTest {
 
         mockMvc.perform(delete(URL+"/{id}",notExistingId)
                         .contentType(APPLICATION_JSON)
-                .with(user("admin").roles("ADMIN"))
                 .with(csrf()))
                 .andExpect(status().isNotFound());
     }
@@ -174,6 +164,7 @@ class TestimonialControllerTest {
     =========================================*/
     @Test
     @DisplayName("Update Testimonials: Success (Code 200 OK)")
+    @WithMockUser(roles = "ADMIN")
     void updateTestimonials__Success() throws Exception {
 
         testimonialDto.setName("New Testimonial Name");
@@ -184,7 +175,6 @@ class TestimonialControllerTest {
         mockMvc.perform(put(URL+"/abc123")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(testimonialDto))
-                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.name").value("New Testimonial Name"))
@@ -194,7 +184,7 @@ class TestimonialControllerTest {
 
     @Test
     @DisplayName("Fail Updating Testimonial due to incorrect role (Error 403 Forbidden)")
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "USER")
     void updateTestimonial__FailBecauseUserIsNotAdmin() throws Exception {
 
         testimonialDto.setName("New Testimonial Name");
@@ -205,7 +195,6 @@ class TestimonialControllerTest {
         mockMvc.perform(put(URL+"/abc123")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(testimonialDto))
-                        .with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -221,7 +210,6 @@ class TestimonialControllerTest {
         mockMvc.perform(put(URL+"/abc123")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(testimonialDto))
-                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isBadRequest());
     }
@@ -237,8 +225,7 @@ class TestimonialControllerTest {
 
         mockMvc.perform(put(URL+"/xyz789")
                 .contentType(APPLICATION_JSON)
-                .content(mapper.writeValueAsString(testimonialDto))
-                .with(user("admin").roles("ADMIN")))
+                .content(mapper.writeValueAsString(testimonialDto)))
                 .andExpect(status().isNotFound());
 
     }
