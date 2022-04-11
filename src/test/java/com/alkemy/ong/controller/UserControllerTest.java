@@ -6,29 +6,31 @@ import com.alkemy.ong.entity.User;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.impl.UserServiceImpl;
-import com.amazonaws.services.devicefarm.model.transform.OfferingJsonUnmarshaller;
-import com.fasterxml.jackson.core.JsonProcessingException;
+import com.alkemy.ong.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
-import org.mockito.stubbing.OngoingStubbing;
+
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.security.core.GrantedAuthority;
+import org.springframework.security.core.authority.SimpleGrantedAuthority;
+import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
-import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
+
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.servlet.mvc.method.annotation.ResponseEntityExceptionHandler;
+import com.amazonaws.services.pinpoint.model.ForbiddenException;
 import org.springframework.web.server.ResponseStatusException;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.InstanceOfAssertFactories.ITERABLE;
+import static org.mockito.Mockito.doThrow;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -56,6 +58,8 @@ class UserControllerTest {
     RoleRepository roleRepository;
     @Autowired
     UserController userController;
+    @Autowired
+    JwtUtils jwtUtils;
 
     private MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
@@ -66,6 +70,7 @@ class UserControllerTest {
     Role user = new Role();
 
     User userEntity = new User();
+    User userEntity2 = new User();
     UserDto userDto = new UserDto();
 
     List<User> userEntityList = new ArrayList<>();
@@ -97,6 +102,14 @@ class UserControllerTest {
         userEntity.setPhoto("harry-potter.jpg");
         userEntity.setRoleId(admin);
 
+        userEntity2.setId("102");
+        userEntity2.setFirstName("Hermione");
+        userEntity2.setLastName("Granger");
+        userEntity2.setEmail("hermione@granger.com");
+        userEntity2.setPassword("1234");
+        userEntity2.setPhoto("hermione.jpg");
+        userEntity2.setRoleId(user);
+
         userDto.setFirstName("Harry");
         userDto.setLastName("Potter");
         userDto.setEmail("harry@potter.com");
@@ -107,6 +120,7 @@ class UserControllerTest {
 
         listToDisplayUserEmail.add("harry@potter.com");
         listToDisplayUserEmail.add("hermione@granger.com");
+
     }
 
     /* ======================================
@@ -185,27 +199,36 @@ class UserControllerTest {
                         .with(csrf()))
                 .andExpect(status().isOk());
 
+        assertThat(userEntity.getId()).isEqualTo("101");
         assertThat(userEntity.getFirstName()).isEqualTo("Harry");
         assertThat(userEntity.getEmail()).isEqualTo("harry-potter@mail.com");
 
     }
     @Test
-    @DisplayName("Fail Updating Testimonial when user is trying to modify another user info (Error 403 Forbidden)")
-    @WithMockUser(roles = "USER")
-    void updateUser__FailBecauseUserIsNotAdmin() throws Exception {
+    @DisplayName("Fail Updating User when user is trying to modify another user info (Error 403 Forbidden)")
 
-        userDto.setEmail("harry-potter@mail.com");
+    void updateUser__FailBecauseUserIsNotAdmin() throws Exception {
+       /*String token1 = buildToken("admin", "harry@potter.com");
+        String token2 = buildToken("user", "hermione@granger.com");
+
         Map<Object, Object> fields = new HashMap<>();
         fields.put("email","harry-potter@mail.com" );
 
-        userService.isUserAllowed("102");
-        userService.updatePartialInfo("101", fields);
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(userService).isUserAllowed("101");
 
-        when(userController.updateUser("101", (Map<Object, Object>) userDto)).thenReturn(ResponseEntity.notFound().build());
+        userService.isUserAllowed("101");
+        when(userRepository.findByEmail("harry@potter.com")).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
+        when(userService.updatePartialInfo("101",fields)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        mockMvc.perform(patch(URL+"/102")
+        when(userController.updateUser("101", fields)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));*/
+        Map<Object, Object> fields = new HashMap<>();
+        fields.put("email","harry-potter@mail.com" );
+        when(userController.updateUser("101", fields)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
+
+        mockMvc.perform(patch(URL+"/101")
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(userDto))
+                        .with(user("Hermione").roles("USER"))
+                        //.content(mapper.writeValueAsString(userEntity))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -214,14 +237,18 @@ class UserControllerTest {
     @DisplayName("Fail Updating User due to non-existent ID (Error 404 Not Found)")
     @WithMockUser(roles = "ADMIN")
     void updateUser__FailBecauseIdNotFound() throws Exception {
-        userDto.setEmail("harry-potter@mail.com");
-        when(userService.updatePartialInfo("101", (Map<Object, Object>) userDto)).thenReturn(ResponseEntity.notFound().build());
+
+        /*userDto.setEmail("harry-potter@mail.com");
+        Map<Object, Object> fields = new HashMap<>();
+        fields.put("email","harry-potter@mail.com" );
+
+        when(userService.updatePartialInfo("101", fields)).thenReturn(new ResponseEntity<>(HttpStatus.NOT_FOUND));
 
         mockMvc.perform(put(URL+"/xyz789")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userDto))
                         .with(user("admin").roles("ADMIN")))
-                .andExpect(status().isNotFound());
+                .andExpect(status().isNotFound());*/
 
 
 
@@ -233,5 +260,13 @@ class UserControllerTest {
 
     @Test
     void delete() {
+    }
+
+
+
+    private String buildToken(String roleName, String email ){
+        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+roleName);
+        UserDetails userDetails = new org.springframework.security.core.userdetails.User(email, "1234", Collections.singletonList(authority));
+        return jwtUtils.generateToken(userDetails);
     }
 }
