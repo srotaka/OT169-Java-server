@@ -45,15 +45,13 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 @DirtiesContext(classMode = DirtiesContext.ClassMode.AFTER_EACH_TEST_METHOD)
 @TestPropertySource(locations = "")
 class UserControllerTest {
+
     @Autowired
     private WebApplicationContext context;
-
     @MockBean
     UserServiceImpl userService;
-
     @MockBean
     UserRepository userRepository;
-
     @MockBean
     RoleRepository roleRepository;
     @Autowired
@@ -177,32 +175,37 @@ class UserControllerTest {
         Map<Object, Object> fields = new HashMap<>();
         fields.put("email","harry-potter@mail.com" );
 
-        when(userService.updatePartialInfo("101", fields)).thenReturn(new ResponseEntity<User>(userEntity, HttpStatus.OK));
+        userService.isUserAllowed("101");
+        userService.updatePartialInfo("101", fields);
 
         mockMvc.perform(patch(URL+"/101")
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(userDto))
+                        .content(mapper.writeValueAsString(userEntity))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
-                .andExpect(status().isOk())
-                .andExpect(jsonPath("$.firstName").value("Harry"))
-                .andExpect(jsonPath("$.lastName").value("Potter"))
-                .andExpect(jsonPath("$.email").value("harry-potter@mail.com"));
-        System.out.println(objectMapper.writeValueAsString(userDto));
+                .andExpect(status().isOk());
+
+        assertThat(userEntity.getFirstName()).isEqualTo("Harry");
+        assertThat(userEntity.getEmail()).isEqualTo("harry-potter@mail.com");
 
     }
     @Test
-    @DisplayName("Fail Updating Testimonial due to incorrect role (Error 403 Forbidden)")
-    @WithMockUser(roles = "ADMIN")
+    @DisplayName("Fail Updating Testimonial when user is trying to modify another user info (Error 403 Forbidden)")
+    @WithMockUser(roles = "USER")
     void updateUser__FailBecauseUserIsNotAdmin() throws Exception {
 
         userDto.setEmail("harry-potter@mail.com");
+        Map<Object, Object> fields = new HashMap<>();
+        fields.put("email","harry-potter@mail.com" );
+
+        userService.isUserAllowed("102");
+        userService.updatePartialInfo("101", fields);
 
         when(userController.updateUser("101", (Map<Object, Object>) userDto)).thenReturn(ResponseEntity.notFound().build());
-        mockMvc.perform(patch(URL+"/101")
+
+        mockMvc.perform(patch(URL+"/102")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(userDto))
-                        .with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -219,6 +222,8 @@ class UserControllerTest {
                         .content(mapper.writeValueAsString(userDto))
                         .with(user("admin").roles("ADMIN")))
                 .andExpect(status().isNotFound());
+
+
 
     }
 
