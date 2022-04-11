@@ -33,7 +33,7 @@ public class MemberController {
 	}
 
 	@PutMapping("/{id}")//OT169-71
-	public ResponseEntity<Member> updateMember(@RequestParam(name="id") String id,@RequestBody Member member){
+	public ResponseEntity<Member> updateMember(@PathVariable String id, @RequestBody Member member){
 		if(memberService.existsById(id)) {//If the member exists
 			return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);//I create the member
 		}

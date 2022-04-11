@@ -10,7 +10,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
@@ -49,6 +48,10 @@ class MemberControllerTest {
 
     private MockMvc mockMvc;
 
+    Member miembroFull = new Member();
+
+
+
 
 
     @BeforeEach
@@ -56,6 +59,17 @@ class MemberControllerTest {
         mockMvc = MockMvcBuilders.webAppContextSetup(context)
                 .apply(springSecurity())
                 .build();
+        String id = String.valueOf(UUID.randomUUID());
+        miembroFull = new Member();
+        miembroFull.setId(id);
+        miembroFull.setName("NuevoValor");
+        miembroFull.setFacebookUrl("facebook.com");
+        miembroFull.setInstagramUrl("instagram.com");
+        miembroFull.setLinkedinUrl("linkedin.com");
+        miembroFull.setImage("img.jpg");
+        miembroFull.setDescription("Prueba modificada");
+        miembroFull.setTimestamp(Timestamp.from(Instant.now()));
+        miembroFull.setSoftDelete(false);
 
     }
    //   ******** TEST CREATED MEMBERS ********
@@ -114,18 +128,6 @@ class MemberControllerTest {
 
 
 
-        Member miembroFull = new Member();
-        String id = String.valueOf(UUID.randomUUID());
-        miembroFull = new Member();
-        miembroFull.setId(id);
-        miembroFull.setName("Prueba");
-        miembroFull.setFacebookUrl("facebook.com");
-        miembroFull.setInstagramUrl("instagram.com");
-        miembroFull.setLinkedinUrl("linkedin.com");
-        miembroFull.setImage("img.jpg");
-        miembroFull.setDescription("Es una prueba");
-        miembroFull.setTimestamp(Timestamp.from(Instant.now()));
-        miembroFull.setSoftDelete(false);
 
         when(service.save(miembroFull)).thenReturn(miembroFull);
 
@@ -140,18 +142,7 @@ class MemberControllerTest {
     @Test
     @DisplayName("Create member, method return 403  if the user has Role 'USER'")
     void createMemberIfUserHasRoleUser()throws Exception{
-        Member miembroFull = new Member();
-        String id = String.valueOf(UUID.randomUUID());
-        miembroFull = new Member();
-        miembroFull.setId(id);
-        miembroFull.setName("Prueba");
-        miembroFull.setFacebookUrl("facebook.com");
-        miembroFull.setInstagramUrl("instagram.com");
-        miembroFull.setLinkedinUrl("linkedin.com");
-        miembroFull.setImage("img.jpg");
-        miembroFull.setDescription("Es una prueba");
-        miembroFull.setTimestamp(Timestamp.from(Instant.now()));
-        miembroFull.setSoftDelete(false);
+
 
         when(service.save(miembroFull)).thenReturn(miembroFull);
 
@@ -165,6 +156,104 @@ class MemberControllerTest {
     }
 
     /*Update Members*/
+    /*Method return 200 OK if user is ADMIN*/
+    @Test
+    @DisplayName("Update member, method should save update member and return 200 ok if the user has Role 'ADMIN'")
+    void updateMemberIfUserHasRoleAdmin()throws Exception{
+        String id = String.valueOf(UUID.randomUUID());
+        String url = String.format("/members/%s", id);
+
+        Member guardado = new Member(id,"Prueba","facebook.com","instagram.com","linkedin.com","img.jpg","Es una prueba",
+                Timestamp.from(Instant.now()), false);
+
+
+
+        when(service.existsById(id)).thenReturn(true);
+        when(service.save(miembroFull)).thenReturn(miembroFull);
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(miembroFull))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isOk());
+
+
+    }
+
+    /*Update Members*/
+    /*Method return 400*/
+    @Test
+    @DisplayName("Update member, method should return 400 Bad Request if Id is not valid")
+    void updateMemberIfUserHasRoleAdminBadRequestIfIdNotValid()throws Exception{
+
+        String id = null;
+        Member member = null;
+        String url = String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(false);
+        when(service.save(member)).thenReturn(member);
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(member))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest());
+
+
+
+    }
+    /*Update Members*/
+    /*Method return 400 if request is not valid*/
+    @Test
+    @DisplayName("Update member, method should return 400 Bad Request if request is not valid")
+    void updateMemberIfUserHasRoleAdminBadRequest()throws Exception{
+
+        String id = miembroFull.getId();
+        Member member = null;
+        String url = String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(true);
+        when(service.save(member)).thenReturn(member);
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(member))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest());
+
+
+
+    }
+
+
+    /*Update Members*/
+    /*Method return 403*/
+    @Test
+    @DisplayName("Update member, method should return 403 Forbidden ")
+    void updateMemberReturn403NotAuthenticated()throws Exception{
+
+        String id = miembroFull.getId();
+        Member member = null;
+        String url = String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(true);
+        when(service.save(member)).thenReturn(member);
+
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(null))
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+
+                .andExpect(status().isForbidden());
+
+
+
+    }
 
 
 
