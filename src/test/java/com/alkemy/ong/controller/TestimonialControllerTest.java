@@ -12,25 +12,29 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
+import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
+import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.server.ResponseStatusException;
+import java.util.*;
 
-import java.util.ArrayList;
-import java.util.List;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.Matchers.is;
 
-import static org.junit.jupiter.api.Assertions.assertTrue;
-import static org.mockito.Mockito.when;
+import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
 import static org.springframework.security.test.web.servlet.setup.SecurityMockMvcConfigurers.springSecurity;
-
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.*;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
@@ -55,11 +59,16 @@ class TestimonialControllerTest {
     ObjectMapper mapper = new ObjectMapper();
 
     private final String URL = "/testimonials";
+    private final static int PAGE = 0;
+    private final static int SIZE = 10;
+    private final static String PAGINATION_URL =  "/testimonials/pages?page=";
 
     TestimonialDto testimonialDto = new TestimonialDto();
     Testimonial testimonialEntity = new Testimonial();
     Testimonial testimonialEntity2 = new Testimonial();
-    List<Testimonial> testimonialList = new ArrayList<>();
+    Testimonial testimonialEntity3 = new Testimonial();
+    Testimonial testimonialEntity4 = new Testimonial();
+    //List<Testimonial> testimonialList = new ArrayList<>();
 
     @BeforeEach
     public void setup(){
@@ -75,15 +84,27 @@ class TestimonialControllerTest {
         testimonialEntity.setId("abc123");
         testimonialEntity.setName("Testimonial Name");
         testimonialEntity.setImage("http://aws.com/img01.jpg");
-        testimonialEntity.setContent("Some content text");
+        testimonialEntity.setContent("Some content text 01");
 
-        testimonialEntity2.setId("abc1234");
+        testimonialEntity2.setId("abc456");
         testimonialEntity2.setName("Testimonial Name");
-        testimonialEntity2.setImage("http://aws.com/img01.jpg");
-        testimonialEntity2.setContent("Some content text");
+        testimonialEntity2.setImage("http://aws.com/img02.jpg");
+        testimonialEntity2.setContent("Some content text 02");
 
+        testimonialEntity3.setId("abc789");
+        testimonialEntity3.setName("Testimonial Name");
+        testimonialEntity3.setImage("http://aws.com/img03.jpg");
+        testimonialEntity3.setContent("Some content text 03");
+
+        testimonialEntity4.setId("abc321");
+        testimonialEntity4.setName("Testimonial Name");
+        testimonialEntity4.setImage("http://aws.com/img04.jpg");
+        testimonialEntity4.setContent("Some content text 04");
+/*
         testimonialList.add(testimonialEntity);
         testimonialList.add(testimonialEntity2);
+        testimonialList.add(testimonialEntity3);
+        testimonialList.add(testimonialEntity4);*/
 
     }
     /* ======================================
@@ -145,13 +166,11 @@ class TestimonialControllerTest {
     @WithMockUser(roles = "ADMIN")
     void deleteTestimonial__Success() throws Exception {
 
-        String urlToDelete = String.format("%s/%s", URL, testimonialList.get(0).getId());
+        testimonialRepository.delete(testimonialEntity);
+        verify(testimonialRepository, times(1)).delete(testimonialEntity);
 
-        mockMvc.perform(delete(urlToDelete)
-                        .contentType(APPLICATION_JSON))
+        mockMvc.perform(delete(URL+"/abc123"))
                 .andExpect(status().isOk());
-        assertTrue(testimonialList.get(0).isSoftDelete());
-
     }
 
     @Test
@@ -246,7 +265,45 @@ class TestimonialControllerTest {
                 .contentType(APPLICATION_JSON)
                 .content(mapper.writeValueAsString(testimonialDto)))
                 .andExpect(status().isNotFound());
+    }
 
+    /* ======================================
+        TESTS FOR GETTING TESTIMONIAL PAGES
+    =========================================*/
+    @Test
+    @DisplayName("Get All Testimonials Pages: Success (Code 200 OK)")
+    @WithMockUser(roles="USER")
+    void getAllPage__Success() throws Exception {
+
+        Map<String, Object>  testimonialPagination = getAllPages();
+       // when(testimonialController.getAllPage(2)).thenReturn(ResponseEntity.ok(testimonialPagination));
+        when(testimonialService.getAllPages(0)).thenReturn(testimonialPagination);
+
+        mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(testimonialPagination)))
+                .andExpect(jsonPath("body").isMap())
+                .andExpect(jsonPath("body", hasSize(4)))
+
+                .andExpect(MockMvcResultMatchers.status().isOk());/*
+                .andExpect(jsonPath("$.TotalItems").value("4"))
+                .andExpect(jsonPath("$.TotalPages").value("2"));*/
+    }
+
+
+    private Map<String, Object> getAllPages() {
+
+        Page<List<LinkedHashMap>> pagedTestimonials;
+        Pageable paging = PageRequest.of(PAGE, SIZE);
+        pagedTestimonials = testimonialRepository.findPage(paging);
+        List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
+        testimonialList = pagedTestimonials.getContent();
+        Map<String, Object> responsePagination = new LinkedHashMap<>();
+        responsePagination.put("TotalItems", pagedTestimonials.getTotalElements());
+        responsePagination.put("TotalPages", pagedTestimonials.getTotalPages());
+        responsePagination.put("CurrentPage", pagedTestimonials.getNumber());
+
+        return responsePagination;
     }
 
 }
