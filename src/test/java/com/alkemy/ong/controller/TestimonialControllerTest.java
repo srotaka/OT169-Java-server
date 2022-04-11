@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageImpl;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
@@ -60,7 +61,7 @@ class TestimonialControllerTest {
 
     private final String URL = "/testimonials";
     private final static int PAGE = 0;
-    private final static int SIZE = 10;
+    private final static int SIZE = 2;
     private final static String PAGINATION_URL =  "/testimonials/pages?page=";
 
     TestimonialDto testimonialDto = new TestimonialDto();
@@ -68,7 +69,7 @@ class TestimonialControllerTest {
     Testimonial testimonialEntity2 = new Testimonial();
     Testimonial testimonialEntity3 = new Testimonial();
     Testimonial testimonialEntity4 = new Testimonial();
-    //List<Testimonial> testimonialList = new ArrayList<>();
+    List<Testimonial> testimonialEntityList = new ArrayList<>();
 
     @BeforeEach
     public void setup(){
@@ -100,11 +101,11 @@ class TestimonialControllerTest {
         testimonialEntity4.setName("Testimonial Name");
         testimonialEntity4.setImage("http://aws.com/img04.jpg");
         testimonialEntity4.setContent("Some content text 04");
-/*
-        testimonialList.add(testimonialEntity);
-        testimonialList.add(testimonialEntity2);
-        testimonialList.add(testimonialEntity3);
-        testimonialList.add(testimonialEntity4);*/
+
+        testimonialEntityList.add(testimonialEntity);
+        testimonialEntityList.add(testimonialEntity2);
+        testimonialEntityList.add(testimonialEntity3);
+        testimonialEntityList.add(testimonialEntity4);
 
     }
     /* ======================================
@@ -274,35 +275,65 @@ class TestimonialControllerTest {
     @DisplayName("Get All Testimonials Pages: Success (Code 200 OK)")
     @WithMockUser(roles="USER")
     void getAllPage__Success() throws Exception {
-
-        Map<String, Object>  testimonialPagination = getAllPages();
-       // when(testimonialController.getAllPage(2)).thenReturn(ResponseEntity.ok(testimonialPagination));
-        when(testimonialService.getAllPages(0)).thenReturn(testimonialPagination);
-
-        mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(testimonialPagination)))
-                .andExpect(jsonPath("body").isMap())
-                .andExpect(jsonPath("body", hasSize(4)))
-
-                .andExpect(MockMvcResultMatchers.status().isOk());/*
-                .andExpect(jsonPath("$.TotalItems").value("4"))
-                .andExpect(jsonPath("$.TotalPages").value("2"));*/
-    }
-
-
-    private Map<String, Object> getAllPages() {
-
         Page<List<LinkedHashMap>> pagedTestimonials;
         Pageable paging = PageRequest.of(PAGE, SIZE);
         pagedTestimonials = testimonialRepository.findPage(paging);
         List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
-        testimonialList = pagedTestimonials.getContent();
+        List<LinkedHashMap> testimonialHashMap = new ArrayList<>();
+        LinkedHashMap<String, Testimonial> testimonialLinkedHashMap = new LinkedHashMap<>();
+        testimonialLinkedHashMap.put("testimonial1", testimonialEntity);
+        testimonialLinkedHashMap.put("testimonial2", testimonialEntity2);
+        testimonialLinkedHashMap.put("testimonial3", testimonialEntity3);
+        testimonialLinkedHashMap.put("testimonial4", testimonialEntity4);
+        testimonialHashMap.add(testimonialLinkedHashMap);
+        testimonialList.add(testimonialHashMap);
+        //when(testimonialRepository.findPage(paging)).thenReturn(pagedTestimonials);
+        pagedTestimonials.toSet().add(testimonialHashMap);
         Map<String, Object> responsePagination = new LinkedHashMap<>();
-        responsePagination.put("TotalItems", pagedTestimonials.getTotalElements());
-        responsePagination.put("TotalPages", pagedTestimonials.getTotalPages());
-        responsePagination.put("CurrentPage", pagedTestimonials.getNumber());
 
+        responsePagination.put("TotalItems", 4);
+        responsePagination.put("TotalPages", 2);
+        responsePagination.put("CurrentPage", 0);
+        responsePagination.put("Testimonials", pagedTestimonials);
+
+        when(testimonialService.getAllPages(0)).thenReturn(responsePagination);
+       //when(testimonialService.getAllPages(0)).thenReturn(getAllPagesInfo());
+
+        mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(responsePagination)))
+                .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+
+    private Map<String, Object> getAllPagesInfo() {
+
+        Page<List<LinkedHashMap>> pagedTestimonials;
+        Pageable paging = PageRequest.of(PAGE, SIZE);
+        //when(testimonialRepository.findPage(paging)).thenReturn();
+        pagedTestimonials = testimonialRepository.findPage(paging);
+        List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
+        List<LinkedHashMap> testimonialHashMap = new ArrayList<>();
+        LinkedHashMap<String, Testimonial> testimonialLinkedHashMap = new LinkedHashMap<>();
+
+        testimonialLinkedHashMap.put("testimonial1", testimonialEntity);
+        testimonialLinkedHashMap.put("testimonial2", testimonialEntity2);
+        testimonialLinkedHashMap.put("testimonial3", testimonialEntity3);
+        testimonialLinkedHashMap.put("testimonial4", testimonialEntity4);
+        testimonialHashMap.add(testimonialLinkedHashMap);
+        testimonialList.add(testimonialHashMap);
+
+        pagedTestimonials.toSet().add(testimonialHashMap);
+
+
+       // when(testimonialRepository.findPage(paging)).thenReturn(pagedTestimonials);
+        Map<String, Object> responsePagination = new LinkedHashMap<>();
+
+        responsePagination.put("TotalItems", 4);
+        responsePagination.put("TotalPages", 2);
+        responsePagination.put("CurrentPage", 0);
+        responsePagination.put("Testimonials", pagedTestimonials);
         return responsePagination;
     }
 
