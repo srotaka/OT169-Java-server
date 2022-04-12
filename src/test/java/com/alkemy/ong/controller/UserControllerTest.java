@@ -3,10 +3,8 @@ package com.alkemy.ong.controller;
 import com.alkemy.ong.dto.UserDto;
 import com.alkemy.ong.entity.Role;
 import com.alkemy.ong.entity.User;
-import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.impl.UserServiceImpl;
-import com.alkemy.ong.utils.JwtUtils;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
@@ -44,12 +42,9 @@ class UserControllerTest {
     UserServiceImpl userService;
     @MockBean
     UserRepository userRepository;
-    @MockBean
-    RoleRepository roleRepository;
+
     @Autowired
     UserController userController;
-    @Autowired
-    JwtUtils jwtUtils;
 
     private MockMvc mockMvc;
     ObjectMapper mapper = new ObjectMapper();
@@ -253,7 +248,6 @@ class UserControllerTest {
         when(userController.delete("101")).thenThrow(new ResponseStatusException(HttpStatus.OK));
         mockMvc.perform(delete(URL+"/101")
                         .contentType(APPLICATION_JSON)
-                        //.with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
