@@ -131,7 +131,17 @@ class UserControllerTest {
         assertThat(listToDisplayUserEmail).hasSize(2);
         assertThat(listToDisplayUserEmail).contains("harry@potter.com", "hermione@granger.com");
 
-        System.out.println(objectMapper.writeValueAsString(listToDisplayUserEmail));
+    }
+
+    @DisplayName("Fail Getting All Users because user is not authenticated (Error 401 Unauthorized)")
+    @Test
+    void getAllUsers__FailBecauseUserIsNotAuthenticated() throws Exception {
+
+        when(userRepository.findAll()).thenReturn(userEntityList);
+        mockMvc.perform(get(URL)
+                        .contentType(APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @DisplayName("Fail Getting All Users due to incorrect role (Error 403 Forbidden)")
@@ -143,11 +153,8 @@ class UserControllerTest {
         mockMvc.perform(get(URL)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(listToDisplayUserEmail))
-                        //.with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
-
-        System.out.println(listToDisplayUserEmail);
     }
 
     @DisplayName("Fail getting All Users because List is empty (Error 204 No Content)")
@@ -160,12 +167,10 @@ class UserControllerTest {
         mockMvc.perform(get(URL)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(noItemsList))
-                        //.with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isNoContent());
 
         assertThat(noItemsList).isEmpty();
-        System.out.println(objectMapper.writeValueAsString(noItemsList));
     }
 
     /* ======================================
@@ -193,6 +198,15 @@ class UserControllerTest {
         assertThat(userEntity.getFirstName()).isEqualTo("Harry");
         assertThat(userEntity.getEmail()).isEqualTo("harry-potter@mail.com");
 
+    }
+    @Test
+    @DisplayName("Fail Updating User is not authenticated (Error 401 Unauthorized)")
+    void updateUser__FailBecauseUserIsNotAuthenticated() throws Exception {
+
+        mockMvc.perform(patch(URL+"/101")
+                        .contentType(APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
     @Test
     @DisplayName("Fail Updating User when user is trying to modify another user info (Error 403 Forbidden)")
@@ -245,6 +259,14 @@ class UserControllerTest {
     }
 
     @Test
+    @DisplayName("Fail Deleting User is not authenticated (Error 401 Unauthorized)")
+    void deleteUser__FailBecauseUserIsNotAuthenticated() throws Exception {
+        mockMvc.perform(delete(URL+"/101")
+                        .contentType(APPLICATION_JSON))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("Fail Deleting User when user is trying to delete user (Error 403 Forbidden)")
     @WithMockUser(roles = "USER")
     void deleteUser__FailBecauseUserTriesToDeleteAnotherUser() throws Exception {
@@ -257,7 +279,6 @@ class UserControllerTest {
                         .content(mapper.writeValueAsString(userEntity))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
-
     }
 
     @Test
@@ -268,10 +289,8 @@ class UserControllerTest {
         when(userController.delete("nonExistingUserId")).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
         mockMvc.perform(delete(URL+"nonExistingUserId")
                         .contentType(APPLICATION_JSON)
-                        //.with(user("admin").roles("ADMIN"))
                         .content(mapper.writeValueAsString(userEntity)))
                 .andExpect(status().isNotFound());
 
     }
-
 }
