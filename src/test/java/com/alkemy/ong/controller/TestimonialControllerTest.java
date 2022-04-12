@@ -139,6 +139,15 @@ class TestimonialControllerTest {
     }
 
     @Test
+    @DisplayName("Fail Saving Testimonial because user is not authenticated (Error 401 Unauthorized)")
+    void saveTestimonial__FailBecauseUserIsAuthenticated() throws Exception {
+        mockMvc.perform(post(URL)
+                        .contentType(APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("Fail Saving Testimonial due to incomplete fields (Error 400 Bad Request)")
     @WithMockUser(roles = "ADMIN")
     void saveTestimonial__FailBecauseOfEmptyFields() throws Exception {
@@ -173,6 +182,16 @@ class TestimonialControllerTest {
                         .contentType(APPLICATION_JSON)
                         .with(csrf()))
                 .andExpect(status().isForbidden());
+    }
+
+    @Test
+    @DisplayName("Fail Deleting Testimonial because user is not authenticated (Error 401 Unauthorized)")
+    void deleteTestimonial__FailBecauseUserIsNotAuthenticated() throws Exception {
+        testimonialService.delete("abc123");
+        mockMvc.perform(delete(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
     }
 
     @Test
@@ -229,6 +248,16 @@ class TestimonialControllerTest {
     }
 
     @Test
+    @DisplayName("Fail Updating Testimonial because user is not authenticated (Error 401 Unauthorized)")
+    void updateTestimonial__FailBecauseUserIsNotAuthenticated() throws Exception {
+
+        mockMvc.perform(put(URL+"/abc123")
+                        .contentType(APPLICATION_JSON)
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+    }
+
+    @Test
     @DisplayName("Fail Updating Testimonial due to incomplete fields (Error 400 Bad Request)")
     @WithMockUser(roles = "ADMIN")
     void updateTestimonial__FailBecauseOfEmptyFields() throws Exception {
@@ -276,15 +305,24 @@ class TestimonialControllerTest {
     }
 
     @Test
-    @DisplayName("Fail Getting All Testimonials Pages: Code 500 Internal Server Error)")
+    @DisplayName("Fail Getting All Testimonials Pages (Code 500 Internal Server Error)")
     @WithMockUser(roles="USER")
-    void getAllPage__Fail() throws Exception {
+    void getAllPage__FailInternalServerError() throws Exception {
 
         when(testimonialService.getAllPages(0)).thenThrow(new Exception("Fail to load pages"));
 
         mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
                         .contentType(APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is5xxServerError());
+    }
+
+    @Test
+    @DisplayName("Fail Getting All Testimonials Pages because user is not authenticated (Error 401 Unauthorized)")
+    void getAllPage__FailBecauseUserIsNotAuthenticated() throws Exception {
+
+        mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().isUnauthorized());
     }
 
 }
