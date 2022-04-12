@@ -257,14 +257,7 @@ class UserControllerTest {
                         .content(mapper.writeValueAsString(userEntity))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
-        /*
 
-         //String token2 = buildToken("user", "hermione@granger.com");
-        when(userRepository.findById("101")).thenReturn(Optional.of(userEntity));
-        mockMvc.perform(patch(URL+"/101").header("Authorization", token2)
-                        .contentType(APPLICATION_JSON)
-                        .with(csrf()))
-                .andExpect(status().isForbidden());*/
     }
 
     @Test
@@ -280,10 +273,5 @@ class UserControllerTest {
                 .andExpect(status().isNotFound());
 
     }
-/*
-    private String buildToken(String roleName, String email ){
-        GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+roleName);
-        UserDetails userDetails = new org.springframework.security.core.userdetails.User(email, "1234", Collections.singletonList(authority));
-        return jwtUtils.generateToken(userDetails);
-    }*/
+
 }
