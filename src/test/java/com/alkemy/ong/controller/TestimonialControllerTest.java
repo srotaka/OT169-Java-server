@@ -7,17 +7,11 @@ import com.alkemy.ong.service.impl.TestimonialServiceImpl;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
-import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageImpl;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
-import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -28,10 +22,6 @@ import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 import org.springframework.web.server.ResponseStatusException;
 import java.util.*;
-
-import static org.hamcrest.Matchers.hasSize;
-import static org.hamcrest.Matchers.is;
-
 import static org.mockito.Mockito.*;
 import static org.springframework.http.MediaType.APPLICATION_JSON;
 import static org.springframework.security.test.web.servlet.request.SecurityMockMvcRequestPostProcessors.csrf;
@@ -275,84 +265,26 @@ class TestimonialControllerTest {
     @DisplayName("Get All Testimonials Pages: Success (Code 200 OK)")
     @WithMockUser(roles="USER")
     void getAllPage__Success() throws Exception {
-        Map<String, Object> testimonialMap = new HashMap<>();
-        testimonialMap = testimonialService.getAllPages(0);
 
         Map<String, Object> response = new LinkedHashMap<>();
-
-
-        when(testimonialService.getAllPages(0)).thenReturn(getPages());
+        when(testimonialService.getAllPages(0)).thenReturn(response);
 
         mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(response)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
-
     }
 
-    private  Map<String, Object> getPages(){
+    @Test
+    @DisplayName("Fail Getting All Testimonials Pages: Code 500 Internal Server Error)")
+    @WithMockUser(roles="USER")
+    void getAllPage__Fail() throws Exception {
 
-        List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
+        when(testimonialService.getAllPages(0)).thenThrow(new Exception("Fail to load pages"));
 
-        Pageable paging = PageRequest.of(0, 2);
-        String url = "/testimonials/pages?page=";
-
-        Page<List<LinkedHashMap>> pagedTestimonials;
-        pagedTestimonials = testimonialRepository.findPage(paging);
-
-        testimonialList = pagedTestimonials.getContent();
-        Map<String, Object> response = new LinkedHashMap<>();
-        response.put("Total Items", pagedTestimonials.getTotalElements());
-        response.put("Total Pages", pagedTestimonials.getTotalPages());
-        response.put("Current Page", pagedTestimonials.getNumber());
-
-        if (pagedTestimonials.getNumber() == pagedTestimonials.getTotalPages() - 1) {
-            response.put("Next Page", "This is the last page");
-        } else {
-            response.put("Next Page", url.concat(String.valueOf(pagedTestimonials.getNumber() + 1)));
-        }
-        if (pagedTestimonials.getNumber() == 0) {
-            response.put("Previous Page", "This is the first page");
-        } else {
-            response.put("Previous Page", url.concat(String.valueOf(pagedTestimonials.getNumber() - 1)));
-        }
-        response.put("Testimonials", testimonialList);
-
-        return response;
-
-
-
-    }
-
-
-    private Map<String, Object> getAllPagesInfo() {
-
-        Page<List<LinkedHashMap>> pagedTestimonials;
-        Pageable paging = PageRequest.of(PAGE, SIZE);
-        //when(testimonialRepository.findPage(paging)).thenReturn();
-        pagedTestimonials = testimonialRepository.findPage(paging);
-        List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
-        List<LinkedHashMap> testimonialHashMap = new ArrayList<>();
-        LinkedHashMap<String, Testimonial> testimonialLinkedHashMap = new LinkedHashMap<>();
-
-        testimonialLinkedHashMap.put("testimonial1", testimonialEntity);
-        testimonialLinkedHashMap.put("testimonial2", testimonialEntity2);
-        testimonialLinkedHashMap.put("testimonial3", testimonialEntity3);
-        testimonialLinkedHashMap.put("testimonial4", testimonialEntity4);
-        testimonialHashMap.add(testimonialLinkedHashMap);
-        testimonialList.add(testimonialHashMap);
-
-        pagedTestimonials.toSet().add(testimonialHashMap);
-
-
-       // when(testimonialRepository.findPage(paging)).thenReturn(pagedTestimonials);
-        Map<String, Object> responsePagination = new LinkedHashMap<>();
-
-        responsePagination.put("TotalItems", 4);
-        responsePagination.put("TotalPages", 2);
-        responsePagination.put("CurrentPage", 0);
-        responsePagination.put("Testimonials", pagedTestimonials);
-        return responsePagination;
+        mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
+                        .contentType(APPLICATION_JSON))
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());
     }
 
 }
