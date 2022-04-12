@@ -275,34 +275,52 @@ class TestimonialControllerTest {
     @DisplayName("Get All Testimonials Pages: Success (Code 200 OK)")
     @WithMockUser(roles="USER")
     void getAllPage__Success() throws Exception {
-        Page<List<LinkedHashMap>> pagedTestimonials;
-        Pageable paging = PageRequest.of(PAGE, SIZE);
-        pagedTestimonials = testimonialRepository.findPage(paging);
-        List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
-        List<LinkedHashMap> testimonialHashMap = new ArrayList<>();
-        LinkedHashMap<String, Testimonial> testimonialLinkedHashMap = new LinkedHashMap<>();
-        testimonialLinkedHashMap.put("testimonial1", testimonialEntity);
-        testimonialLinkedHashMap.put("testimonial2", testimonialEntity2);
-        testimonialLinkedHashMap.put("testimonial3", testimonialEntity3);
-        testimonialLinkedHashMap.put("testimonial4", testimonialEntity4);
-        testimonialHashMap.add(testimonialLinkedHashMap);
-        testimonialList.add(testimonialHashMap);
-        //when(testimonialRepository.findPage(paging)).thenReturn(pagedTestimonials);
-        pagedTestimonials.toSet().add(testimonialHashMap);
-        Map<String, Object> responsePagination = new LinkedHashMap<>();
+        Map<String, Object> testimonialMap = new HashMap<>();
+        testimonialMap = testimonialService.getAllPages(0);
 
-        responsePagination.put("TotalItems", 4);
-        responsePagination.put("TotalPages", 2);
-        responsePagination.put("CurrentPage", 0);
-        responsePagination.put("Testimonials", pagedTestimonials);
+        Map<String, Object> response = new LinkedHashMap<>();
 
-        when(testimonialService.getAllPages(0)).thenReturn(responsePagination);
-       //when(testimonialService.getAllPages(0)).thenReturn(getAllPagesInfo());
+
+        when(testimonialService.getAllPages(0)).thenReturn(getPages());
 
         mockMvc.perform(MockMvcRequestBuilders.get(PAGINATION_URL)
                         .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(responsePagination)))
+                        .content(mapper.writeValueAsString(response)))
                 .andExpect(MockMvcResultMatchers.status().isOk());
+
+    }
+
+    private  Map<String, Object> getPages(){
+
+        List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
+
+        Pageable paging = PageRequest.of(0, 2);
+        String url = "/testimonials/pages?page=";
+
+        Page<List<LinkedHashMap>> pagedTestimonials;
+        pagedTestimonials = testimonialRepository.findPage(paging);
+
+        testimonialList = pagedTestimonials.getContent();
+        Map<String, Object> response = new LinkedHashMap<>();
+        response.put("Total Items", pagedTestimonials.getTotalElements());
+        response.put("Total Pages", pagedTestimonials.getTotalPages());
+        response.put("Current Page", pagedTestimonials.getNumber());
+
+        if (pagedTestimonials.getNumber() == pagedTestimonials.getTotalPages() - 1) {
+            response.put("Next Page", "This is the last page");
+        } else {
+            response.put("Next Page", url.concat(String.valueOf(pagedTestimonials.getNumber() + 1)));
+        }
+        if (pagedTestimonials.getNumber() == 0) {
+            response.put("Previous Page", "This is the first page");
+        } else {
+            response.put("Previous Page", url.concat(String.valueOf(pagedTestimonials.getNumber() - 1)));
+        }
+        response.put("Testimonials", testimonialList);
+
+        return response;
+
+
 
     }
 
