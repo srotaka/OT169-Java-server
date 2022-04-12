@@ -31,6 +31,7 @@ public class TestimonialController {
     @ApiResponses(value = { @ApiResponse(code = 201 , message= "Create Testimonial"),
             @ApiResponse(code = 403, message = "Forbidden/Accessing with invalid role"),
             @ApiResponse(code = 400 , message = "Bad request/Invalid field")
+
     })
     @ApiImplicitParam(name = "Authorization", value = "Access Token",
             required = true,
@@ -102,9 +103,7 @@ public class TestimonialController {
 
     //**PAGINATION**//
     @ApiOperation(value = "Get a paginated list of testimonials")
-    @ApiResponses(value = { @ApiResponse(code = 200, message = "Return a paginated list of testimonials"),
-            @ApiResponse(code = 403, message = "Forbidden/Accessing with invalid role" )
-    })
+    @ApiResponse(code = 200, message = "Return a paginated list of testimonials")
     @ApiImplicitParam(name = "Authorization", value = "Access Token",
             required = true,
             allowEmptyValue = false,
