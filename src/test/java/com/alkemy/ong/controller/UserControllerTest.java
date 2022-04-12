@@ -14,9 +14,6 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
-import org.springframework.security.core.GrantedAuthority;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -138,7 +135,7 @@ class UserControllerTest {
     }
 
     @DisplayName("Fail Getting All Users due to incorrect role (Error 403 Forbidden)")
-    @WithMockUser(roles = "ADMIN")
+    @WithMockUser(roles = "USER")
     @Test
     void getAllUsers__FailBecauseUserIsNotAdmin() throws Exception {
 
@@ -146,7 +143,7 @@ class UserControllerTest {
         mockMvc.perform(get(URL)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(listToDisplayUserEmail))
-                        .with(user("user").roles("USER"))
+                        //.with(user("user").roles("USER"))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
 
@@ -163,7 +160,7 @@ class UserControllerTest {
         mockMvc.perform(get(URL)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(noItemsList))
-                        .with(user("admin").roles("ADMIN"))
+                        //.with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isNoContent());
 
@@ -199,17 +196,17 @@ class UserControllerTest {
     }
     @Test
     @DisplayName("Fail Updating User when user is trying to modify another user info (Error 403 Forbidden)")
+    @WithMockUser(roles = "USER")
     void updateUser__FailBecauseUserTriesToUpdateAnotherUserInfo() throws Exception {
-        String token2 = buildToken("user", "hermione@granger.com");
 
         Map<Object, Object> fields = new HashMap<>();
-        fields.put("email","harry-potter@mail.com" );
+        fields.put("email","hermione-potter@mail.com" );
 
-        when(userRepository.findById("101")).thenReturn(Optional.of(userEntity));
         when(userService.updatePartialInfo("101", fields)).thenThrow(new ResponseStatusException(HttpStatus.FORBIDDEN));
 
-        mockMvc.perform(patch(URL+"/101").header("Authorization", token2)
+        mockMvc.perform(patch(URL+"/101")
                         .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(fields))
                         .with(csrf()))
                 .andExpect(status().isForbidden());
     }
@@ -242,21 +239,32 @@ class UserControllerTest {
         when(userController.delete("101")).thenThrow(new ResponseStatusException(HttpStatus.OK));
         mockMvc.perform(delete(URL+"/101")
                         .contentType(APPLICATION_JSON)
-                        .with(user("admin").roles("ADMIN"))
+                        //.with(user("admin").roles("ADMIN"))
                         .with(csrf()))
                 .andExpect(status().isOk());
     }
 
     @Test
-    @DisplayName("Fail Deleting User when user is trying to delete another user info (Error 403 Forbidden)")
-    void deleteUser__FailBecauseUserTriesToUpdateAnotherUserInfo() throws Exception {
-        String token2 = buildToken("user", "hermione@granger.com");
+    @DisplayName("Fail Deleting User when user is trying to delete user (Error 403 Forbidden)")
+    @WithMockUser(roles = "USER")
+    void deleteUser__FailBecauseUserTriesToDeleteAnotherUser() throws Exception {
 
+        when(userRepository.findById("101")).thenReturn(Optional.of(userEntity));
+        doThrow(new ResponseStatusException(HttpStatus.FORBIDDEN)).when(userService).delete("101");
+
+        mockMvc.perform(delete(URL+"/101")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(userEntity))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+        /*
+
+         //String token2 = buildToken("user", "hermione@granger.com");
         when(userRepository.findById("101")).thenReturn(Optional.of(userEntity));
         mockMvc.perform(patch(URL+"/101").header("Authorization", token2)
                         .contentType(APPLICATION_JSON)
                         .with(csrf()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isForbidden());*/
     }
 
     @Test
@@ -267,15 +275,15 @@ class UserControllerTest {
         when(userController.delete("nonExistingUserId")).thenThrow(new ResponseStatusException(HttpStatus.NOT_FOUND));
         mockMvc.perform(delete(URL+"nonExistingUserId")
                         .contentType(APPLICATION_JSON)
-                        .with(user("admin").roles("ADMIN"))
+                        //.with(user("admin").roles("ADMIN"))
                         .content(mapper.writeValueAsString(userEntity)))
                 .andExpect(status().isNotFound());
 
     }
-
+/*
     private String buildToken(String roleName, String email ){
         GrantedAuthority authority = new SimpleGrantedAuthority("ROLE_"+roleName);
         UserDetails userDetails = new org.springframework.security.core.userdetails.User(email, "1234", Collections.singletonList(authority));
         return jwtUtils.generateToken(userDetails);
-    }
+    }*/
 }
