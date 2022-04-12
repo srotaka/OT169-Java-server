@@ -10,6 +10,8 @@ import org.springframework.web.bind.annotation.*;
 import org.springframework.web.server.ResponseStatusException;
 
 import javax.validation.Valid;
+import java.util.HashMap;
+import java.util.Map;
 
 @RestController
 @RequestMapping("/news")
@@ -28,8 +30,8 @@ public class NewsController {
     @GetMapping("/{id}")
     public ResponseEntity<NewsDto> getNewsById(@PathVariable String id) throws Exception {
         try{
-            newsService.getNewsById(id);
-            return ResponseEntity.status(HttpStatus.OK).build();
+            NewsDto newsDto= newsService.getNewsById(id);
+            return ResponseEntity.status(HttpStatus.OK).body(newsDto);
         } catch (Exception e){
             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
         }
@@ -52,14 +54,25 @@ public class NewsController {
        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-
-
-
-
-
-
-
+    @GetMapping("/pages")
+    public ResponseEntity<Map<String, Object>> getAllPage(@RequestParam(defaultValue = "0") Integer page){
+        Map<String, Object> news = new HashMap<>();
+        try {
+            news = newsService.getAllPages(page);
+            return new ResponseEntity<>(news, HttpStatus.OK);
+        } catch (Exception e) {
+            return new ResponseEntity<>(null, HttpStatus.INTERNAL_SERVER_ERROR);
+        }
     }
+
+
+
+
+
+
+
+
+}
 
 
 

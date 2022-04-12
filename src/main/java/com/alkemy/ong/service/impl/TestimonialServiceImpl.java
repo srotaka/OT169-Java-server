@@ -7,11 +7,14 @@ import com.alkemy.ong.service.TestimonialService;
 import com.alkemy.ong.utils.Mapper;
 import com.amazonaws.services.simplesystemsmanagement.model.ParameterNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 
-import java.util.Optional;
+import java.util.*;
 
 import java.util.Optional;
 
@@ -57,5 +60,41 @@ public class TestimonialServiceImpl implements TestimonialService {
             throw new ParameterNotFoundException("");
         }
     }
+    public Map<String, Object> getAllPages (Integer page) throws Exception {
+        Integer size = 10;
+        try {
+            List<List<LinkedHashMap>> testimonialList = new ArrayList<List<LinkedHashMap>>();
+
+            Pageable paging = PageRequest.of(page, size);
+            String url = "/testimonials/pages?page=";
+
+            Page<List<LinkedHashMap>> pagedTestimonials;
+            pagedTestimonials = testimonialRepository.findPage(paging);
+
+            testimonialList = pagedTestimonials.getContent();
+            Map<String, Object> response = new LinkedHashMap<>();
+            response.put("Total Items", pagedTestimonials.getTotalElements());
+            response.put("Total Pages", pagedTestimonials.getTotalPages());
+            response.put("Current Page", pagedTestimonials.getNumber());
+
+            if (pagedTestimonials.getNumber() == pagedTestimonials.getTotalPages() - 1) {
+                response.put("Next Page", "This is the last page");
+            } else {
+                response.put("Next Page", url.concat(String.valueOf(pagedTestimonials.getNumber() + 1)));
+            }
+            if (pagedTestimonials.getNumber() == 0) {
+                response.put("Previous Page", "This is the first page");
+            } else {
+                response.put("Previous Page", url.concat(String.valueOf(pagedTestimonials.getNumber() - 1)));
+            }
+            response.put("Testimonials", testimonialList);
+
+            return response;
+
+        } catch (Exception e) {
+            throw new Exception("Fail to load pages");
+        }
+    }
+
 
 }
