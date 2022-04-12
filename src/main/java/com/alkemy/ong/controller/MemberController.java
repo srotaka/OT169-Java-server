@@ -37,7 +37,7 @@ public class MemberController {
 		if(memberService.existsById(id)) {//If the member exists
 			return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);//I create the member
 		}
-		return new ResponseEntity<Member>(HttpStatus.BAD_REQUEST);//If it doesn't or the Member is null/not valid, I throw 500 error code
+		return ResponseEntity.status(HttpStatus.NOT_FOUND).build();//If it doesn't or the Member is null/not valid, I throw 500 error code
 
 	}
 

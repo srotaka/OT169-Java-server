@@ -1,5 +1,6 @@
 package com.alkemy.ong.controller;
 
+import com.alkemy.ong.dto.MembersResponseDto;
 import com.alkemy.ong.entity.Member;
 import com.alkemy.ong.repository.MemberRepository;
 import com.alkemy.ong.service.MemberService;
@@ -7,13 +8,17 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
+import org.mockito.InjectMocks;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
+import org.springframework.web.client.HttpClientErrorException;
 import org.springframework.web.context.WebApplicationContext;
 
 
@@ -41,6 +46,7 @@ class MemberControllerTest {
     private WebApplicationContext context;
     @MockBean
     private MemberService service;
+
     @MockBean
     private MemberRepository repository;
 
@@ -79,19 +85,6 @@ class MemberControllerTest {
     @Test
     @DisplayName("Create member, method should save new member and return 200 ok if the user has Role 'ADMIN'")
     void createMemberIfUserHasRoleAdmin()throws Exception{
-
-        Member miembroFull;
-        String id = String.valueOf(UUID.randomUUID());
-        miembroFull = new Member();
-        miembroFull.setId(id);
-        miembroFull.setName("Prueba");
-        miembroFull.setFacebookUrl("facebook.com");
-        miembroFull.setInstagramUrl("instagram.com");
-        miembroFull.setLinkedinUrl("linkedin.com");
-        miembroFull.setImage("img.jpg");
-        miembroFull.setDescription("Es una prueba");
-        miembroFull.setTimestamp(Timestamp.from(Instant.now()));
-        miembroFull.setSoftDelete(false);
 
 
         when(service.save(miembroFull)).thenReturn(miembroFull);
@@ -135,7 +128,7 @@ class MemberControllerTest {
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(miembroFull))
                         .with(csrf()))
-                .andExpect(status().isForbidden());
+                .andExpect(status().isUnauthorized());
     }
 
     /*Method return 403 Forbidden*/
@@ -204,11 +197,33 @@ class MemberControllerTest {
 
 
     }
-    /*Update Members*/
+                                    /*Update Members*/
     /*Method return 400 if request is not valid*/
     @Test
     @DisplayName("Update member, method should return 400 Bad Request if request is not valid")
     void updateMemberIfUserHasRoleAdminBadRequest()throws Exception{
+
+        String id = miembroFull.getId();
+        Member member = null;
+        String url = String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(false);
+        when(service.save(member)).thenReturn(member);
+
+        mockMvc.perform(put(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(member))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isBadRequest());
+
+
+
+    }
+    /*Method return 401 Unauthorized*/
+    @Test
+    @DisplayName("Update member, method should return 401 Unauthorized if user not authenticated'")
+    void updateMemberReturn401IfUserNotAuthenticate()throws Exception{
 
         String id = miembroFull.getId();
         Member member = null;
@@ -220,9 +235,8 @@ class MemberControllerTest {
         mockMvc.perform(put(url)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(member))
-                        .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isUnauthorized());
 
 
 
@@ -254,7 +268,101 @@ class MemberControllerTest {
 
 
     }
+                    /*Delete Members*/
+    /*Return 200*/
+    @Test
+    @DisplayName("Delete member, method should delete member and return 200 ok if the user has Role 'ADMIN'")
+    void deleteMemberIfUserHasRoleAdmin()throws Exception{
+
+        String id = miembroFull.getId();
+        String url= String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(true);
+        when(service.delete(miembroFull)).thenReturn(ResponseEntity.ok(miembroFull));
+
+        mockMvc.perform(delete(url)
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(miembroFull))
+                .with(user("user").roles("ADMIN"))
+                .with(csrf()))
+                .andExpect(status().isOk());
 
 
+    }
+
+    /*Return 500*/
+    @Test
+    @DisplayName("Delete member, method should return 500 if ID is not valid")
+    void deleteMemberReturn500IfIdIsNotValid()throws Exception{
+
+        String id = "prueba";
+        String url= String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(false);
+
+
+        mockMvc.perform(delete(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(miembroFull))
+                        .with(user("user").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().is5xxServerError());
+
+
+    }
+    @Test
+    @DisplayName("Delete member, method should return 401 if ID is not valid")
+    void deleteMemberReturn401IfUserIsNotAuthenticate()throws Exception{
+
+        String id = "prueba";
+        String url= String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(true);
+
+
+        mockMvc.perform(delete(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(miembroFull))
+                        .with(csrf()))
+                .andExpect(status().isUnauthorized());
+
+
+    }
+
+
+    /*Method retunr 403*/
+    @Test
+    @DisplayName("Delete member,method should return 403 Forbidden")
+    void deleteMemberReturn403()throws Exception{
+
+        String id = "prueba";
+        String url= String.format("/members/%s", id);
+
+        when(service.existsById(id)).thenReturn(true);
+
+
+        mockMvc.perform(delete(url)
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(miembroFull))
+                        .with(user("user").roles("USER"))
+                        .with(csrf()))
+                .andExpect(status().isForbidden());
+
+
+    }
+
+    /*Get All*/
+
+    @Test
+    @DisplayName("List members, method should List member and return 200 ok if the user has Role 'ADMIN'")
+    void listMemberIfUserHasRoleAdmin()throws Exception{
+
+        Integer page = 0;
+        ResponseEntity<?>r = new ResponseEntity<>(HttpStatus.OK);
+        MembersResponseDto responseDto = new MembersResponseDto();
+
+        Object MembersResponseDto;
+        when(service.getAllMembers(page)).thenReturn(responseDto.);
+    }
 
 }
