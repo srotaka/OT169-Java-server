@@ -150,7 +150,6 @@ public class NewsController {
     @ApiOperation(value = "Return News paginated list.")
     @ApiResponses(value = {
             @ApiResponse(code = 401, message ="Unauthorized"),
-            @ApiResponse(code = 403, message = "Forbidden" ),
             @ApiResponse(code = 500, message = "Internal Server Error", response = ResponseEntity.class),
             @ApiResponse(code = 200, message = "Ok", response = ResponseEntity.class),
             })
