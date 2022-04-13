@@ -29,6 +29,7 @@ public class SwaggerConfig {
     @Bean
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
+                .useDefaultResponseMessages(false)
                 .ignoredParameterTypes(CategoryBasicDto.class, MultipartFile.class, InputStream.class, Role.class, Timestamp.class)
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
