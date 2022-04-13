@@ -38,23 +38,18 @@ public class NewsController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<NewsDto> updateNews(@PathVariable String id,@Valid @RequestBody NewsDto newsDto) throws ResponseStatusException {
-        try{
-            newsService.updateNews( id, newsDto);
-            return ResponseEntity.status(HttpStatus.OK).body(newsDto);
-          }
-            catch (Exception e){
-             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
+    public ResponseEntity<NewsDto> updateNews(@PathVariable String id,@Valid @RequestBody NewsDto newsDto) {
+        newsService.updateNews( id, newsDto);
+        return ResponseEntity.status(HttpStatus.OK).body(newsDto);
     }
 
     @DeleteMapping("/{id}")
     public ResponseEntity<Void>delete(@PathVariable String id) {
-       newsService.delete(id);
-       return ResponseEntity.status(HttpStatus.OK).build();
+        newsService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
-    @GetMapping("/pages")
+    @GetMapping
     public ResponseEntity<Map<String, Object>> getAllPage(@RequestParam(defaultValue = "0") Integer page){
         Map<String, Object> news = new HashMap<>();
         try {
@@ -65,15 +60,5 @@ public class NewsController {
         }
     }
 
-
-
-
-
-
-
-
 }
-
-
-
 
