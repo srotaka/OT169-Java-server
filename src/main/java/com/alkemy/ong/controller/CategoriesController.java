@@ -102,8 +102,7 @@ public class CategoriesController {
 	@ApiOperation(value = "Gets the pagination of Categories", consumes = "application/json")
 	@ApiResponses( value = {
 			@ApiResponse(code = 200, message = "Returns the pagination of all the categories"),
-			@ApiResponse(code = 401, message = "There aren't authorization headers"),
-			@ApiResponse(code = 403, message = "Error, the user doesn't have the permissions to use this method"),
+			@ApiResponse(code = 401, message = "There aren't authorization headers"),			
 			@ApiResponse(code = 404, message = "Error, not found any Page with that Integer")
 	})
 	@GetMapping("/pages")
