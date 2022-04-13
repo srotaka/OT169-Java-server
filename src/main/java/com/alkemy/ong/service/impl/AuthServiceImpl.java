@@ -10,6 +10,7 @@ import com.alkemy.ong.service.EmailService;
 import com.alkemy.ong.utils.JwtUtils;
 import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.authentication.AuthenticationManager;
 import org.springframework.security.authentication.BadCredentialsException;
@@ -19,6 +20,7 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
 
 import javax.servlet.http.HttpServletRequest;
+import java.util.Optional;
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -45,6 +47,11 @@ public class AuthServiceImpl implements AuthService {
     private EmailService emailService;
 
     public ResponseEntity<AuthenticationResponse> register (User user) throws Exception {
+        User findUser = userRepository.findByEmail(user.getEmail());
+
+        if(findUser !=null){
+            return ResponseEntity.status(HttpStatus.CONFLICT).build();
+        }
 
         String oldPassword = user.getPassword();
         String encoded = passwordEncoder.encode(user.getPassword());
