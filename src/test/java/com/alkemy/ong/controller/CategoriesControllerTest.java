@@ -487,7 +487,7 @@ class CategoriesControllerTest {
     }
 
     @Test
-    @DisplayName("Attempt to get the Categories Pagination: Error (Code 500 Internal Server Error)")
+    @DisplayName("Attempt to get the Categories Pagination: Error (Code 401 Unauthorized)")
     void getAllPage__UserIsUnauthorized() throws Exception {
         //I create the entity Response
         Map<String, Object> response = new LinkedHashMap<>();
