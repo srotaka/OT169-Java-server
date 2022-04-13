@@ -228,7 +228,7 @@ class CategoriesControllerTest {
     //Create category Endpoint tests
     @Test
     @DisplayName("Creating a Category: Success (Code 201 Created)")
-    void createCategory__MethodIsOK() throws Exception {
+    void createCategory__MethodIsOK_AdminRole() throws Exception {
         //I create the category that I will use
         Category c1 = new Category("1", "Created Category", "Description", null, null, false);
 
@@ -242,6 +242,41 @@ class CategoriesControllerTest {
                         .content(mapper.writeValueAsString(c1))//I put the values for the entity that I will create
                 .with(user("admin").roles("ADMIN"))
         ).andExpect(status().isCreated());//I verify that the code is 201
+    }
+
+    @Test
+    @DisplayName("Attempt to create a Category: Error (Code 401 Unauthorized)")
+    void createCategory__MethodIsOK_UserRole() throws Exception {
+        //I create the category that I will use
+        Category c1 = new Category("1", "Created Category", "Description", null, null, false);
+
+        //I set the correct functionality for the repository and service methods
+        Mockito.when(categoryService.save(any(Category.class))).thenReturn(c1);
+        Mockito.when(categoryRepository.save(any(Category.class))).thenReturn(c1);
+
+        //I realize a request to the server with role Admin
+        mockMvc.perform(MockMvcRequestBuilders.post("/categories/")
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(c1))//I put the values for the entity that I will create
+                .with(user("user").roles("USER"))
+        ).andExpect(status().isCreated());//I verify that the code is 201
+    }
+
+    @Test
+    @DisplayName("Attempt to create a Category: Error (Code 401 Unauthorized)")
+    void createCategory__isUnauthorized() throws Exception {
+        //I create the category that I will use
+        Category c1 = new Category("1", "Created Category", "Description", null, null, false);
+
+        //I set the correct functionality for the repository and service methods
+        Mockito.when(categoryService.save(any(Category.class))).thenReturn(c1);
+        Mockito.when(categoryRepository.save(any(Category.class))).thenReturn(c1);
+
+        //I realize a request to the server with role Admin
+        mockMvc.perform(MockMvcRequestBuilders.post("/categories/")
+                .contentType(APPLICATION_JSON)
+                .content(mapper.writeValueAsString(c1))//I put the values for the entity that I will create
+        ).andExpect(status().isUnauthorized());//I verify that the code is 401
     }
     //Create category Endpoint tests
 
