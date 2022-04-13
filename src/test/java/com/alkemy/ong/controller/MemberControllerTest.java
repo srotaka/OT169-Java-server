@@ -358,11 +358,39 @@ class MemberControllerTest {
     void listMemberIfUserHasRoleAdmin()throws Exception{
 
         Integer page = 0;
-        ResponseEntity<?>r = new ResponseEntity<>(HttpStatus.OK);
-        MembersResponseDto responseDto = new MembersResponseDto();
+        ResponseEntity r = new ResponseEntity<>(HttpStatus.OK);
+
 
         Object MembersResponseDto;
-        when(service.getAllMembers(page)).thenReturn(responseDto.);
+        when(service.getAllMembers(page)).thenReturn(r);
+        mockMvc.perform(get("/members/?page=0")
+                        .contentType(APPLICATION_JSON)
+                        .content(mapper.writeValueAsString(r))
+                        .with(user("admin").roles("ADMIN"))
+                        .with(csrf()))
+                .andExpect(status().isOk());
     }
 
-}
+    @Test
+    @DisplayName("List members, method return 404 ")
+    void listMemberReturnError()throws Exception {
+
+        Integer page = 0;
+        ResponseEntity r = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
+
+
+        Object MembersResponseDto;
+        when(service.getAllMembers(null)).thenThrow(new Throwable("Fail"));
+        mockMvc.perform(get("/members/?page=0")
+                .contentType(APPLICATION_JSON)
+
+                .with(user("admin").roles("ADMIN"))
+                .with(csrf()))
+                .andExpect(status().isBadRequest());
+    }
+
+
+
+
+
+    }
