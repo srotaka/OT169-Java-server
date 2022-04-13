@@ -107,7 +107,7 @@ public class MemberController {
 					@ResponseHeader(name = "Link",
 							description = "Link of the previous page and another for the next page",
 							response = String.class)}),
-			@ApiResponse(code = 403, message = "PERMISSION_DENIED - Forbidden.")})
+			@ApiResponse(code = 401, message = "Unauthorized")})
 	@ApiImplicitParams(value = {
 			@ApiImplicitParam(name = "page", value = "Page of the list",
 					required = true,
