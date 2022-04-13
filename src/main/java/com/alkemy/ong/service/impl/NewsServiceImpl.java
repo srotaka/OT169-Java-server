@@ -93,7 +93,7 @@ public class NewsServiceImpl implements NewsService {
         try {
             List<List<LinkedHashMap>> newsList = new ArrayList<List<LinkedHashMap>>();
             Pageable paging = PageRequest.of(page,size);
-            String url = "/news/pages?page=";
+            String url = "/news?page=";
 
             Page<List<LinkedHashMap>> pagedNews;
             pagedNews = newsRepository.findPage(paging);
