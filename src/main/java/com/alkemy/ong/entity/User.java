@@ -22,7 +22,12 @@ import org.hibernate.annotations.Where;
 import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
+import org.springframework.lang.Nullable;
+
 import javax.persistence.ForeignKey;
+import javax.validation.constraints.Email;
+import javax.validation.constraints.NotBlank;
+import javax.validation.constraints.NotNull;
 
 @Entity
 @Table(name = "users")
@@ -40,23 +45,33 @@ public class User {
     @ApiModelProperty(notes = "The unique id of the user")
 	private String id;
 	
+    @NotNull
+    @NotBlank
     @Column(nullable = false)
     @ApiModelProperty(notes = "The User's firstname",required = true,position = 1)
     private String firstName;
 
     @Column(nullable = false)
+    @NotNull
+    @NotBlank
     @ApiModelProperty(notes = "The User's lastname",required = true,position = 2)
     private String lastName;
 
     @Column(nullable = false,unique = true)
+    @NotNull
+    @NotBlank
+    @Email
     @ApiModelProperty(notes = "The User's email",required = true,position = 3)
     private String email;
 
     @Column(nullable = false)
+    @NotNull
+    @NotBlank
     @ApiModelProperty(notes = "The User's password",required = true,position = 4)
     private String password;
 
     @ApiModelProperty(notes = "The User's photo",position = 5)
+    @Nullable
     private String photo;
 
     @ApiModelProperty(notes = "The User's timestamp creation",position = 6)
