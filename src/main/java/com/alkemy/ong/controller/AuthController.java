@@ -30,10 +30,10 @@ public class AuthController {
     @ApiResponses(value = {
             @ApiResponse(code = 200, message = "User successfully registered."),
             @ApiResponse(code = 400, message = "Bad Request, fields are missing or have incorrect type."),
-            @ApiResponse(code = 500, message = "Email already exists.")
+            @ApiResponse(code = 409, message = "Email already exists.")
     })
 	public ResponseEntity<AuthenticationResponse> register(@ApiParam("JSON with User data.")
-                                                            @RequestBody User user) throws Exception {
+                                                            @RequestBody @Valid User user) throws Exception {
 		return authService.register(user);
 	}
 
