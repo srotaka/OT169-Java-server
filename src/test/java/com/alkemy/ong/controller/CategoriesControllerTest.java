@@ -461,7 +461,7 @@ class CategoriesControllerTest {
             when(categoryService.getAllPages(0)).thenReturn(response);
 
             //I realize a request to the server with role admin
-            mockMvc.perform(MockMvcRequestBuilders.get("/testimonials/pages?page=")
+            mockMvc.perform(MockMvcRequestBuilders.get("/categories/pages?page=")
                             .with(user("admin").roles("ADMIN"))
                             .contentType(APPLICATION_JSON)
                             .content(mapper.writeValueAsString(response)))
@@ -479,7 +479,7 @@ class CategoriesControllerTest {
         when(categoryService.getAllPages(0)).thenReturn(response);
 
         //I realize a request to the server with role user
-        mockMvc.perform(MockMvcRequestBuilders.get("/testimonials/pages?page=")
+        mockMvc.perform(MockMvcRequestBuilders.get("/categories/pages?page=")
                         .with(user("user").roles("USER"))
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(response)))
@@ -496,7 +496,7 @@ class CategoriesControllerTest {
         when(categoryService.getAllPages(0)).thenReturn(response);
 
         //I realize a request to the server with role user
-        mockMvc.perform(MockMvcRequestBuilders.get("/testimonials/pages?page=")
+        mockMvc.perform(MockMvcRequestBuilders.get("/categories/pages?page=")
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(response)))
                 //I don't send any role
@@ -510,7 +510,7 @@ class CategoriesControllerTest {
         when(categoryService.getAllPages(0)).thenThrow(new Exception("Fail to load pages"));
 
         //I realize a request that will fail due to the previous exception
-        mockMvc.perform(MockMvcRequestBuilders.get("/testimonials/pages?page=")
+        mockMvc.perform(MockMvcRequestBuilders.get("/categories/pages?page=")
                         .contentType(APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().is4xxClientError());//I verify that the error is any 4xx
     }
