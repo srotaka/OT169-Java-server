@@ -24,17 +24,19 @@ public class ContactServiceImpl implements ContactService {
 
     @Override
     @Transactional
-    public Contact create(Contact contact) throws Exception {
-        if(contact.getName().isEmpty() || contact.getName() == null){
+    public ContactDto create(ContactDto contactDto) throws Exception {
+        if(contactDto.getName().isEmpty() || contactDto.getName() == null){
             throw new Exception("Name is empty");
         }
-        if(contact.getEmail().isEmpty() || contact.getEmail() == null){
+        if(contactDto.getEmail().isEmpty() || contactDto.getEmail() == null){
             throw new Exception("Email is empty");
         }
-        contactRepository.save(contact);
-        emailService.sendContactMail(contact.getEmail(), contact.getName());
-        return contact;
+
+        contactRepository.save(Mapper.mapFromDto(contactDto,new Contact()));
+        emailService.sendContactMail(contactDto.getEmail(), contactDto.getName());
+        return contactDto;
     }
+
 
     @Override
     public List<ContactDto> getContactList() throws Exception {
