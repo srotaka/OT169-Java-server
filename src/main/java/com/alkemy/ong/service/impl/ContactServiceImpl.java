@@ -7,9 +7,9 @@ import com.alkemy.ong.service.ContactService;
 import com.alkemy.ong.service.EmailService;
 import com.alkemy.ong.utils.Mapper;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
+
 
 import java.util.ArrayList;
 import java.util.List;
@@ -23,7 +23,6 @@ public class ContactServiceImpl implements ContactService {
     private EmailService emailService;
 
     @Override
-    @Transactional
     public ContactDto create(ContactDto contactDto) throws Exception {
         if(contactDto.getName().isEmpty() || contactDto.getName() == null){
             throw new Exception("Name is empty");
@@ -31,10 +30,11 @@ public class ContactServiceImpl implements ContactService {
         if(contactDto.getEmail().isEmpty() || contactDto.getEmail() == null){
             throw new Exception("Email is empty");
         }
-
-        contactRepository.save(Mapper.mapFromDto(contactDto,new Contact()));
+       Contact newContact = new Contact();
+        newContact = Mapper.mapFromDto(contactDto,new Contact());
+        contactRepository.save(newContact);
         emailService.sendContactMail(contactDto.getEmail(), contactDto.getName());
-        return contactDto;
+        return Mapper.mapToDto(newContact,contactDto);
     }
 
 

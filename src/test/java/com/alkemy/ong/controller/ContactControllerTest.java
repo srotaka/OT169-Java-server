@@ -20,6 +20,7 @@ import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
 import org.springframework.test.context.TestPropertySource;
@@ -96,6 +97,7 @@ class ContactControllerTest {
     @WithMockUser(roles = "ADMIN")
     void addContact__ShouldSaveContactAndReturnOkIfUserHasRoleAdmin() throws Exception {
 
+        //ContactDto c2 = new ContactDto();
         when(contactService.create(contactDto)).thenReturn(contactDto);
 
         mockMvc.perform(post(ROOT_PATH).with(csrf())
@@ -122,8 +124,8 @@ class ContactControllerTest {
         ContactDto c1 = new ContactDto();
         c1.setName("");
         c1.setEmail("");
-        //when(contactController.save(c1)).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
-        when(contactService.create(c1)).thenReturn(c1);
+
+        when(contactService.create(c1)).thenThrow(new ResponseStatusException(HttpStatus.BAD_REQUEST));
         mockMvc.perform(post(ROOT_PATH).with(csrf())
                 .content(asJson(c1)).contentType(APPLICATION_JSON))
                 .andExpect(status().isBadRequest());
