@@ -19,13 +19,8 @@ public class ContactController {
     private ContactServiceImpl contactService;
 
     @PostMapping
-    public ResponseEntity<?> save(@RequestBody @Valid ContactDto dto){
-        try{
-            ContactDto contact1 = contactService.create(dto);
-            return ResponseEntity.status(CREATED).body(contact1);
-        }catch (Exception e){
-            return ResponseEntity.status(BAD_REQUEST).body(e.getMessage());
-        }
+    public ResponseEntity<?> save(@RequestBody @Valid ContactDto dto) throws Exception {
+       return ResponseEntity.status(CREATED).body(contactService.create(dto));
 
     }
 
