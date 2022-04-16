@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 
+import org.springframework.http.HttpStatus;
 import org.springframework.test.annotation.DirtiesContext;
 
 import org.springframework.test.web.servlet.MockMvc;
@@ -22,6 +23,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
+import org.springframework.web.server.ResponseStatusException;
 
 import java.util.*;
 import static org.junit.jupiter.api.Assertions.assertEquals;
@@ -470,23 +472,6 @@ class CategoriesControllerTest {
     }
 
     @Test
-    @DisplayName("Getting Categories Pagination without admin user: Success (Code 200 Ok)")
-    void getAllPage__MethodIsOkWithoutAdmin() throws Exception {
-        //I create the entity Response
-        Map<String, Object> response = new LinkedHashMap<>();
-
-        //I set the correct functionality for the service method
-        when(categoryService.getAllPages(0)).thenReturn(response);
-
-        //I realize a request to the server with role user
-        mockMvc.perform(MockMvcRequestBuilders.get("/categories/pages?page=")
-                        .with(user("user").roles("USER"))
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(response)))
-                .andExpect(MockMvcResultMatchers.status().isOk());//I verify that the code is 200
-    }
-
-    @Test
     @DisplayName("Attempt to get the Categories Pagination: Error (Code 401 Unauthorized)")
     void getAllPage__UserIsUnauthorized() throws Exception {
         //I create the entity Response
@@ -507,12 +492,15 @@ class CategoriesControllerTest {
     @DisplayName("Attempt to get the Categories Pagination: Error (Code 400 Client Error)")
     void getAllPage__ClientError() throws Exception {
         //I throw an exception when I use the service
-        when(categoryService.getAllPages(0)).thenThrow(new Exception("Fail to load pages"));
+        when(categoryService.getAllPages(0)).thenThrow(new ResponseStatusException(HttpStatus.INTERNAL_SERVER_ERROR));
 
         //I realize a request that will fail due to the previous exception
         mockMvc.perform(MockMvcRequestBuilders.get("/categories/pages?page=")
-                        .contentType(APPLICATION_JSON))
-                .andExpect(MockMvcResultMatchers.status().is4xxClientError());//I verify that the error is any 4xx
+                        .contentType(APPLICATION_JSON)
+                        .with(user("admin").roles("ADMIN"))
+                )
+
+                .andExpect(MockMvcResultMatchers.status().is5xxServerError());//I verify that the error is any 5xx
     }
     //Pagination endpoint tests
 }
