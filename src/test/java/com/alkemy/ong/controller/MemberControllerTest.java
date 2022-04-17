@@ -114,39 +114,9 @@ class MemberControllerTest {
                 .andExpect(status().isBadRequest());
     }
 
-    /*Method return 401 Unauthorized*/
-    @Test
-    @DisplayName("Create member, method should return 401 Unauthorized if user not authenticated'")
-    void createMemberReturnUnauthorized()throws Exception{
 
 
 
-
-        when(service.save(miembroFull)).thenReturn(miembroFull);
-
-        mockMvc.perform(post("/members/")
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(miembroFull))
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
-    }
-
-    /*Method return 403 Forbidden*/
-    @Test
-    @DisplayName("Create member, method return 403  if the user has Role 'USER'")
-    void createMemberIfUserHasRoleUser()throws Exception{
-
-
-        when(service.save(miembroFull)).thenReturn(miembroFull);
-
-        mockMvc.perform(post("/members/")
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(miembroFull))
-                        .with(user("user").roles("USER"))
-                        .with(csrf()))
-                .andExpect(status().isForbidden());
-
-    }
 
     /*Update Members*/
     /*Method return 200 OK if user is ADMIN*/
@@ -177,22 +147,22 @@ class MemberControllerTest {
     /*Update Members*/
     /*Method return 400*/
     @Test
-    @DisplayName("Update member, method should return 400 Bad Request if Id is not valid")
-    void updateMemberIfUserHasRoleAdminBadRequestIfIdNotValid()throws Exception{
+    @DisplayName("Update member, method should return 404 Not found if Id is not valid")
+    void updateMemberIfUserHasRoleAdmidNotFoundIfIdNotValid()throws Exception{
 
-        String id = null;
-        Member member = null;
+        String id = "asdas";
+        Member member = new Member();
         String url = String.format("/members/%s", id);
 
         when(service.existsById(id)).thenReturn(false);
-        when(service.save(member)).thenReturn(member);
+
 
         mockMvc.perform(put(url)
                         .contentType(APPLICATION_JSON)
                         .content(mapper.writeValueAsString(member))
                         .with(user("admin").roles("ADMIN"))
                         .with(csrf()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
 
 
 
@@ -220,54 +190,10 @@ class MemberControllerTest {
 
 
     }
-    /*Method return 401 Unauthorized*/
-    @Test
-    @DisplayName("Update member, method should return 401 Unauthorized if user not authenticated'")
-    void updateMemberReturn401IfUserNotAuthenticate()throws Exception{
-
-        String id = miembroFull.getId();
-        Member member = null;
-        String url = String.format("/members/%s", id);
-
-        when(service.existsById(id)).thenReturn(true);
-        when(service.save(member)).thenReturn(member);
-
-        mockMvc.perform(put(url)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(member))
-                        .with(csrf()))
-                .andExpect(status().isUnauthorized());
 
 
 
-    }
 
-
-    /*Update Members*/
-    /*Method return 403*/
-    @Test
-    @DisplayName("Update member, method should return 403 Forbidden ")
-    void updateMemberReturn403NotAuthenticated()throws Exception{
-
-        String id = miembroFull.getId();
-        Member member = null;
-        String url = String.format("/members/%s", id);
-
-        when(service.existsById(id)).thenReturn(true);
-        when(service.save(member)).thenReturn(member);
-
-
-        mockMvc.perform(put(url)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(null))
-                        .with(user("user").roles("USER"))
-                        .with(csrf()))
-
-                .andExpect(status().isForbidden());
-
-
-
-    }
                     /*Delete Members*/
     /*Return 200*/
     @Test
@@ -330,26 +256,7 @@ class MemberControllerTest {
     }
 
 
-    /*Method retunr 403*/
-    @Test
-    @DisplayName("Delete member,method should return 403 Forbidden")
-    void deleteMemberReturn403()throws Exception{
 
-        String id = "prueba";
-        String url= String.format("/members/%s", id);
-
-        when(service.existsById(id)).thenReturn(true);
-
-
-        mockMvc.perform(delete(url)
-                        .contentType(APPLICATION_JSON)
-                        .content(mapper.writeValueAsString(miembroFull))
-                        .with(user("user").roles("USER"))
-                        .with(csrf()))
-                .andExpect(status().isForbidden());
-
-
-    }
 
     /*Get All*/
 
@@ -375,18 +282,19 @@ class MemberControllerTest {
     @DisplayName("List members, method return 404 ")
     void listMemberReturnError()throws Exception {
 
-        Integer page = 0;
+        Integer page = null;
+        String bad = "fse";
         ResponseEntity r = new ResponseEntity<>(HttpStatus.BAD_REQUEST);
-
+        String url= String.format("/members/?page=", bad);
 
         Object MembersResponseDto;
-        when(service.getAllMembers(null)).thenThrow(new Throwable("Fail"));
-        mockMvc.perform(get("/members/?page=0")
+        when(service.getAllMembers(page)).thenThrow();
+        mockMvc.perform(get(url)
                 .contentType(APPLICATION_JSON)
 
                 .with(user("admin").roles("ADMIN"))
                 .with(csrf()))
-                .andExpect(status().isBadRequest());
+                .andExpect(status().isNotFound());
     }
 
 
