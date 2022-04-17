@@ -31,14 +31,17 @@ public class MemberService {
 		return new ResponseEntity<Member>(HttpStatus.OK);
 	}
 	//List all
-	public ResponseEntity<?> getAllMembers(Integer page) {
+	public ResponseEntity<?> getAllMembers(Integer page) throws Exception {
 
+		if (page.equals(null) || page.equals(String.class)){
+			throw new Exception("Unexpected value");
+		}
 		MembersResponseDto response = new MembersResponseDto();
 
 		Page<Member> membersPage = memberRepository.findAll(PageRequest.of(page, 10));
 
 		if(membersPage.getTotalPages() < 0 || membersPage.isEmpty()){
-			return ResponseEntity.noContent().build();
+			throw new Exception("Members is empty");
 		}
 
 		List<MemberDto> members = membersPage.stream()
