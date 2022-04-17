@@ -36,7 +36,7 @@ public class SecurityConfig extends WebSecurityConfigurerAdapter {
 
     private static final String[] swaggerWhitelist = {
             "/configuration/ui",
-            "/swagger-resources",
+            "/swagger-resources/**",
             "/swagger-ui.html",
             "/webjars/**",
             "/swagger-resources/configuration/ui",

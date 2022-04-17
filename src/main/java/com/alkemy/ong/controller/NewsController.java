@@ -79,6 +79,8 @@ public class NewsController {
     }
 
 
+
+ 
     @ApiOperation(value = "Update News if exist ")
     @ApiResponses( value={
 
@@ -108,13 +110,8 @@ public class NewsController {
                     )       })
     @PutMapping(value = "/{id}", produces = {"application/json"}, consumes = {"application/json"})
     public ResponseEntity<NewsDto> updateNews(@PathVariable String id,@Valid @RequestBody NewsDto newsDto) throws ResponseStatusException {
-        try{
             newsService.updateNews( id, newsDto);
-            return ResponseEntity.status(HttpStatus.OK).body(newsDto);
-          }
-            catch (Exception e){
-             throw new ResponseStatusException(HttpStatus.NOT_FOUND);
-            }
+        return ResponseEntity.status(HttpStatus.OK).body(newsDto);
     }
 
 
@@ -142,8 +139,8 @@ public class NewsController {
                     example = "Bearer access_token")})
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<Void>delete(@PathVariable String id) {
-       newsService.delete(id);
-       return ResponseEntity.status(HttpStatus.OK).build();
+        newsService.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).build();
     }
 
 
@@ -178,15 +175,5 @@ public class NewsController {
         }
     }
 
-
-
-
-
-
-
-
 }
-
-
-
 
