@@ -69,10 +69,6 @@ public class MemberController {
 		return new ResponseEntity<Member>(HttpStatus.INTERNAL_SERVER_ERROR);//If the member doesn't exists, throws 500 error code
 	}
 
-
-	@PutMapping("/{id}")//OT169-71
-	public ResponseEntity<Member> updateMember(@PathVariable String id, @RequestBody Member member){
-
 	@PutMapping(value = "/{id}", produces = {"application/json"}, consumes = {"application/json"})
 	@ResponseStatus(HttpStatus.NO_CONTENT)
 	@ApiOperation(value = "Update a member passed by id.")
