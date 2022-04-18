@@ -6,7 +6,7 @@ import com.alkemy.ong.entity.Contact;
 import java.util.List;
 
 public interface ContactService {
-    Contact create (Contact contact) throws Exception;
+    ContactDto create (ContactDto dto) throws Exception;
 
     List<ContactDto> getContactList()throws Exception;
 }

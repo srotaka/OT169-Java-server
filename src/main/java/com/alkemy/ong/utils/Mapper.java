@@ -122,6 +122,15 @@ public class Mapper {
 		contactDto.setMessage(contact.getMessage());
 		return contactDto;
 	}
+	public static Contact mapFromDto(ContactDto contactDto, Contact contact){
+		contact.setId(contactDto.getId());
+		contact.setName(contactDto.getName());
+		contact.setPhone(contactDto.getPhone());
+		contact.setEmail(contactDto.getEmail());
+		contact.setMessage(contactDto.getMessage());
+		return contact;
+	}
+
 
 	public static TestimonialDto mapToDto(Testimonial testimonial, TestimonialDto testimonialDto){
 		testimonialDto.setId(testimonial.getId());
