@@ -39,15 +39,9 @@ public class OrganizationController {
 	}
 
 	@GetMapping("/public/Slides/{id}")
-	public ResponseEntity<List<SlideResponseDto>> slideList(@PathVariable String id){
+	public ResponseEntity<List<SlideResponseDto>> slideList(@PathVariable String id) throws Exception {
 		List<SlideResponseDto> dots = new ArrayList<>();
-		try {
 			dots=slideService.slideForOng(id);
-
-		} catch (Exception e) {
-			ResponseEntity.status(HttpStatus.NOT_FOUND).build();;
-		}
-
 		return ResponseEntity.ok().body(dots);
 	}
 }
