@@ -31,12 +31,6 @@ public class MemberController {
 			@ApiResponse(code = 400, message = "INVALID_ARGUMENT - Certain arguments "
 					+ "cannot be empty or null."),
 			@ApiResponse(code = 403, message = "PERMISSION_DENIED - Forbidden.")})
-	@ApiImplicitParam(name = "Authorization", value = "Access Token",
-			required = true,
-			allowEmptyValue = false,
-			paramType = "header",
-			dataTypeClass = String.class,
-			example = "Bearer access_token")
 	public ResponseEntity<Member> createMember(@RequestBody Member member) { // I get the entity
 		return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK); // if it doesn't had errors,
 	}
@@ -53,14 +47,7 @@ public class MemberController {
 					value = "Id of the member we want to delete",
 					required = true, allowEmptyValue = false,
 					paramType = "path", dataTypeClass = String.class,
-					example = "1"),
-			@ApiImplicitParam(name = "Authorization",
-					value = "Access Token",
-					required = true,
-					allowEmptyValue = false,
-					paramType = "header",
-					dataTypeClass = String.class,
-					example = "Bearer access_token")})
+					example = "1")})
 	public ResponseEntity<Member> deleteMember(@PathVariable String id){
 		if(memberService.existsById(id)) {//If the member exists
 			memberService.delete( memberService.getById(id) );//I delete the member
@@ -69,28 +56,14 @@ public class MemberController {
 		return new ResponseEntity<Member>(HttpStatus.INTERNAL_SERVER_ERROR);//If the member doesn't exists, throws 500 error code
 	}
 
-	@PutMapping(value = "/{id}", produces = {"application/json"}, consumes = {"application/json"})
-	@ResponseStatus(HttpStatus.NO_CONTENT)
-	@ApiOperation(value = "Update a member passed by id.")
-	@ApiResponses(value = {
-			@ApiResponse(code = 204, message = "NO_CONTENT - The member was successfully updated"),
-			@ApiResponse(code = 400, message = "INVALID_ARGUMENT - Certain arguments "
-					+ "cannot be empty or null."),
-			@ApiResponse(code = 403, message = "PERMISSION_DENIED - Forbidden."),
-			@ApiResponse(code = 404, message = "NOT_FOUND - Member not found.")})
-	@ApiImplicitParams(value = {
-			@ApiImplicitParam(name = "id",
-					value = "Id of the member we want to update",
-					required = true, allowEmptyValue = false,
-					paramType = "path", dataTypeClass = String.class,
-					example = "1"),
-			@ApiImplicitParam(name = "Authorization",
-					value = "Access Token",
-					required = true,
-					allowEmptyValue = false,
-					paramType = "header",
-					dataTypeClass = String.class,
-					example = "Bearer access_token")})
+	@ApiOperation(value = "Updates a member", consumes = "application/json")
+	@ApiResponses( value = {
+			@ApiResponse(code = 200, message = "Returns the entire updated member"),
+			@ApiResponse(code = 401, message = "There aren't authorization headers"),
+			@ApiResponse(code = 403, message = "Error, the user doesn't have the permissions to use this method"),
+			@ApiResponse(code = 404, message = "Error, not found any Member with that ID")
+	})
+	@PutMapping("/{id}")
 	public ResponseEntity<Member> updateMember(@RequestParam(name="id") String id,@RequestBody Member member){
 
 		if(memberService.existsById(id)) {//If the member exists
@@ -108,26 +81,13 @@ public class MemberController {
 					@ResponseHeader(name = "Link",
 							description = "Link of the previous page and another for the next page",
 							response = String.class)}),
-			@ApiResponse(code = 401, message = "Unauthorized")})
+			@ApiResponse(code = 403, message = "PERMISSION_DENIED - Forbidden.")})
 	@ApiImplicitParams(value = {
 			@ApiImplicitParam(name = "page", value = "Page of the list",
 					required = true,
 					paramType = "query",
 					dataTypeClass = String.class,
-					example = "0"),
-			@ApiImplicitParam(name = "size",
-					value = "Size of the page",
-					required = false,
-					paramType = "query",
-					dataTypeClass = String.class,
-					example = "10"),
-			@ApiImplicitParam(name = "Authorization",
-					value = "Access Token",
-					required = true,
-					allowEmptyValue = false,
-					paramType = "header",
-					dataTypeClass = String.class,
-					example = "Bearer access_token")})
+					example = "0")})
 	public ResponseEntity<?> getAllUsers(@RequestParam(defaultValue = "0") Integer page){
 		try{
 			return ResponseEntity.status(OK).body(memberService.getAllMembers(page));
