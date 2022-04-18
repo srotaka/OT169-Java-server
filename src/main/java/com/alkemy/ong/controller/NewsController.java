@@ -164,7 +164,7 @@ public class NewsController {
                     paramType = "query",
                     dataTypeClass = Integer.class,
                     example = "1"), })
-    @GetMapping(value = "/pages", produces ={"application/json"} )
+    @GetMapping(produces ={"application/json"} )
     public ResponseEntity<Map<String, Object>> getAllPage(@RequestParam(defaultValue = "0") Integer page){
         Map<String, Object> news = new HashMap<>();
         try {
