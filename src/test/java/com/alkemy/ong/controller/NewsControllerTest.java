@@ -142,7 +142,7 @@ class NewsControllerTest {
                         .with(csrf()))
                 .andExpect(status().isUnauthorized());
     }
-//GET//
+    //GET//
 
     @Test
     @WithMockUser(roles = "ADMIN")
@@ -178,21 +178,6 @@ class NewsControllerTest {
                         .contentType(APPLICATION_JSON))
                 .andExpect(MockMvcResultMatchers.status().isOk());
     }
-
-    @Test
-    @WithMockUser(roles = "USER")
-    @DisplayName("Get All News Pages: Success (Code 200 OK)")
-    void getAllPage_Ok1() throws Exception {
-
-         Map<String, Object> response = new LinkedHashMap<>();
-          when(newsService.getAllPages(1)).thenReturn(response);
-        mockMvc.perform(MockMvcRequestBuilders.get(URL + "?page=1")
-                        .contentType(APPLICATION_JSON)
-                .content(objectMapper.writeValueAsString(response)))
-                .andExpect(MockMvcResultMatchers.status().isOk());
-
-    }
-
 
     @Test
     @WithMockUser(roles = "ADMIN")
