@@ -1,10 +1,8 @@
 package com.alkemy.ong.controller;
 
-import com.alkemy.ong.config.SwaggerConfig;
 import com.alkemy.ong.dto.UserCredentialsDto;
 import com.alkemy.ong.dto.UserDto;
 import com.alkemy.ong.entity.Role;
-import com.alkemy.ong.filter.JwtRequestFilter;
 import com.alkemy.ong.repository.RoleRepository;
 import com.alkemy.ong.repository.UserRepository;
 import com.alkemy.ong.service.EmailService;
@@ -25,15 +23,11 @@ import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.User;
 import org.springframework.security.test.context.support.WithMockUser;
 import org.springframework.test.annotation.DirtiesContext;
-import org.springframework.test.context.ContextConfiguration;
 import org.springframework.test.context.TestPropertySource;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import org.springframework.web.context.WebApplicationContext;
 
-import javax.servlet.http.HttpServletRequest;
-import java.sql.Timestamp;
-import java.time.Instant;
 import java.util.Collections;
 import java.util.Optional;
 
@@ -54,6 +48,29 @@ public class AuthControllerTest {
     @Autowired
     private WebApplicationContext context;
 
+    @Autowired
+    private JwtUtils jwtUtil;
+
+    @MockBean
+    private UserDetailsCustomServiceImpl userDetailsCustomService;
+
+    @MockBean
+    private UserRepository userRepository;
+
+    @MockBean
+    private RoleRepository roleRepository;
+
+    @MockBean
+    private AuthenticationManager authenticationManager;
+
+    @MockBean
+    private EmailService emailService;
+
+    @MockBean
+    private UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
+
+    private final String commonUrl = "/auth";
+
     private MockMvc mockMvc;
 
     private UserCredentialsDto userCredentialsDto;
@@ -67,32 +84,6 @@ public class AuthControllerTest {
     private UserDto userDto;
 
     private String jwt;
-
-    @Autowired
-    JwtUtils jwtUtil;
-
-    @MockBean
-    private UserDetailsCustomServiceImpl userDetailsCustomService;
-
-    @MockBean
-    private UserRepository userRepository;
-
-    @MockBean
-    private RoleRepository roleRepository;
-
-    @MockBean
-    private EmailService emailService;
-
-    @MockBean
-    AuthenticationManager authenticationManager;
-
-    @MockBean
-    HttpServletRequest httpServletRequest;
-
-    @MockBean
-    private UsernamePasswordAuthenticationToken usernamePasswordAuthenticationToken;
-
-    private final String commonUrl = "/auth";
 
     @BeforeEach
     public void setup(){
@@ -186,10 +177,10 @@ public class AuthControllerTest {
 
     @Test
     @DisplayName("Get authneticated user data should return 401 Unauthorized if a valid JWT is missing in the request or user is not logged in")
-    @WithMockUser(username = "eva@mail.com",password = "1234",roles = "ADMIN")
     void getAuthenticatedUserData__shouldReturn401UnauthorizedIfAValidJwtIsMissing() throws Exception{
 
-        mockMvc.perform(get(commonUrl + "/me").header(HttpHeaders.AUTHORIZATION,jwt))
+        mockMvc.perform(get(commonUrl + "/me")
+                .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -222,13 +213,22 @@ public class AuthControllerTest {
 
         when(userRepository.save(userEntity)).thenReturn(null);
         when(roleRepository.findById(roleEntity.getId())).thenReturn(Optional.of(roleEntity));
-        when(userDetailsCustomService.loadUserByUsername(userEntity.getEmail())).thenReturn(user);
-        when(usernamePasswordAuthenticationToken.isAuthenticated()).thenReturn(true);
-        when(authenticationManager.authenticate(any())).thenReturn(any());
 
         mockMvc.perform(post(commonUrl +"/register")
                         .contentType(MediaType.APPLICATION_JSON)
                         .content(asJson(userEntity)))
                 .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    @DisplayName("Register new user should return 409 conflict if the email is already taken")
+    void registerUser__shouldReturn409ConflictIfTheEmailIsAlreadyTaken() throws Exception {
+
+        when(userRepository.findByEmail(userEntity.getEmail())).thenReturn(userEntity);
+
+        mockMvc.perform(post(commonUrl + "/register")
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(userEntity)))
+                .andExpect(status().isConflict());
     }
 }
