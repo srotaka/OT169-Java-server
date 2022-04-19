@@ -105,9 +105,9 @@ public class AuthControllerTest {
         userDto.setEmail("eva@mail.com");
 
         roleEntity = new Role();
-        roleEntity.setId("1");
+        roleEntity.setId("2");
         roleEntity.setDescription("Role with administrator privileges");
-        roleEntity.setName("ADMIN");
+        roleEntity.setName("USER");
 
         userEntity = new com.alkemy.ong.entity.User();
         userEntity.setId("10");
@@ -134,8 +134,8 @@ public class AuthControllerTest {
         when(authenticationManager.authenticate(any())).thenReturn(any());
 
         mockMvc.perform(post(commonUrl +"/login")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJson(userCredentialsDto)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(userCredentialsDto)))
                 .andExpect(status().isOk())
                 .andExpect((jsonPath("$.jwt").value(jwt)));
     }
@@ -149,9 +149,9 @@ public class AuthControllerTest {
         when(userDetailsCustomService.loadUserByUsername(userCredentialsDto.getEmail())).thenThrow(new BadCredentialsException("Incorrect email or password"));
 
         mockMvc.perform(post(commonUrl + "/login")
-               .contentType(MediaType.APPLICATION_JSON)
-               .content(asJson(userCredentialsDto)))
-               .andExpect(status().isBadRequest());
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(userCredentialsDto)))
+                .andExpect(status().isBadRequest());
     }
 
     /*================================================================
@@ -167,7 +167,7 @@ public class AuthControllerTest {
         when(usernamePasswordAuthenticationToken.isAuthenticated()).thenReturn(true);
 
         mockMvc.perform(get(commonUrl + "/me").header(HttpHeaders.AUTHORIZATION,"Bearer "+jwt)
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.firstName").value("Maria Eva"))
                 .andExpect(jsonPath("$.lastName").value("De los angeles"))
@@ -180,7 +180,7 @@ public class AuthControllerTest {
     void getAuthenticatedUserData__shouldReturn401UnauthorizedIfAValidJwtIsMissing() throws Exception{
 
         mockMvc.perform(get(commonUrl + "/me")
-                .contentType(MediaType.APPLICATION_JSON))
+                        .contentType(MediaType.APPLICATION_JSON))
                 .andExpect(status().isUnauthorized());
     }
 
@@ -199,8 +199,8 @@ public class AuthControllerTest {
         when(authenticationManager.authenticate(any())).thenReturn(any());
 
         mockMvc.perform(post(commonUrl +"/register")
-                .contentType(MediaType.APPLICATION_JSON)
-                .content(asJson(userEntity)))
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .content(asJson(userEntity)))
                 .andExpect(status().isOk())
                 .andExpect((jsonPath("$.jwt").value(jwt)));
     }

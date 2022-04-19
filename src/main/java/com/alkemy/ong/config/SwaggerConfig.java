@@ -4,7 +4,8 @@ import com.alkemy.ong.dto.CategoryBasicDto;
 import com.alkemy.ong.entity.Role;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.web.multipart.MultipartFile;
+import org.springframework.http.ResponseEntity;
+import org.springframework.web.server.ResponseStatusException;
 import springfox.documentation.builders.PathSelectors;
 import springfox.documentation.builders.RequestHandlerSelectors;
 import springfox.documentation.service.ApiInfo;
@@ -30,7 +31,7 @@ public class SwaggerConfig {
     public Docket api(){
         return new Docket(DocumentationType.SWAGGER_2)
                 .useDefaultResponseMessages(false)
-                .ignoredParameterTypes(CategoryBasicDto.class, MultipartFile.class, InputStream.class, Role.class, Timestamp.class)
+                .ignoredParameterTypes(CategoryBasicDto.class, InputStream.class, ResponseEntity.class, ResponseStatusException.class, StackTraceElement.class, Throwable.class, ResponseEntity.class, Role.class, Timestamp.class)
                 .securityContexts(Arrays.asList(securityContext()))
                 .securitySchemes(Arrays.asList(apiKey()))
                 .select()

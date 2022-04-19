@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/members")
 @Api(tags = "Member Controller", value = "MemberEndpoints")
 public class MemberController {
-	
+
 	@Autowired
 	private MemberService memberService;
 
@@ -91,7 +91,7 @@ public class MemberController {
 					paramType = "header",
 					dataTypeClass = String.class,
 					example = "Bearer access_token")})
-	public ResponseEntity<Member> updateMember(@RequestParam(name="id") String id,@RequestBody Member member){
+	public ResponseEntity<Member> updateMember(@PathVariable(name="id") String id,@RequestBody Member member){
 
 		if(memberService.existsById(id)) {//If the member exists
 			return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);//I create the member
