@@ -17,7 +17,7 @@ import static org.springframework.http.HttpStatus.OK;
 @RequestMapping("/members")
 @Api(tags = "Member Controller", value = "MemberEndpoints")
 public class MemberController {
-	
+
 	@Autowired
 	private MemberService memberService;
 

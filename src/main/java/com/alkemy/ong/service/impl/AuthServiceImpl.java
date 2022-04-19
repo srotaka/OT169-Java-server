@@ -18,9 +18,8 @@ import org.springframework.security.authentication.UsernamePasswordAuthenticatio
 import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
-
 import javax.servlet.http.HttpServletRequest;
-import java.util.Optional;
+
 
 @Service
 public class AuthServiceImpl implements AuthService {
@@ -56,7 +55,7 @@ public class AuthServiceImpl implements AuthService {
         String oldPassword = user.getPassword();
         String encoded = passwordEncoder.encode(user.getPassword());
         user.setPassword(encoded);
-        user.setRoleId(roleRepository.findById(user.getRoleId().getId()).get());
+        user.setRoleId(roleRepository.findById("2").get());
         userRepository.save(user); //guarda el usuario y automáticamente devuelve un objeto con mis datos json
 
         try {
