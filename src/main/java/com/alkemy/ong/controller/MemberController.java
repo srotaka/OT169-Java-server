@@ -56,15 +56,20 @@ public class MemberController {
 		return new ResponseEntity<Member>(HttpStatus.INTERNAL_SERVER_ERROR);//If the member doesn't exists, throws 500 error code
 	}
 
-	@ApiOperation(value = "Updates a member", consumes = "application/json")
+	@ApiOperation(value = "Updates a member")
 	@ApiResponses( value = {
 			@ApiResponse(code = 200, message = "Returns the entire updated member"),
 			@ApiResponse(code = 401, message = "There aren't authorization headers"),
 			@ApiResponse(code = 403, message = "Error, the user doesn't have the permissions to use this method"),
 			@ApiResponse(code = 404, message = "Error, not found any Member with that ID")
 	})
-	@PutMapping("/{id}")
-	public ResponseEntity<Member> updateMember(@RequestParam(name="id") String id,@RequestBody Member member){
+	@ApiImplicitParams(value = {@ApiImplicitParam(name = "id",
+			value = "Id of the member we want to update",
+			required = true, allowEmptyValue = false,
+			paramType = "path", dataTypeClass = String.class,
+			example = "1")})
+	@PutMapping(value = "/{id}", produces = {"application/json"}, consumes = {"application/json"})
+	public ResponseEntity<Member> updateMember(@PathVariable(name="id") String id,@RequestBody Member member){
 
 		if(memberService.existsById(id)) {//If the member exists
 			return new ResponseEntity<Member>(memberService.save(member), HttpStatus.OK);//I create the member
@@ -81,7 +86,7 @@ public class MemberController {
 					@ResponseHeader(name = "Link",
 							description = "Link of the previous page and another for the next page",
 							response = String.class)}),
-			@ApiResponse(code = 403, message = "PERMISSION_DENIED - Forbidden.")})
+			@ApiResponse(code = 403, message = "PERMISSION_DENIED - Forbidden.")})//VER ROL
 	@ApiImplicitParams(value = {
 			@ApiImplicitParam(name = "page", value = "Page of the list",
 					required = true,
