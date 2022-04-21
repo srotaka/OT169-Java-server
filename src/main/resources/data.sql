@@ -1,3 +1,7 @@
+-- Creación de Base de datos
+CREATE DATABASE IF NOT EXISTS gr169 CHARACTER SET utf8mb4;
+USE gr169;
+
 -- Creación de roles
 INSERT INTO `gr169`.`role` (`id`, `description`, `name`, `soft_deleted`, `timestamp`) SELECT '1', 'Administrador General', 'ADMIN', 0, NOW() WHERE NOT EXISTS (SELECT * FROM role WHERE id = '1');
 INSERT INTO `gr169`.`role` (`id`, `description`, `name`, `soft_deleted`, `timestamp`) SELECT '2', 'Usuario del Sistema', 'USER', 0, NOW() WHERE NOT EXISTS (SELECT * FROM role WHERE id = '2');

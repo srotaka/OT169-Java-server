@@ -30,13 +30,6 @@ public class NewsController {
             @ApiResponse(code = 201, message = "Created", response = NewsDto.class)
     })
     @ApiImplicitParams( value = {
-            @ApiImplicitParam (name = "Authorization", value = "Access Token",
-            required = true,
-            allowEmptyValue = false,
-            paramType = "header",
-            dataTypeClass = String.class,
-            example = "Bearer access_token"),
-
             @ApiImplicitParam (name = "NewsDto", value = "Entity to create",
                                 required = true,
                                 allowEmptyValue = false,
@@ -58,14 +51,6 @@ public class NewsController {
             @ApiResponse(code = 403, message = "Forbidden" ),
             @ApiResponse(code = 404, message = "Not Found"),
             @ApiResponse(code = 200, message = "Ok", response = NewsDto.class)
-    })
-    @ApiImplicitParams( value = {
-            @ApiImplicitParam (name = "Authorization", value = "Access Token",
-                    required = true,
-                    allowEmptyValue = false,
-                    paramType = "header",
-                    dataTypeClass = String.class,
-                    example = "Bearer access_token")
     })
     @GetMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<NewsDto> getNewsById(@ApiParam (value = "News id found", required = true, allowEmptyValue = false)
@@ -95,13 +80,6 @@ public class NewsController {
                     required = true, allowEmptyValue = false,
                     paramType = "path", dataTypeClass = String.class,
                     example = "1"),
-            @ApiImplicitParam(name = "Authorization",
-                    value = "Access Token",
-                    required = true,
-                    allowEmptyValue = false,
-                    paramType = "header",
-                    dataTypeClass = String.class,
-                    example = "Bearer access_token"),
             @ApiImplicitParam(name= "RequestBody",
                     value = "Update params of News",
                     required = true,
@@ -130,13 +108,7 @@ public class NewsController {
                     required = true, allowEmptyValue = false,
                     paramType = "path", dataTypeClass = String.class,
                     example = "1"),
-            @ApiImplicitParam(name = "Authorization",
-                    value = "Access Token",
-                    required = true,
-                    allowEmptyValue = false,
-                    paramType = "header",
-                    dataTypeClass = String.class,
-                    example = "Bearer access_token")})
+    })
     @DeleteMapping(value = "/{id}", produces = {"application/json"})
     public ResponseEntity<Void>delete(@PathVariable String id) {
         newsService.delete(id);
@@ -151,19 +123,11 @@ public class NewsController {
             @ApiResponse(code = 200, message = "Ok", response = ResponseEntity.class),
             })
     @ApiImplicitParams(value = {
-
-            @ApiImplicitParam(name = "Authorization",
-                    value = "Access Token",
-                    required = true,
-                    allowEmptyValue = false,
-                    paramType = "header",
-                    dataTypeClass = String.class,
-                    example = "Bearer access_token"),
             @ApiImplicitParam(name = "page", value = "Page of the list",
                     required = true,
                     paramType = "query",
                     dataTypeClass = Integer.class,
-                    example = "1"), })
+                    example = "0"), })
     @GetMapping(produces ={"application/json"} )
     public ResponseEntity<Map<String, Object>> getAllPage(@RequestParam(defaultValue = "0") Integer page){
         Map<String, Object> news = new HashMap<>();

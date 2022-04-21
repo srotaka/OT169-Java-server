@@ -29,15 +29,10 @@ public class TestimonialController {
     //**POST**//
     @ApiOperation(value = "Add a new testimonial and return it")
     @ApiResponses(value = { @ApiResponse(code = 201 , message= "Create Testimonial"),
+            @ApiResponse(code = 401, message = "There aren't authorization headers"),
             @ApiResponse(code = 403, message = "Forbidden/Accessing with invalid role"),
             @ApiResponse(code = 400 , message = "Bad request/Invalid field")
-
     })
-    @ApiImplicitParam(name = "Authorization", value = "Access Token",
-            required = true,
-            allowEmptyValue = false,
-            paramType = "header",
-            dataTypeClass = String.class)
     @PostMapping
     public ResponseEntity<TestimonialDto> save(@Valid @RequestBody TestimonialDto testimonialDto){
         TestimonialDto savedTestimonials = testimonialService.save(testimonialDto);
@@ -49,19 +44,14 @@ public class TestimonialController {
     @ApiOperation(value = "Delete a testimonial by id")
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Delete Testimonial by id"),
             @ApiResponse(code = 404, message = "Testimonial not found"),
-            @ApiResponse(code = 403, message = "Forbidden/Accessing with invalid role" )})
-    @ApiImplicitParams(value = {
-            @ApiImplicitParam(name = "id",
+            @ApiResponse(code = 403, message = "Forbidden/Accessing with invalid role" ),
+            @ApiResponse(code = 401, message = "There aren't authorization headers")})
+    @ApiImplicitParam(name = "id",
                     value = "Id of the testimonial we want to delete",
                     required = true,
                     allowEmptyValue = false,
                     paramType = "path",
-                    dataTypeClass = String.class),
-             @ApiImplicitParam(name = "Authorization", value = "Access Token",
-                    required = true,
-                    allowEmptyValue = false,
-                    paramType = "header",
-                    dataTypeClass = String.class)})
+                    dataTypeClass = String.class)
     @DeleteMapping("/{id}")
     public ResponseEntity<Void> delete(@PathVariable String id){
         testimonialService.delete(id);
@@ -75,7 +65,8 @@ public class TestimonialController {
     @ApiResponses(value = { @ApiResponse(code = 200, message = "Update testimonial"),
             @ApiResponse(code = 404, message = "Testimonial not found"),
             @ApiResponse(code = 403, message = "Forbidden/Accessing with invalid role" ),
-            @ApiResponse(code = 400 , message = "Bad request/Invalid field")
+            @ApiResponse(code = 400 , message = "Bad request/Invalid field"),
+            @ApiResponse(code = 401, message = "There aren't authorization headers")
 
     })
     @ApiImplicitParams(value = {
@@ -84,11 +75,6 @@ public class TestimonialController {
                     required = true,
                     allowEmptyValue = false,
                     paramType = "path",
-                    dataTypeClass = String.class),
-            @ApiImplicitParam(name = "Authorization", value = "Access Token",
-                    required = true,
-                    allowEmptyValue = false,
-                    paramType = "header",
                     dataTypeClass = String.class)})
     @PutMapping("/{id}")
     public ResponseEntity<TestimonialDto> updateTestimonials(@Valid @RequestBody TestimonialDto testimonialDto, @PathVariable String id) throws ResponseStatusException{
@@ -103,12 +89,9 @@ public class TestimonialController {
 
     //**PAGINATION**//
     @ApiOperation(value = "Get a paginated list of testimonials")
-    @ApiResponse(code = 200, message = "Return a paginated list of testimonials")
-    @ApiImplicitParam(name = "Authorization", value = "Access Token",
-            required = true,
-            allowEmptyValue = false,
-            paramType = "header",
-            dataTypeClass = String.class)
+    @ApiResponses(value = {
+    @ApiResponse(code = 200, message = "Return a paginated list of testimonials"),
+    @ApiResponse(code = 401, message = "There aren't authorization headers")})
     @GetMapping("/pages")
     public ResponseEntity<Map<String, Object>> getAllPage(@RequestParam(defaultValue = "0") int page) {
         Map<String, Object> testimonial = new HashMap<>();
